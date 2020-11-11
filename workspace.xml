@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="08b62431-1c56-4440-b809-c6372c2f9779" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="e6bd0822-93ce-4f01-b492-7bb11704556d" />
+  </component>
+  <component name="ProjectId" id="1k6lq6KIuStb0bJuZJGFcw3D398" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.javacompiler" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="08b62431-1c56-4440-b809-c6372c2f9779" name="Default Changelist" comment="" />
+      <created>1605029112552</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1605029112552</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="520" y="236" key="#Notifications" timestamp="1605113542319">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="520" y="236" key="#Notifications/0.0.1536.824@0.0.1536.824" timestamp="1605113542319" />
+    <state x="596" y="103" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog" timestamp="1605113773926">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="596" y="103" key="#com.intellij.openapi.keymap.impl.ui.EditKeymapsDialog/0.0.1536.824@0.0.1536.824" timestamp="1605113773926" />
+    <state x="545" y="161" key="FileChooserDialogImpl" timestamp="1605113634207">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="545" y="161" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1605113634207" />
+    <state x="593" y="332" key="Github.CreateGistDialog" timestamp="1605111141228">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="593" y="332" key="Github.CreateGistDialog/0.0.1536.824@0.0.1536.824" timestamp="1605111141228" />
+    <state x="647" y="310" width="428" height="203" key="Github.ShareDialog" timestamp="1605114556300">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="647" y="310" width="428" height="203" key="Github.ShareDialog/0.0.1536.824@0.0.1536.824" timestamp="1605114556300" />
+    <state x="277" y="0" key="SettingsEditor" timestamp="1605113647768">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="277" y="0" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1605113647768" />
+    <state x="586" y="326" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1605114518261">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="586" y="326" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.824@0.0.1536.824" timestamp="1605114518261" />
+    <state x="209" y="33" key="new project wizard" timestamp="1605110693903">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="209" y="33" key="new project wizard/0.0.1536.824@0.0.1536.824" timestamp="1605110693903" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1605111235224">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1605111235224" />
+  </component>
+</project>
