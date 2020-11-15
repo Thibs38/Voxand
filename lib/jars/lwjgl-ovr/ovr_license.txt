@@ -121,13 +121,13 @@ You agree that Oculus may use its contractors and affiliates for the purposes of
 its rights and licenses set forth in this Section 3.
 
 3.3. Internal Use. You agree that Oculus may grant its employees and internal contractors the
-right to use, perform and display the Developer Content you provide to Oculus for testing,
+right to use, perform and window the Developer Content you provide to Oculus for testing,
 evaluation and approval purposes, which shall be on a royalty-free basis.
 
 3.4 Key Provision and Redemption. If you request that Oculus generate activation keys for your
 Developer Content on the Platform ("Keys") and Oculus agrees, you hereby grant Oculus (i) the
 right to generate Keys for you and (ii) a license to make available, reproduce, distribute,
-perform, and display the Developer Content to end users who have submitted a Key to Oculus.
+perform, and window the Developer Content to end users who have submitted a Key to Oculus.
 Oculus agrees to authenticate and make Developer Content available to any end user supplying
 a valid Key (unless the Developer Content has been removed or withdrawn).
 
