@@ -1,0 +1,42 @@
+[ 
+	{ 
+		"id": 0,
+		"name": "air",
+		"color": [ 1,1,1,0],
+		"solid":false,
+		"shineDamper":1,
+		"reflectivity":0
+	},
+	{ 
+		"id": 1,
+		"name": "grass",
+		"color": [ 0.0784,0.5804,0.0784,1],
+		"solid":true,
+		"shineDamper":1,
+		"reflectivity":0
+	},
+	{ 
+		"id": 2,
+		"name": "dirt",
+		"color": [ 1,0.5,0.5,1],		
+		"solid":true,
+		"shineDamper":1,
+		"reflectivity":0
+	},
+	{ 
+		"id": 3,
+		"name": "stone",
+		"color": [ 0.5,0.5,0.5,1],
+		"solid":true,
+		"shineDamper":1,
+		"reflectivity":0
+	},
+	{ 
+		"id": 4,
+		"name": "deep stone",
+		"color": [ 0.3,0.3,0.3,1],
+		"solid":true,
+		"shineDamper":1,
+		"reflectivity":0
+	}
+]
