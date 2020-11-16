@@ -77,13 +77,16 @@ public class BasicShader extends ShaderProgram{
 		super.loadMatrix(location_viewMatrix, view);
 	}
 	
-	public void loadLights(List<PointLight> lights) {
-		for(int i = 0; i < lights.size();i++) {
-			super.loadVector(location_lightPosition[i], lights.get(i).getPosition());
-			super.loadVector(location_lightColour[i], lights.get(i).getColour());
-			super.loadVector(location_attenuation[i], lights.get(i).getAttenuationFactor());
+	public void loadLights(PointLight[] lights) {
+		for(int i = 0; i < lights.length;i++) {
+			if(lights[i] != null){
+				super.loadVector(location_lightPosition[i], lights[i].getPosition());
+				super.loadVector(location_lightColour[i], lights[i].getColour());
+				super.loadVector(location_attenuation[i], lights[i].getAttenuationFactor());
+			}
+
 		}
-		super.loadInteger(location_lightCount, lights.size());
+		super.loadInteger(location_lightCount, lights.length);
 	}
 	
 	public void loadAmbientLight(DirectionalLight sun) {

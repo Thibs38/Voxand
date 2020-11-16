@@ -1,7 +1,8 @@
 package com.thibsworkshop.voxand.entities;
 
-import com.thibsworkshop.voxand.rendering.Input;
-import com.thibsworkshop.voxand.rendering.Window;
+import com.thibsworkshop.voxand.io.Input;
+import com.thibsworkshop.voxand.io.Time;
+import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -25,10 +26,14 @@ public class Camera {
 	private float FAR_PLANE = 1000;
 	private float ASPECT_RATIO;
 
-	//private Player player;
+	public static Camera mainCamera;
+
+	private Player player;
+
+	//TODO: Cant look and move at the same time
 	
-	public Camera() {
-		//this.player = player;
+	public Camera(Player player) {
+		this.player = player;
 		ASPECT_RATIO = Window.mainWindow.getAspectRatio();
 		projectionMatrix = new Matrix4f().setPerspective(FOV,ASPECT_RATIO,NEAR_PLANE,FAR_PLANE);
 		viewMatrix = Maths.createViewMatrix(this);
@@ -38,12 +43,12 @@ public class Camera {
 
 	}
 	public void move() {
-		float realSpeed = speed * com.thibsworkshop.voxand.rendering.Window.mainWindow.getDeltaTime();
-		float realRotationSpeed = rotationspeed * com.thibsworkshop.voxand.rendering.Window.mainWindow.getDeltaTime();
+		float realSpeed = speed * Time.getDeltaTime();
+		float realRotationSpeed = rotationspeed * Time.getDeltaTime();
 		boolean moved = look(realRotationSpeed);
 
 		if(attachedToPlayer) {
-			//position = new Vector3f(player.position.x,player.position.y + 2f,player.position.z);
+			position = new Vector3f(player.position.x,player.position.y + 2f,player.position.z);
 		} else {
 			moved = moved || freeLook(realSpeed);
 		}

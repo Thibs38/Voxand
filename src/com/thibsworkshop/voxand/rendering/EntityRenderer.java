@@ -27,49 +27,27 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 
 
-public class EntityRenderer {
-
-	public static final Vector3f SKY_COLOR = new Vector3f(0.529f,0.808f,0.922f);
-
+public class EntityRenderer extends Renderer {
 
 	private StaticShader shader;
 
-	DirectionalLight sun;
-
 	private Map<Model,List<Entity>> entities = new HashMap<Model,List<Entity>>();
 
-	//MasterRenderer masterRenderer;
+	MasterRenderer masterRenderer;
 	
-	public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix
-						  //, MasterRenderer masterRenderer
-						  , DirectionalLight sun
-
-						  ) {
-
-		this.sun = sun;
+	public EntityRenderer(StaticShader shader, MasterRenderer masterRenderer){
+		super(shader);
 		this.shader = shader;
-		shader.start();
-		shader.loadProjectionMatrix(projectionMatrix);
-		shader.stop();
-		glClearColor(SKY_COLOR.x, SKY_COLOR.y, SKY_COLOR.z,1);
+		updateProjectionMatrix(Camera.mainCamera.getProjectionMatrix());
 
-		//this.masterRenderer = masterRenderer;
+		this.masterRenderer = masterRenderer;
 	}
 
-	
+	@Override
 	public void render(Camera camera) {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-
-		shader.start();
-
-		shader.loadFogVariables(0.0035f, 5f, SKY_COLOR);
-
-
-		shader.loadLights(new ArrayList<PointLight>());
-		shader.loadViewMatrix(camera.getViewMatrix());
-		shader.loadAmbientLight(sun);
 		for(Model model:entities.keySet()) {
 			prepareTexturedModel(model);
 			List<Entity> batch = entities.get(model);
@@ -77,10 +55,8 @@ public class EntityRenderer {
 				prepareInstance(entity);
 				GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
 			}
-			unbindTexturedModel();
+			unbindModel();
 		}
-
-		shader.stop();
 
 	}
 
@@ -112,7 +88,6 @@ public class EntityRenderer {
 
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, rawModel.getIboID());
 
-
 		Texture texture = model.getTexture();
 		Material material = model.getMaterial();
 		shader.loadShineVariables(material.getShineDamper(), material.getReflectivity());
@@ -121,25 +96,11 @@ public class EntityRenderer {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getID());
 	}
 	
-	private void unbindTexturedModel() {
-		
-		GL20.glDisableVertexAttribArray(0);
-		GL20.glDisableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(2);
 
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER,0);
-		GL30.glBindVertexArray(0);
-	}
-	
 	private void prepareInstance(Entity entity) {
+		//TODO: Store transformation matrix in entity and update if entity moved
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.position, entity.rotation, entity.scale);
 		shader.loadTransformationMatrix(transformationMatrix);
-	}
-	
-	public void updateProjectionMatrix(Matrix4f projection) {
-		shader.start();
-		shader.loadProjectionMatrix(projection);
-		shader.stop();
 	}
 	
 }

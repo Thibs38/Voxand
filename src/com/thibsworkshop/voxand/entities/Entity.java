@@ -10,13 +10,11 @@ public class Entity {
 	public Vector3f position;
 	public Vector3f rotation;
 	public Vector3f scale;
-	//protected Collider collider;
+	protected Collider collider;
 	
 	public boolean grounded;
 
-	//Store transformation matrix here, change it when moving, dont update if not visible
-
-	/*public Entity(Model model, Vector3f position, Vector3f rotation, Vector3f scale,Collider collider) {
+	public Entity(Model model, Vector3f position, Vector3f rotation, Vector3f scale,Collider collider) {
 		this.model = model;
 		this.position = position;
 		this.rotation = rotation;
@@ -24,20 +22,18 @@ public class Entity {
 		this.collider = collider;
 		if(collider != null)
 			collider.LinkEntity(this);
-	}*/
+	}
 	
-	public Entity(Model model, Vector3f position
-				  //,Collider collider
-				   ) {
+	public Entity(Model model, Vector3f position, Collider collider) {
 		this.model = model;
 		this.position = position;
 		this.rotation = new Vector3f(0,0,0);
 		this.scale = new Vector3f(1,1,1);
-		/*this.collider = collider;
+		this.collider = collider;
 		if(collider != null)
-			collider.LinkEntity(this);*/
+			collider.LinkEntity(this);
 	}
-	/*public Entity(Model model, Vector3f position,float scale,Collider collider) {
+	public Entity(Model model, Vector3f position,float scale,Collider collider) {
 		this.model = model;
 		this.position = position;
 		this.rotation = new Vector3f(0,0,0);
@@ -45,7 +41,7 @@ public class Entity {
 		this.collider = collider;
 		if(collider != null)
 			collider.LinkEntity(this);
-	}*/
+	}
 	
 	public void translate(Vector3f translation) {
 		this.position.add(translation);

@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.rendering;
+package com.thibsworkshop.voxand.io;
 
 import java.util.HashMap;
 import java.util.Map;

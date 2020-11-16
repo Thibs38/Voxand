@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.rendering;
+package com.thibsworkshop.voxand.io;
 
 
 import org.lwjgl.opengl.GL11;
@@ -27,10 +27,6 @@ public class Window {
 
 	private int FPS_CAP = 120;
 	private boolean FULLSCREEN;
-	private int currentFps;
-	private float deltaTime;
-
-	private long lastFrameTime;
 	
 	private static GLFWFramebufferSizeCallback framebufferSizeCallback;
 	
@@ -46,12 +42,10 @@ public class Window {
 		this.FULLSCREEN = fullscreen;
 		this.ASPECT_RATIO = (float)width/(float)height;
 
-		createDisplay();
+		createWindow();
 	}
 
-	public void createDisplay() {
-
-
+	public void createWindow() {
 
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -114,7 +108,6 @@ public class Window {
 		}));
 		
 		GL11.glViewport(0, 0, WIDTH, HEIGHT);
-		lastFrameTime = getCurrentTime();
 
 		mainWindow = this; //After initializing everything, this display becomes the main one
 	}
@@ -129,23 +122,20 @@ public class Window {
 		//MasterRenderer.createProjectionMatrix(false);
 	}
 	
-	public void updateDisplay() {
+	public void updateWindow() {
 		
 		//Display.sync(FPS);
 		glfwPollEvents(); //Callbacks execution
 		glfwSwapBuffers(window);
 
 
-		long currentFrameTime = getCurrentTime();
-		deltaTime = (float)(currentFrameTime - lastFrameTime)/1000f;
-		currentFps = Math.round(1f/deltaTime);
-		lastFrameTime = currentFrameTime;
+
 
 		if(Input.isKeyDown(GLFW_KEY_ESCAPE))
 			closeWindow = true;
 	}
 	
-	public void closeDisplay() {
+	public void closeWindow() {
 		glfwFreeCallbacks(window);
 
 		glfwDestroyWindow(window);
@@ -165,21 +155,5 @@ public class Window {
 	public int getHeight(){return HEIGHT;}
 
 	public float getAspectRatio(){return ASPECT_RATIO;}
-
-	public float getDeltaTime() {
-		return deltaTime;
-	}
-	
-	public long getCurrentTime() {
-		return (long) (glfwGetTime() * 1000);
-	}
-	
-	public long getCurrentMicroTime() {
-		return (long) (glfwGetTime() * 1000000);
-	}
-	
-	public int getFps() {
-		return currentFps;
-	}
 
 }

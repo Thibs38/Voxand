@@ -15,7 +15,7 @@ public class JsonLoader {
 		String content = "";
 		Block[] blocks = new Block[Block.MAX_BLOCK];
 		try {
-			content = Utility.readFile(path, StandardCharsets.US_ASCII);
+			content = Utility.readFile(path + ".json", StandardCharsets.US_ASCII);
 		} catch (IOException e) {
 			System.err.println("Couldn't find file " + path);
 			e.printStackTrace();

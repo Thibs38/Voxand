@@ -22,8 +22,8 @@ public class Loader {
 	private static List<Integer> vbos = new ArrayList<Integer>();
 	private static List<Integer> textures = new ArrayList<Integer>();
 	
-	public static void init(String blockPath) {
-		Block.blocks = JsonLoader.loadBlocks(blockPath);
+	public static void init() {
+		Block.blocks = JsonLoader.loadBlocks("res/data/blocks");
 	}
 	
 	public static RawModel loadToVAO(float[] positions, int[] indices, float[] textureCoords, float[] normals) {
@@ -50,7 +50,7 @@ public class Loader {
 	}
 	
 	public static int loadTexture(String fileName) {
-		Texture texture = TextureLoader.loadTexture("PNG", "res/"+fileName+".png");
+		Texture texture = TextureLoader.loadTexture("PNG", "res/textures/"+fileName+".png");
 		if(texture == null)
 			return 0;
 

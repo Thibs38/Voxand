@@ -2,8 +2,8 @@ package com.thibsworkshop.voxand.shaders;
 
 public class StaticShader extends BasicShader{
 
-	private static final String VERTEX_FILE = "src/com/thibsworkshop/voxand/shaders/vertexShader";
-	private static final String FRAGMENT_FILE = "src/com/thibsworkshop/voxand/shaders/fragmentShader";
+	private static final String VERTEX_FILE = "res/shaders/vertexShader";
+	private static final String FRAGMENT_FILE = "res/shaders/fragmentShader";
 
 	private int location_shineDamper;
 	private int location_reflectivity;
