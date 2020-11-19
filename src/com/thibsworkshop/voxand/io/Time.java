@@ -9,27 +9,35 @@ public class Time {
 
     private static long lastFrameTime;
 
+    private static long time;
+    private static long milliTime;
+    private static long microTime;
+
     public static void init(){
-        lastFrameTime = getCurrentTime();
+        lastFrameTime = milliTime;
     }
 
     public static void update(){
-        long currentFrameTime = getCurrentTime();
-        deltaTime = (float)(currentFrameTime - lastFrameTime)/1000f;
+        double glfwtime = glfwGetTime();
+        time = (long) (glfwtime);
+        milliTime = (long) (glfwtime * 1000);
+        microTime = (long) (glfwtime * 1000000);
+
+        deltaTime = (float)(milliTime - lastFrameTime)/1000f;
         currentFps = Math.round(1f/deltaTime);
-        lastFrameTime = currentFrameTime;
+        lastFrameTime = milliTime;
     }
 
     public static float getDeltaTime() {
         return deltaTime;
     }
 
-    public static long getCurrentTime() {
-        return (long) (glfwGetTime() * 1000);
-    }
+    public static long getTime(){ return time; }
 
-    public static long getCurrentMicroTime() {
-        return (long) (glfwGetTime() * 1000000);
+    public static long getMilliTime() { return milliTime; }
+
+    public static long getMicroTime() {
+        return microTime;
     }
 
     public static int getFps() {

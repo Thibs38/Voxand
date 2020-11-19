@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.entities.Collider;
 import com.thibsworkshop.voxand.entities.Entity;
@@ -38,6 +39,8 @@ public class MasterRenderer {
 
 	DirectionalLight sun;
 	PointLight[] lights;
+
+	public static String debugName = "Rendering";
 	
 	public MasterRenderer(DirectionalLight sun, PointLight[] lights) {
 
@@ -48,30 +51,41 @@ public class MasterRenderer {
 		entityRenderer = new EntityRenderer(staticShader,this);
 		terrainRenderer = new TerrainRenderer(terrainShader,this);
 
+		Timing.add(debugName, new String[]{
+			"Entities",
+			"Terrain"
+		});
 	}
 	
 	public void render(Camera camera) {
 		updateFrustum(camera);
 		prepare();
+
+		Timing.start(debugName,"Entities");
+
 		staticShader.start();
-		
 		staticShader.loadFogVariables(0.0035f, 5f, SKY_COLOR);
-		
 		staticShader.loadLights(lights);
 		staticShader.loadViewMatrix(Camera.mainCamera.getViewMatrix());
 		staticShader.loadAmbientLight(sun);
 		entityRenderer.render(camera);
 		staticShader.stop();
-		
+
+		Timing.stop(debugName,"Entities");
+
+
+		Timing.start(debugName,"Terrain");
+
 		terrainShader.start();
-		
 		terrainShader.loadFogVariables(0.0035f, 5f, SKY_COLOR);
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(Camera.mainCamera.getViewMatrix());
 		terrainShader.loadAmbientLight(sun);
 		terrainRenderer.render(camera);
 		terrainShader.stop();
-		
+
+		Timing.stop(debugName,"Terrain");
+
 	}
 
 	public void prepare() {

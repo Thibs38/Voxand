@@ -3,11 +3,13 @@ package com.thibsworkshop.voxand.terrain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
 import com.thibsworkshop.voxand.loaders.Loader;
 import com.thibsworkshop.voxand.models.RawModel;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 
@@ -19,9 +21,8 @@ public class Terrain {
 	public static final int CHUNK_SIZE_HALF = 16;
 	public static final int CHUNK_HEIGHT_HALF = 16;
 	
-	private int chunkx;
-	private int chunkz;
-	
+	private Vector2i chunkPos;
+
 	private Vector3f position;
 
 	public boolean generated = false;
@@ -33,11 +34,10 @@ public class Terrain {
 	public byte[][][] grid;
 	
 	//Maybe later add an byte that leads to like the biome with premade infos.
-	public Terrain(int chunkx, int chunkz) {
-		this.chunkx = chunkx;
-		this.chunkz = chunkz;
+	public Terrain(Vector2i chunkPos) {
+		this.chunkPos = chunkPos;
 		
-		this.position = new Vector3f(chunkx * CHUNK_SIZE,0, chunkz * CHUNK_SIZE);
+		this.position = new Vector3f(chunkPos.x * CHUNK_SIZE,0, chunkPos.y * CHUNK_SIZE);
 		this.transformationMatrix = Maths.createTransformationMatrix(position);
 
 		this.grid = new byte[CHUNK_SIZE][CHUNK_HEIGHT][CHUNK_SIZE];
@@ -55,14 +55,10 @@ public class Terrain {
 	}
 	
 
-	public int getChunkX() {
-		return chunkx;
+	public Vector2i getChunkPos() {
+		return chunkPos;
 	}
 
-	public int getChunkZ() {
-		return chunkz;
-	}
-	
 	public Vector3f getPosition() {
 		return position;
 	}
@@ -80,13 +76,13 @@ public class Terrain {
         if (this == o) return true;
         if (!(o instanceof Terrain)) return false;
         Terrain te = (Terrain) o;
-        return chunkx == te.chunkx && chunkz == te.chunkz;
+        return chunkPos == te.chunkPos;
     }
 
     @Override
     public int hashCode() {
-        int result = chunkx;
-        result = 31 * result + chunkz;
+        int result = chunkPos.x;
+        result = 31 * result + chunkPos.y;
         return result;
     }
 

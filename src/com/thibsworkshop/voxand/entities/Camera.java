@@ -5,13 +5,14 @@ import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 
 public class Camera {
 
-	private Vector3f position = new Vector3f(0,0,0);
+	private Vector3f position = new Vector3f(0,50,0);
 	private Vector3f rotation = new Vector3f(0,0,0);
 	private final float speed = 40f;
 	private final float rotationspeed = 20f;
@@ -30,16 +31,13 @@ public class Camera {
 
 	private Player player;
 
-	//TODO: Cant look and move at the same time
-	
+	public Vector2i currentChunk = new Vector2i(0,0);
+
 	public Camera(Player player) {
 		this.player = player;
 		ASPECT_RATIO = Window.mainWindow.getAspectRatio();
 		projectionMatrix = new Matrix4f().setPerspective(FOV,ASPECT_RATIO,NEAR_PLANE,FAR_PLANE);
 		viewMatrix = Maths.createViewMatrix(this);
-		System.out.println("projection Matrix: \n" + projectionMatrix);
-		System.out.println("view Matrix: \n" + viewMatrix);
-
 
 	}
 	public void move() {
@@ -50,7 +48,7 @@ public class Camera {
 		if(attachedToPlayer) {
 			position = new Vector3f(player.position.x,player.position.y + 2f,player.position.z);
 		} else {
-			moved = moved || freeLook(realSpeed);
+			moved = freeLook(realSpeed) || moved;
 		}
 		if(moved)
 			viewMatrix = Maths.createViewMatrix(this);

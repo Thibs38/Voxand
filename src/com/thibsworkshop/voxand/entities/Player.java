@@ -13,11 +13,9 @@ public class Player extends Entity {
 	
 	public Player(Model model, Collider collider) {
 		super(model, new Vector3f(0,0,0),collider);
-		// TODO Auto-generated constructor stub
 	}
 	public Player(Model model, Vector3f position,float scale,Collider collider) {
 		super(model, position,scale,collider);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public void move() {

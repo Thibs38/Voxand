@@ -42,7 +42,6 @@ public class TextureLoader {
 	    try {
 			decoder.decode(buffer, decoder.getWidth() * 4, PNGDecoder.Format.RGBA);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

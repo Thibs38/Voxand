@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.game;
 
+import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.entities.Entity;
 import com.thibsworkshop.voxand.entities.Player;
@@ -30,6 +31,14 @@ public class Test {
     private static GLFWErrorCallback errorCallback;
 
 
+    //TODO: Really low fps due to terrain management
+    //TODO: profiling tools, add time calculation for every methods like
+    // total rendering, then entity rendering / terrain rendering
+    // Terrain generation, then management / actual generation
+    // Input / display / Time update
+    // Collisions
+    // ...
+
     private void init() {
 
         if(!glfwInit()){
@@ -59,16 +68,17 @@ public class Test {
 
         DirectionalLight sun = new DirectionalLight(new Vector3f(1,1,1), 1, new Vector3f(1,0,0));
         sun.rotate(new Vector3f(0,3.14f/4f,0));
+        sun.rotate(new Vector3f(3.14f/4f,0,0));
 
         PointLight[] lights = new PointLight[MasterRenderer.MAX_LIGHT];
 
         MasterRenderer renderer = new MasterRenderer(sun,lights);
 
-        TerrainInfo terrainInfo = new TerrainInfo(1,1,1,1,1);
+        TerrainInfo terrainInfo = new TerrainInfo(0.01f,10,4,1,1);
         TerrainManager terrainManager = new TerrainManager(terrainInfo);
 
 
-        Entity entity = new Entity(model ,new Vector3f(0,0,5),null);
+        Entity entity = new Entity(model , new Vector3f(0,0,5),null);
         Entity entity2 = new Entity(model ,new Vector3f(0,0,-5),null);
         Entity entity3 = new Entity(model ,new Vector3f(-5,0,0),null);
         Entity entity4 = new Entity(model ,new Vector3f(5,0,0),null);
@@ -78,10 +88,25 @@ public class Test {
         renderer.processEntity(entity3);
         renderer.processEntity(entity4);
 
+        //Timing.enable(TerrainManager.debugName);
+        Timing.enable(MasterRenderer.debugName);
+
         while ( !window.shouldWindowClose() ) {
             Time.update();
             input.updateInput();
             camera.move();
+
+            //Game Logic
+
+            if(Input.isKeyHold(GLFW_KEY_UP)){
+                sun.rotate(new Vector3f(0.025f,0,0));
+            }
+            if(Input.isKeyHold(GLFW_KEY_DOWN))
+                sun.rotate(new Vector3f(-0.025f,0,0));
+
+            if(Input.isKeyDown(GLFW_KEY_ENTER))
+                Timing.print(TerrainManager.debugName,"Refreshing",5);
+
             terrainManager.refreshChunks();
             renderer.render(camera);
             window.updateWindow();

@@ -11,7 +11,8 @@ import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
 public class Input {
 
-	public static enum KeyState{
+
+	public enum KeyState{
 		SLEEP, DOWN, HOLD, UP
 	}
 	private static Map<Integer,KeyState> keys = new HashMap<Integer, KeyState>();
@@ -27,7 +28,10 @@ public class Input {
 	private static GLFWKeyCallback keyCallback;
 	private static GLFWCursorPosCallback cursorPosCallback;
 	private static GLFWMouseButtonCallback mouseButtonCallback;
-	
+
+	//TODO: Bug where input stay hold where it shouldn't
+	//TODO: test inputs, maybe they are not working as expected
+
 	public Input(Window window) {
 		
 		this.window = window;
@@ -36,10 +40,19 @@ public class Input {
 		keys.put(GLFW.GLFW_KEY_Q,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_KEY_S,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_KEY_D,KeyState.SLEEP);
+
+		keys.put(GLFW.GLFW_KEY_UP,KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_DOWN,KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_LEFT,KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_RIGHT,KeyState.SLEEP);
+
+
 		keys.put(GLFW.GLFW_KEY_SPACE,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_KEY_LEFT_SHIFT,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_KEY_ESCAPE,KeyState.SLEEP);
-		
+		keys.put(GLFW.GLFW_KEY_ENTER,KeyState.SLEEP);
+
+
 		keys.put(GLFW.GLFW_MOUSE_BUTTON_LEFT,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_MOUSE_BUTTON_RIGHT,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_MOUSE_BUTTON_MIDDLE,KeyState.SLEEP);

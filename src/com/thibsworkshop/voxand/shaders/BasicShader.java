@@ -78,15 +78,17 @@ public class BasicShader extends ShaderProgram{
 	}
 	
 	public void loadLights(PointLight[] lights) {
+		int n = 0;
 		for(int i = 0; i < lights.length;i++) {
 			if(lights[i] != null){
 				super.loadVector(location_lightPosition[i], lights[i].getPosition());
 				super.loadVector(location_lightColour[i], lights[i].getColour());
 				super.loadVector(location_attenuation[i], lights[i].getAttenuationFactor());
+				n++;
 			}
 
 		}
-		super.loadInteger(location_lightCount, lights.length);
+		super.loadInteger(location_lightCount, n);
 	}
 	
 	public void loadAmbientLight(DirectionalLight sun) {
@@ -106,7 +108,6 @@ public class BasicShader extends ShaderProgram{
 
 	@Override
 	protected void bindAttributes() {
-		// TODO Auto-generated method stub
-		
+
 	}
 }

@@ -11,7 +11,6 @@ public class StaticShader extends BasicShader{
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 		
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

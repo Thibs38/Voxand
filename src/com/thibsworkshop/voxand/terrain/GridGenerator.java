@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.terrain;
 import com.thibsworkshop.voxand.terrain.Terrain;
 import com.thibsworkshop.voxand.terrain.Terrain.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.SimplexNoise;
+import org.joml.Vector2i;
 
 
 public class GridGenerator {
@@ -11,11 +12,11 @@ public class GridGenerator {
 
 	public static final int HEIGHT_OFFSET = 128;
 
-	public static Terrain generate(int chunkx, int chunkz, TerrainInfo info) {
-		Terrain terrain = new Terrain(chunkx,chunkz);
+	public static Terrain generate(Vector2i chunkPos, TerrainInfo info) {
+		Terrain terrain = new Terrain(chunkPos);
 		
-		int realx = chunkx * Terrain.CHUNK_SIZE;
-		int realz = chunkz * Terrain.CHUNK_SIZE;
+		int realx = chunkPos.x * Terrain.CHUNK_SIZE;
+		int realz = chunkPos.y * Terrain.CHUNK_SIZE;
 
 		for(int x = 0; x < Terrain.CHUNK_SIZE; x++) {
 			for (int z = 0; z < Terrain.CHUNK_SIZE; z++) {

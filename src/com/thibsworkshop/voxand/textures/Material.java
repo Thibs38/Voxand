@@ -5,7 +5,6 @@ public class Material {
 	private float shineDamper = 1;
 	private float reflectivity = 0;
 	
-	
 	public Material(float shineDamper, float reflectivity) {
 		this.shineDamper = shineDamper;
 		this.reflectivity = reflectivity;

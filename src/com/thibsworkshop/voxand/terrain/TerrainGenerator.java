@@ -1,7 +1,6 @@
 package com.thibsworkshop.voxand.terrain;
 
 import com.thibsworkshop.voxand.io.Time;
-import com.thibsworkshop.voxand.io.Window;
 
 public class TerrainGenerator {
 	
@@ -14,27 +13,30 @@ public class TerrainGenerator {
 		boolean[][] rightOv = new boolean[Terrain.CHUNK_SIZE][Terrain.CHUNK_HEIGHT];
 		boolean[][] leftOv = new boolean[Terrain.CHUNK_SIZE][Terrain.CHUNK_HEIGHT];
 
+		int chunkx = terrain.getChunkPos().x;
+		int chunkz = terrain.getChunkPos().y;
+
 		for(int x = 0; x < Terrain.CHUNK_SIZE;x++) {
 			for(int y = 0; y < Terrain.CHUNK_HEIGHT;y++) {
-				backOv[x][y] = TerrainManager.isTerrainTransparent(x, y, Terrain.CHUNK_SIZE-1, terrain.getChunkX(), terrain.getChunkZ()-1);
+				backOv[x][y] = TerrainManager.isTerrainTransparent(x, y, Terrain.CHUNK_SIZE-1, chunkx, chunkz-1);
 			}
 		}
 		
 		for(int x = 0; x < Terrain.CHUNK_SIZE;x++) {
 			for(int y = 0; y < Terrain.CHUNK_HEIGHT;y++) {
-				frontOv[x][y] = TerrainManager.isTerrainTransparent(x, y, 0, terrain.getChunkX(), terrain.getChunkZ()+1);
+				frontOv[x][y] = TerrainManager.isTerrainTransparent(x, y, 0, chunkx, chunkz+1);
 			}
 		}
 		
 		for(int z = 0; z < Terrain.CHUNK_SIZE;z++) {
 			for(int y = 0; y < Terrain.CHUNK_HEIGHT;y++) {
-				leftOv[z][y] = TerrainManager.isTerrainTransparent(Terrain.CHUNK_SIZE-1, y, z, terrain.getChunkX()-1, terrain.getChunkZ());
+				leftOv[z][y] = TerrainManager.isTerrainTransparent(Terrain.CHUNK_SIZE-1, y, z, chunkx-1, chunkz);
 			}
 		}
 		
 		for(int z = 0; z < Terrain.CHUNK_SIZE;z++) {
 			for(int y = 0; y < Terrain.CHUNK_HEIGHT;y++) {
-				rightOv[z][y] = TerrainManager.isTerrainTransparent(0, y, z, terrain.getChunkX()+1, terrain.getChunkZ());
+				rightOv[z][y] = TerrainManager.isTerrainTransparent(0, y, z, chunkx+1, chunkz);
 			}
 		}
 		
@@ -248,7 +250,7 @@ public class TerrainGenerator {
 			}
 		}
 
-		long verticeTimeE = Time.getCurrentTime();
+		long verticeTimeE = Time.getMilliTime();
 
 		/*System.out.println(String.format("estimation: %d + Init time: %d grid time: %d vertice time: %d total time: %d", 
 				verticesCountEstimate,

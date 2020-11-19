@@ -17,7 +17,6 @@ public class TerrainShader extends BasicShader{
 
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
-		
 	}
 	
 	@Override
@@ -50,8 +49,6 @@ public class TerrainShader extends BasicShader{
 				super.loadFloat(location_block_reflectivity[i], b.getReflectivity());
 				super.loadFloat(location_block_shineDamper[i], b.getShineDamper());
 			}
-			
-
 		}
 	}
 }

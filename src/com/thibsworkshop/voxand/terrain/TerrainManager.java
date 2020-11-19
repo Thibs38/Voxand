@@ -1,7 +1,6 @@
 package com.thibsworkshop.voxand.terrain;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,113 +8,132 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.rendering.MasterRenderer;
-import com.thibsworkshop.voxand.rendering.TerrainRenderer;
-import com.thibsworkshop.voxand.toolbox.Maths;
-import com.thibsworkshop.voxand.toolbox.Maths.Key;
 import com.thibsworkshop.voxand.terrain.TerrainGenerator.IndiceVerticeNormal;
 import com.thibsworkshop.voxand.terrain.Terrain.TerrainInfo;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
-
+import org.joml.Vector2i;
 
 public class TerrainManager {
 	
 	private static final int CHUNK_VIEW_DIST = 12;
-	private final int SQR_CHUNK_VIEW_DIST = 12*12;
-	
+
 	private static final int CHUNK_GENERATE_DIST = 15;
-	private static final int SQR_CHUNK_GENERATE_DIST = 15*15;
-	private final int SQR4_CHUNK_GENERATE_DIST = 15*15*4;
 
-	
 	private static final int CHUNK_LOAD_DIST = 13;
-	private final int SQR_CHUNK_LOAD_DIST = 13*13;
-	
-	private static final int CHUNK_UNLOAD_DIST = 18;
-	private final int SQR_CHUNK_UNLOAD_DIST = 18*18;
-	
-	public static Map<Key,Terrain> terrains = new HashMap<Key,Terrain>();
 
-	private Map<Key,Future<Terrain>> gridsInCreation = new HashMap<Key, Future<Terrain>>();
+	private static final int CHUNK_UNLOAD_DIST = 18;
+
+	public static Map<Vector2i,Terrain> terrains = new HashMap<Vector2i,Terrain>();
+
+	private Map<Vector2i,Future<Terrain>> gridsInCreation = new HashMap<Vector2i, Future<Terrain>>();
 	
-	private Map<Key,Callable<IndiceVerticeNormal>> terrainsToCreate = new HashMap<Key, Callable<IndiceVerticeNormal>>();
+	private Map<Vector2i,Callable<IndiceVerticeNormal>> terrainsToCreate = new HashMap<Vector2i, Callable<IndiceVerticeNormal>>();
 	
-	private Map<Key,Callable<IndiceVerticeNormal>> terrainsWaitingToCreate = new HashMap<Key, Callable<IndiceVerticeNormal>>();
+	private Map<Vector2i,Callable<IndiceVerticeNormal>> terrainsWaitingToCreate = new HashMap<Vector2i, Callable<IndiceVerticeNormal>>();
 	
-	private Map<Key, Future<IndiceVerticeNormal>> terrainsInCreation = new HashMap<Key, Future<IndiceVerticeNormal>>();
+	private Map<Vector2i, Future<IndiceVerticeNormal>> terrainsInCreation = new HashMap<Vector2i, Future<IndiceVerticeNormal>>();
 	
-	private Map<Key,IndiceVerticeNormal> calculatedTerrains = new HashMap<Key,IndiceVerticeNormal>(); //Calculated terrains waited to be created
+	private Map<Vector2i,IndiceVerticeNormal> calculatedTerrains = new HashMap<Vector2i,IndiceVerticeNormal>(); //Calculated terrains waited to be created
 
 	private List<Terrain> terrainsToRender = new ArrayList<Terrain>();
 	private TerrainInfo terrainInfo;
 	
-	private long lastClean = 0;
-	private int cleanGap = 5000;
+	private boolean refresh = false; // refresh the chunk every two frames
 	
 	private Vector2f campos;
 	
 	ExecutorService executor;
 
+	public static String debugName = "Terrain Generation";
+
+	private long lastClean = 0;
+	private long cleanGap = 5; // in seconds
+
 	
 	public TerrainManager(TerrainInfo terrainInfo) {
 		this.terrainInfo = terrainInfo;
 		MasterRenderer.terrainRenderer.linkManager(this);
-		lastClean = Time.getCurrentTime();
 		executor = new ThreadPoolExecutor(CHUNK_GENERATE_DIST*2,CHUNK_GENERATE_DIST*4*(CHUNK_GENERATE_DIST+1)+1,5,TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
 
+		Timing.add(debugName,new String[]{
+			"Refreshing",
+			"Grid Generation",
+			"Model Generation"
+		});
+
+		lastClean = Time.getMilliTime();
 	}
 	
 	public void refreshChunks() {
 
-		//TODO: Maybe check if a terrain is in the list of rendering instead of flushing the list
-		//TODO: can't see terrains
-		Map<Key,Callable<Terrain>> gridsToCreate = new HashMap<Key,Callable<Terrain>>();
+		refresh = !refresh;
+		if(!refresh)
+			return;
+
+		//TODO: Refactor the generation management (too many lists and hashmaps)
+
+		Timing.start(debugName,"Refreshing");
+
+		Map<Vector2i,Callable<Terrain>> gridsToCreate = new HashMap<Vector2i,Callable<Terrain>>();
 		
 		int camposX = (int)(Camera.mainCamera.getPosition().x/(float)Terrain.CHUNK_SIZE);
 		int camposZ = (int)(Camera.mainCamera.getPosition().z/(float)Terrain.CHUNK_SIZE);
 		campos = new Vector2f(camposX,camposZ);
 
-		for(int x = -SQR_CHUNK_GENERATE_DIST + camposX; x <= SQR_CHUNK_GENERATE_DIST + camposX; x++) {
-			for(int z = -SQR_CHUNK_GENERATE_DIST + camposZ; z <= SQR_CHUNK_GENERATE_DIST + camposZ; z++) {
-				Key key = new Key(x,z);
+		for(int x = -CHUNK_GENERATE_DIST; x <= CHUNK_GENERATE_DIST; x++) {
+			for(int z = -CHUNK_GENERATE_DIST; z <= CHUNK_GENERATE_DIST; z++) {
+				int rx = x + camposX;
+				int rz = z + camposZ;
+
+				int ax = Math.abs(x);
+				int az = Math.abs(z);
+
+				Vector2i key = new Vector2i(rx,rz);
 				Terrain value = terrains.get(key);
-				
-				float dist = Maths.sqrDistance(new Vector2f(x,z), campos);
-				if(dist <= SQR_CHUNK_GENERATE_DIST) { // At this distance, we generate all the grids
-					if(value == null) {
-						if(!gridsInCreation.containsKey(key)) { // If the grid doesn't exist and it is not in creation, then we'll create it
-							gridsToCreate.put(key,new GridGeneratorCallable(x,z,terrainInfo));
-						}
-						continue;
+
+				boolean inRenderList = terrainsToRender.contains(value);
+
+				if(value == null) { //If the terrain doesn't exist, let's create it
+					if(!gridsInCreation.containsKey(key)) { // If the grid doesn't exist and it is not in creation, then we'll create it
+						gridsToCreate.put(key,new GridGeneratorCallable(key,terrainInfo));
 					}
-					if(dist <= SQR_CHUNK_LOAD_DIST) { // At this distance, we generate only the terrains, keeping an ungenerated terrain border around
-						if(terrainsWaitingToCreate.containsKey(key)) {
-							terrainsToCreate.put(key,terrainsWaitingToCreate.get(key));
-							terrainsWaitingToCreate.remove(key);
-						}
-						
-						if(dist <= SQR_CHUNK_VIEW_DIST && value.generated) {
+					continue;
+				}
+
+				if(ax <= CHUNK_LOAD_DIST && az <= CHUNK_LOAD_DIST){ //At this distance we generate the model, keeping a grid-only border
+					if(terrainsWaitingToCreate.containsKey(key)) { // if the terrain has a grid and is waiting, we create it
+						terrainsToCreate.put(key,terrainsWaitingToCreate.get(key));
+						terrainsWaitingToCreate.remove(key);
+					}
+
+					if(ax <= CHUNK_VIEW_DIST && az <= CHUNK_VIEW_DIST) {
+						if(value.generated && !inRenderList) // If the terrain has a model and is not in the render list
 							terrainsToRender.add(value);
-						}
+					}else if(inRenderList){ // Else if the terrain in outside of the view dist and is in the render list we remove it
+						terrainsToRender.remove(value);
 					}
+
 				}
 			}
 		}
 
-		if(gridsToCreate.size() > 0) { //If we have grids to create
-			generateGrids(gridsToCreate);
+		Timing.stop(debugName,"Refreshing");
 
+		if(gridsToCreate.size() > 0) { //If we have grids to create
+			Timing.start(debugName,"Grid Generation");
+			generateGrids(gridsToCreate);
+			Timing.stop(debugName,"Grid Generation");
 		}
-		
+
 		if(gridsInCreation.size() > 0)
 			checkForFutureGrids(); // We check for future at each frame
 		
@@ -125,33 +143,42 @@ public class TerrainManager {
 		
 		if(gridsInCreation.size() == 0 && terrainsToCreate.size()>0) {
 			generateTerrains();
-
 			terrainsToCreate.clear();
-
 		}
-		
-		if(terrainsInCreation.size() == 0 && calculatedTerrains.size() > 0)
-			generateCalculatedTerrains();		
 
-		terrainsToRender.clear();
 
-		if(Time.getCurrentTime() - lastClean > cleanGap) {
-			lastClean = Time.getCurrentTime();
-			deleteUnusedChunks();
+		if(terrainsInCreation.size() == 0 && calculatedTerrains.size() > 0){
+			Timing.start(debugName,"Model Generation");
+			generateCalculatedTerrains();
+			Timing.stop(debugName,"Model Generation");
+		}
+
+		if(lastClean - Time.getMilliTime() > cleanGap){
+			cleanTerrains();
+			lastClean = Time.getMilliTime();
 		}
 
 	}
+
+	private void cleanTerrains(){
+		List<Terrain> toRemove = new ArrayList<>();
+		terrains.forEach((k,v) -> {
+			if(Math.abs(k.x) > CHUNK_UNLOAD_DIST || Math.abs(k.y) > CHUNK_UNLOAD_DIST)
+				toRemove.add(v);
+		});
+
+		for(Terrain t : toRemove){
+			terrains.remove(t.getChunkPos());
+			terrainsToRender.remove(t.getChunkPos());
+		}
+	}
+
 	private void generateCalculatedTerrains() {
-		int i = 0;
-		if(calculatedTerrains.size() >= SQR4_CHUNK_GENERATE_DIST)
-			i = calculatedTerrains.size();
-		else
-			i = 2;
-		
+		int i = 2;
 
 		Iterator it = calculatedTerrains.entrySet().iterator();
 	    while (it.hasNext() && i > 0) {
-	        Map.Entry<Key,IndiceVerticeNormal> entry = (Map.Entry)it.next();
+	        Map.Entry<Vector2i,IndiceVerticeNormal> entry = (Map.Entry)it.next();
 	        Terrain t = terrains.get(entry.getKey());
 			IndiceVerticeNormal v = entry.getValue();
 			if(t == null)
@@ -167,7 +194,7 @@ public class TerrainManager {
 	
 	private void checkForFutureTerrains() {
 	
-		List<Key> futuresToRemove = new ArrayList<Key>();
+		List<Vector2i> futuresToRemove = new ArrayList<Vector2i>();
 		
 		terrainsInCreation.forEach((k,v) -> {
 			
@@ -187,7 +214,7 @@ public class TerrainManager {
 		
 
 		
-		for(Key k:futuresToRemove){
+		for(Vector2i k:futuresToRemove){
 			terrainsInCreation.remove(k);
 		}
 
@@ -195,7 +222,7 @@ public class TerrainManager {
 	
 	private void checkForFutureGrids() {
 
-		List<Key> futuresToRemove = new ArrayList<Key>();
+		List<Vector2i> futuresToRemove = new ArrayList<Vector2i>();
 		
 		gridsInCreation.forEach((k,v) -> {
 			if(v.isDone()) {
@@ -216,7 +243,7 @@ public class TerrainManager {
 		
 
 		
-		for(Key k:futuresToRemove){
+		for(Vector2i k:futuresToRemove){
 			gridsInCreation.remove(k);
 		}
 
@@ -230,25 +257,12 @@ public class TerrainManager {
 		});
 	}
 
-	private void generateGrids(Map<Key,Callable<Terrain>> gridsToCreate) {
+	private void generateGrids(Map<Vector2i,Callable<Terrain>> gridsToCreate) {
 		gridsToCreate.forEach((k, v) -> {
 			gridsInCreation.put(k,executor.submit(v));
 		});
 	}
-	
-	private void deleteUnusedChunks() {
-		List<Key> toRemove = new ArrayList<Key>();
-		terrains.forEach((k, v) -> {
-			float dist = Maths.sqrDistance(new Vector2f(k.x,k.y), campos);
-            if(dist > SQR_CHUNK_UNLOAD_DIST){
-            	toRemove.add(k);
-            }
-        });
-		
-		for(Key s:toRemove) {
-			terrains.remove(s);
-		}
-	}
+
 	
 	public void cleanUp() {
 		executor.shutdown(); // Disable new tasks from being submitted
@@ -286,19 +300,17 @@ public class TerrainManager {
 	
 	public class GridGeneratorCallable implements Callable<Terrain>{
 		
-		int chunkx;
-		int chunkz;
+		Vector2i chunkPos;
 		TerrainInfo tinfo;
 
-		public GridGeneratorCallable(int chunkx, int chunkz, TerrainInfo tinfo) {
-			this.chunkx = chunkx;
-			this.chunkz = chunkz;
+		public GridGeneratorCallable(Vector2i chunkPos, TerrainInfo tinfo) {
+			this.chunkPos = chunkPos;
 			this.tinfo = tinfo;
 		}
 
 		@Override
 		public Terrain call() throws Exception {
-	        return GridGenerator.generate(chunkx, chunkz,tinfo);
+	        return GridGenerator.generate(chunkPos,tinfo);
 		}
 	}
 	
@@ -311,7 +323,7 @@ public class TerrainManager {
 
 	public static byte getBlock(int x, int y, int z, int chunkx, int chunkz) {
 
-		Terrain t = terrains.get(new Key(chunkx,chunkz));
+		Terrain t = terrains.get(new Vector2i(chunkx,chunkz));
 		if(t == null || t.grid ==null) {
 			return -1;
 		} else {
