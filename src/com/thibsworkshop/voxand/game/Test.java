@@ -10,11 +10,10 @@ import com.thibsworkshop.voxand.lighting.PointLight;
 import com.thibsworkshop.voxand.loaders.Loader;
 import com.thibsworkshop.voxand.models.Model;
 
-import com.thibsworkshop.voxand.rendering.EntityRenderer;
 import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Window;
+import com.thibsworkshop.voxand.models.RawModel;
 import com.thibsworkshop.voxand.rendering.MasterRenderer;
-import com.thibsworkshop.voxand.shaders.StaticShader;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.textures.Material;
 import com.thibsworkshop.voxand.terrain.Terrain.TerrainInfo;
@@ -23,7 +22,6 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.*;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.glClearColor;
 
 public class Test {
 
@@ -31,13 +29,9 @@ public class Test {
     private static GLFWErrorCallback errorCallback;
 
 
-    //TODO: Really low fps due to terrain management
-    //TODO: profiling tools, add time calculation for every methods like
-    // total rendering, then entity rendering / terrain rendering
-    // Terrain generation, then management / actual generation
-    // Input / display / Time update
-    // Collisions
-    // ...
+    //TODO: Put rendering on another thread to allow multiple input polling per frame
+    //TODO: add AABB handler class, and then add code to the line renderer to render an AABB, and Collider takes an AABB as constructor
+    //TODO: add Debug class, add debuging code from window class. From here, add controls over rendering AABBs, send debug messages, control timing etc...
 
     private void init() {
 
@@ -47,7 +41,7 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        window = new Window(1280,720,false);
+        window = new Window(1600,900,false);
         Time.init();
         Loader.init();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -62,7 +56,7 @@ public class Test {
 
         Player player = new Player(model,null);
         Camera camera = new Camera(player);
-        Camera.mainCamera = camera;
+        Camera.main = camera;
 
         Input input = new Input(window);
 
@@ -77,7 +71,6 @@ public class Test {
         TerrainInfo terrainInfo = new TerrainInfo(0.01f,10,4,1,1);
         TerrainManager terrainManager = new TerrainManager(terrainInfo);
 
-
         Entity entity = new Entity(model , new Vector3f(0,0,5),null);
         Entity entity2 = new Entity(model ,new Vector3f(0,0,-5),null);
         Entity entity3 = new Entity(model ,new Vector3f(-5,0,0),null);
@@ -88,8 +81,46 @@ public class Test {
         renderer.processEntity(entity3);
         renderer.processEntity(entity4);
 
+        RawModel line = Loader.loadToVAOLine(
+                new float[]{
+                    -1, -1, -1, //0
+                    1, -1, -1,  //1
+                    1, 1, -1,   //2
+                    -1, 1, -1,  //3
+                    -1, -1, 1,  //4
+                    1, -1, 1,   //5
+                    1, 1, 1,    //6
+                    -1, 1, 1    //7
+                },
+                new float[]{
+                        1,0,0,
+                        0,1,0,
+                        1,0,0,
+                        0,1,0,
+                        1,0,0,
+                        0,1,0,
+                        1,0,0,
+                        0,1,0,
+                        1,0,0,
+                        0,1,0,
+                        1,0,0,
+                        0,1,0,
+                },
+                new int []
+                {
+                        0, 1,
+                        0, 3,
+                        0, 4,
+                        6, 7,
+                        6, 2,
+                        6, 5,
+                }
+
+        );
+
+        renderer.processLine(line);
         //Timing.enable(TerrainManager.debugName);
-        Timing.enable(MasterRenderer.debugName);
+        //Timing.enable(MasterRenderer.debugName);
 
         while ( !window.shouldWindowClose() ) {
             Time.update();
@@ -104,8 +135,9 @@ public class Test {
             if(Input.isKeyHold(GLFW_KEY_DOWN))
                 sun.rotate(new Vector3f(-0.025f,0,0));
 
-            if(Input.isKeyDown(GLFW_KEY_ENTER))
-                Timing.print(TerrainManager.debugName,"Refreshing",5);
+            //if(Input.isKeyDown(GLFW_KEY_ENTER))
+                //Timing.print(MasterRenderer.debugName,"Terrain",5);
+                //Timing.print(TerrainManager.debugName,"Refreshing",5);
 
             terrainManager.refreshChunks();
             renderer.render(camera);

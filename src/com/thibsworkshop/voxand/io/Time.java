@@ -4,7 +4,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public class Time {
 
-    private static int currentFps;
+    private static int fps;
     private static float deltaTime;
 
     private static long lastFrameTime;
@@ -13,8 +13,12 @@ public class Time {
     private static long milliTime;
     private static long microTime;
 
+    private static int frameCount = 0;
+
+    private static long lastSecond = 0;
+
     public static void init(){
-        lastFrameTime = milliTime;
+        lastFrameTime = microTime;
     }
 
     public static void update(){
@@ -23,24 +27,35 @@ public class Time {
         milliTime = (long) (glfwtime * 1000);
         microTime = (long) (glfwtime * 1000000);
 
-        deltaTime = (float)(milliTime - lastFrameTime)/1000f;
-        currentFps = Math.round(1f/deltaTime);
-        lastFrameTime = milliTime;
+        if(lastSecond < time){
+            fps = frameCount;
+            lastSecond = time;
+            frameCount = 0;
+        }
+
+        deltaTime = (float)(microTime - lastFrameTime)/1000000f;
+        lastFrameTime = microTime;
+
+        frameCount++;
     }
 
     public static float getDeltaTime() {
         return deltaTime;
     }
 
-    public static long getTime(){ return time; }
+    public static long getFrameTime(){ return time; }
 
-    public static long getMilliTime() { return milliTime; }
+    public static long getFrameMilliTime() { return milliTime; }
 
-    public static long getMicroTime() {
-        return microTime;
-    }
+    public static long getFrameMicroTime() { return microTime; }
+
+    public static long getTime(){ return (long) (glfwGetTime()); }
+
+    public static long getMilliTime() { return (long) (glfwGetTime() * 1000); }
+
+    public static long getMicroTime() { return (long) (glfwGetTime() * 1000000);}
 
     public static int getFps() {
-        return currentFps;
+        return fps;
     }
 }

@@ -25,6 +25,9 @@ public class Terrain {
 
 	private Vector3f position;
 
+	private Vector3f positionMax;
+
+
 	public boolean generated = false;
 	
 	private RawModel model;
@@ -36,8 +39,10 @@ public class Terrain {
 	//Maybe later add an byte that leads to like the biome with premade infos.
 	public Terrain(Vector2i chunkPos) {
 		this.chunkPos = chunkPos;
-		
-		this.position = new Vector3f(chunkPos.x * CHUNK_SIZE,0, chunkPos.y * CHUNK_SIZE);
+
+		position = new Vector3f(chunkPos.x * CHUNK_SIZE,0, chunkPos.y * CHUNK_SIZE);
+		positionMax = new Vector3f(position.x + CHUNK_SIZE, CHUNK_HEIGHT, position.z + Terrain.CHUNK_SIZE);
+
 		this.transformationMatrix = Maths.createTransformationMatrix(position);
 
 		this.grid = new byte[CHUNK_SIZE][CHUNK_HEIGHT][CHUNK_SIZE];
@@ -62,6 +67,8 @@ public class Terrain {
 	public Vector3f getPosition() {
 		return position;
 	}
+
+	public Vector3f getPositionMax(){ return positionMax; }
 	
 	public Matrix4f getTransformationMatrix() {
 		return transformationMatrix;

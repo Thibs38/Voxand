@@ -250,7 +250,7 @@ public class TerrainGenerator {
 			}
 		}
 
-		long verticeTimeE = Time.getMilliTime();
+		long verticeTimeE = Time.getFrameMilliTime();
 
 		/*System.out.println(String.format("estimation: %d + Init time: %d grid time: %d vertice time: %d total time: %d", 
 				verticesCountEstimate,

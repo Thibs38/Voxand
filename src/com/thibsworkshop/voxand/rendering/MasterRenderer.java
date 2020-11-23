@@ -1,28 +1,27 @@
 package com.thibsworkshop.voxand.rendering;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Camera;
-import com.thibsworkshop.voxand.entities.Collider;
 import com.thibsworkshop.voxand.entities.Entity;
 import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.lighting.DirectionalLight;
 import com.thibsworkshop.voxand.lighting.PointLight;
-import com.thibsworkshop.voxand.models.Model;
+import com.thibsworkshop.voxand.models.RawModel;
+import com.thibsworkshop.voxand.shaders.LineShader;
 import com.thibsworkshop.voxand.shaders.StaticShader;
 import com.thibsworkshop.voxand.shaders.TerrainShader;
 import com.thibsworkshop.voxand.terrain.Terrain;
-import com.thibsworkshop.voxand.toolbox.Maths;
-import org.lwjgl.opengl.GL11;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.FrustumIntersection;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL11;
+import org.joml.Vector3f;
 
-import static org.lwjgl.opengl.GL11.glClearColor;
+import javax.sound.sampled.Line;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
 public class MasterRenderer {
 
@@ -33,14 +32,21 @@ public class MasterRenderer {
 	private StaticShader staticShader = new StaticShader();
 	public static EntityRenderer entityRenderer;
 
-	public static TerrainRenderer terrainRenderer;
 	private TerrainShader terrainShader = new TerrainShader();
-		
+	public static TerrainRenderer terrainRenderer;
+
+	private LineShader lineShader = new LineShader();
+	public static LineRenderer lineRenderer;
+
+	FrustumIntersection frustumIntersection;
 
 	DirectionalLight sun;
 	PointLight[] lights;
 
 	public static String debugName = "Rendering";
+
+	//TODO: Make fog variables handle class
+	//TODO: Make a function to calculate fog variables based on distance
 	
 	public MasterRenderer(DirectionalLight sun, PointLight[] lights) {
 
@@ -48,8 +54,10 @@ public class MasterRenderer {
 		this.lights = lights;
 		glClearColor(SKY_COLOR.x, SKY_COLOR.y, SKY_COLOR.z,1);
 
-		entityRenderer = new EntityRenderer(staticShader,this);
-		terrainRenderer = new TerrainRenderer(terrainShader,this);
+		entityRenderer = new EntityRenderer(staticShader);
+		terrainRenderer = new TerrainRenderer(terrainShader);
+		lineRenderer = new LineRenderer(lineShader);
+
 
 		Timing.add(debugName, new String[]{
 			"Entities",
@@ -58,7 +66,6 @@ public class MasterRenderer {
 	}
 	
 	public void render(Camera camera) {
-		updateFrustum(camera);
 		prepare();
 
 		Timing.start(debugName,"Entities");
@@ -66,47 +73,40 @@ public class MasterRenderer {
 		staticShader.start();
 		staticShader.loadFogVariables(0.0035f, 5f, SKY_COLOR);
 		staticShader.loadLights(lights);
-		staticShader.loadViewMatrix(Camera.mainCamera.getViewMatrix());
+		staticShader.loadViewMatrix(Camera.main.getViewMatrix());
 		staticShader.loadAmbientLight(sun);
 		entityRenderer.render(camera);
 		staticShader.stop();
 
 		Timing.stop(debugName,"Entities");
 
+		lineShader.start();
+		lineShader.loadRenderingVariables(camera.getProjectionViewMatrix());
+		lineRenderer.render(camera);
+		lineShader.stop();
 
 		Timing.start(debugName,"Terrain");
 
 		terrainShader.start();
 		terrainShader.loadFogVariables(0.0035f, 5f, SKY_COLOR);
 		terrainShader.loadLights(lights);
-		terrainShader.loadViewMatrix(Camera.mainCamera.getViewMatrix());
+		terrainShader.loadViewMatrix(Camera.main.getViewMatrix());
 		terrainShader.loadAmbientLight(sun);
 		terrainRenderer.render(camera);
 		terrainShader.stop();
 
 		Timing.stop(debugName,"Terrain");
-
 	}
 
 	public void prepare() {
-		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT|GL11.GL_DEPTH_BUFFER_BIT);
-		GL11.glClearColor(SKY_COLOR.x,SKY_COLOR.y,SKY_COLOR.z, 1);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 	}
 	
 	public void cleanUp() {
 		staticShader.cleanUp();
 		terrainShader.cleanUp();
 	}
-	
-	private void updateFrustum(Camera camera) {
-        // Calculate projection view matrix
-        //Matrix4f.mul(fakeProjectionMatrix,viewMatrix,prjViewMatrix);
-        // Get frustum planes
-        //frustumPlanes = Maths.frustumPlanes(prjViewMatrix,true);
-        
-        //System.out.println("Camera: " + camera.getRotation() + " near: " + frustumPlanes[4].normal + " | far: " + frustumPlanes[4].normal);
 
-    }
 
     public void processEntity(Entity entity){
 		entityRenderer.processEntity(entity);
@@ -116,28 +116,6 @@ public class MasterRenderer {
 		entityRenderer.processEntities(entities);
 	}
 
-	public void processTerrains(List<Terrain> terrains){
-
-	}
-	
-	/*public boolean boxInsideFrustum(Vector3f boxMin, Vector3f boxMax) {
-		
-		for (int i = 0; i < 6; i++) {
-	        if(Collider.boxFrontOfPlane(frustumPlanes[i], boxMin, boxMax))
-	        	return false;
-	    }
-	    return true;
-	}*/
-	
-	//Return true if the specified chunk is inside of the camera frustum, otherwise false.
-	/*public boolean chunkInsideFrustum(Vector3f chunkPos) {
-        Vector3f chunkPosMax = new Vector3f(chunkPos.x + Terrain.CHUNK_SIZE, Terrain.CHUNK_HEIGHT, chunkPos.z + Terrain.CHUNK_SIZE);
-	    for (int i = 0; i < 6; i++) {
-
-	        if(Collider.boxToPlaneCollision(frustumPlanes[i], new Vector3f[] {chunkPos,chunkPosMax}) == 0)
-	        	return false;
-	    }
-	    return true;
-	}*/
+	public void processLine(RawModel model){ lineRenderer.setRawModel(model);}
 
 }

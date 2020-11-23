@@ -1,6 +1,8 @@
 package com.thibsworkshop.voxand.io;
 
 
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL;
 
@@ -13,15 +15,18 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
+import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
 
 
-//Multiple display can be instantiated, for example when switching to fullscreen, changing resolution etc...
+//Multiple windows can be instantiated, for example when switching to fullscreen, changing resolution etc...
 public class Window {
 	
 	private int WIDTH;
 	private int HEIGHT;
+
+	private Vector2f viewport;
 
 	private float ASPECT_RATIO;
 
@@ -35,6 +40,8 @@ public class Window {
 	public long window;
 
 	public static Window mainWindow;
+
+	//TODO: Put debug code to Debug class and add control over what messages should be shown etc...
 	
 	public Window(int width, int height, boolean fullscreen) {
 		this.WIDTH = width;
@@ -98,6 +105,8 @@ public class Window {
 		glfwShowWindow(window);
 		GL.createCapabilities();
 
+		glfwSwapInterval(0);
+
 		//GLUtil.setupDebugMessageCallback();//Debugging
 
 		glfwSetFramebufferSizeCallback(window, (framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
@@ -108,6 +117,8 @@ public class Window {
 		}));
 		
 		GL11.glViewport(0, 0, WIDTH, HEIGHT);
+
+		viewport = new Vector2f(WIDTH,HEIGHT);
 
 		mainWindow = this; //After initializing everything, this display becomes the main one
 	}
@@ -125,7 +136,6 @@ public class Window {
 	public void updateWindow() {
 		
 		//Display.sync(FPS);
-		glfwPollEvents(); //Callbacks execution
 		glfwSwapBuffers(window);
 
 
@@ -156,4 +166,5 @@ public class Window {
 
 	public float getAspectRatio(){return ASPECT_RATIO;}
 
+	public Vector2f getViewport(){ return viewport; }
 }

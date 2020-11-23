@@ -31,7 +31,7 @@ public class BasicShader extends ShaderProgram{
 	private int location_skyColor;
 	
 	public BasicShader(String vertexFile,String fragmentFile) {
-		super(vertexFile, fragmentFile);
+		super(vertexFile, fragmentFile,3);
 	}
 	
 	

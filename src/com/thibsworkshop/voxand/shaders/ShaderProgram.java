@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
+import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -19,12 +20,17 @@ public abstract class ShaderProgram {
 	private int programID;
 	private int vertexShaderID;
 	private int fragmentShaderID;
-	
+
+	private int attributeCount;
+
+	private String[] shaderTypeName = new String[]{ "Vertex", "Fragment"};
+
 	private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 	
-	public ShaderProgram(String vertexFile, String fragmentFile) {
+	public ShaderProgram(String vertexFile, String fragmentFile, int attributeCount) {
 		vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
 		fragmentShaderID = loadShader(fragmentFile, GL20.GL_FRAGMENT_SHADER);
+		this.attributeCount = attributeCount;
 		programID = GL20.glCreateProgram();
 		GL20.glAttachShader(programID, vertexShaderID);
 		GL20.glAttachShader(programID, fragmentShaderID);
@@ -66,6 +72,10 @@ public abstract class ShaderProgram {
 	protected void loadFloat(int location, float value) {
 		GL20.glUniform1f(location, value);
 	}
+
+	protected void loadVector(int location, Vector2f vector) {
+		GL20.glUniform2f(location, vector.x,vector.y);
+	}
 	
 	protected void loadVector(int location, Vector3f vector) {
 		GL20.glUniform3f(location, vector.x,vector.y,vector.z);
@@ -88,8 +98,10 @@ public abstract class ShaderProgram {
 		GL20.glUniformMatrix4fv(location, false, matrix.get(matrixBuffer));
 		matrixBuffer.clear();
 	}
+
+	public int getAttributeCount(){ return attributeCount; }
 	
-	private static int loadShader(String file,int type) {
+	private int loadShader(String file,int type) {
 		
 		StringBuilder shaderSource = new StringBuilder();
 		try{
@@ -108,7 +120,7 @@ public abstract class ShaderProgram {
 		GL20.glCompileShader(shaderID);
 		if(GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS )== GL11.GL_FALSE){
 			System.out.println(GL20.glGetShaderInfoLog(shaderID, 500));
-			System.err.println("Could not compile shader!");
+			System.err.println("Could not compile " + shaderTypeName[type == GL20.GL_VERTEX_SHADER?0:1] + " shader!");
 			System.exit(-1);
 		}
 		return shaderID;

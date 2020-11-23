@@ -9,6 +9,8 @@ import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 
+import static org.lwjgl.glfw.GLFW.*;
+
 public class Input {
 
 
@@ -29,8 +31,7 @@ public class Input {
 	private static GLFWCursorPosCallback cursorPosCallback;
 	private static GLFWMouseButtonCallback mouseButtonCallback;
 
-	//TODO: Bug where input stay hold where it shouldn't
-	//TODO: test inputs, maybe they are not working as expected
+	//TODO: mouse input lag
 
 	public Input(Window window) {
 		
@@ -61,21 +62,21 @@ public class Input {
 		lastMousePosition = new Vector2d();
 		mouseDelta = new Vector2d();
 
-		GLFW.glfwSetInputMode(window.window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
-
+		glfwSetInputMode(window.window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+		if (glfwRawMouseMotionSupported())
+			glfwSetInputMode(window.window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 		
 		setMouseCallback();
 		setKeyBoardCallback();
 	}
 	
 	public void updateInput() {
-		
+
+		glfwWaitEventsTimeout(0.007);
+
 		mousePosition.sub(lastMousePosition,mouseDelta);
 		lastMousePosition = new Vector2d(mousePosition);
-		
-		//System.out.println("mouse position: " + mousePosition + "  " + mouseDelta);
 
-		
 		nextState.forEach((k,v) -> {keys.put(k,v);}); //Update the key state
 		nextState.clear();
 		
@@ -92,7 +93,7 @@ public class Input {
 	///----------------------------------------///
 	
 	private void setMouseCallback() {
-		GLFW.glfwSetCursorPosCallback(window.window, (cursorPosCallback = new GLFWCursorPosCallback() {
+		glfwSetCursorPosCallback(window.window, (cursorPosCallback = new GLFWCursorPosCallback() {
 		    @Override
 		    public void invoke(long window, double xpos, double ypos) {
 		    	mousePosition.x = xpos;
@@ -101,7 +102,7 @@ public class Input {
 
 		}));
 		
-		GLFW.glfwSetMouseButtonCallback(window.window, (mouseButtonCallback = new GLFWMouseButtonCallback() {
+		glfwSetMouseButtonCallback(window.window, (mouseButtonCallback = new GLFWMouseButtonCallback() {
 
 		    @Override
 		    public void invoke(long window, int button, int action, int mods) {
@@ -121,7 +122,7 @@ public class Input {
 	
 	private void setKeyBoardCallback() {
 
-		GLFW.glfwSetKeyCallback(window.window, (keyCallback = new GLFWKeyCallback() {
+		glfwSetKeyCallback(window.window, (keyCallback = new GLFWKeyCallback() {
 
 		    @Override
 		    public void invoke(long window, int key, int scancode, int action, int mods) {

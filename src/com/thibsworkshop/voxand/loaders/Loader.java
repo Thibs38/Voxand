@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+//TODO: Rearenge Loader class, maybe make subclasses and remove the static prefix
 
 public class Loader {
 	
@@ -43,9 +44,16 @@ public class Loader {
 		storeDataInAttributeList(0,3, positions);
 		storeDataInAttributeList(1,1, blocks);
 		storeDataInAttributeList(2,1, normals);
-
 		unbindVAO();
-		
+		return new RawModel(vaoID,iboID, indices.length);
+	}
+
+	public static RawModel loadToVAOLine(float[] positions, float[] colors, int[] indices){
+		int vaoID = createVAO();
+		int iboID = bindIndicesBuffer(indices);
+		storeDataInAttributeList(0,3,positions);
+		storeDataInAttributeList(1,3,colors);
+		unbindVAO();
 		return new RawModel(vaoID,iboID, indices.length);
 	}
 	

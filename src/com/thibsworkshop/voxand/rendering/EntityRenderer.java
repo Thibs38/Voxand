@@ -3,15 +3,12 @@ package com.thibsworkshop.voxand.rendering;
 
 import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.entities.Entity;
-import com.thibsworkshop.voxand.lighting.DirectionalLight;
-import com.thibsworkshop.voxand.lighting.PointLight;
 import com.thibsworkshop.voxand.models.Model;
 import com.thibsworkshop.voxand.models.RawModel;
 import com.thibsworkshop.voxand.shaders.StaticShader;
 import com.thibsworkshop.voxand.textures.Material;
 import com.thibsworkshop.voxand.textures.Texture;
 import com.thibsworkshop.voxand.toolbox.Maths;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -33,20 +30,15 @@ public class EntityRenderer extends Renderer {
 
 	private Map<Model,List<Entity>> entities = new HashMap<Model,List<Entity>>();
 
-	MasterRenderer masterRenderer;
-	
-	public EntityRenderer(StaticShader shader, MasterRenderer masterRenderer){
+	public EntityRenderer(StaticShader shader){
 		super(shader);
 		this.shader = shader;
-		updateProjectionMatrix(Camera.mainCamera.getProjectionMatrix());
+		updateProjectionMatrix(Camera.main.getProjectionMatrix());
 
-		this.masterRenderer = masterRenderer;
 	}
 
 	@Override
 	public void render(Camera camera) {
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
 		for(Model model:entities.keySet()) {
 			prepareTexturedModel(model);
@@ -102,5 +94,10 @@ public class EntityRenderer extends Renderer {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.position, entity.rotation, entity.scale);
 		shader.loadTransformationMatrix(transformationMatrix);
 	}
-	
+
+	public void updateProjectionMatrix(Matrix4f projection) {
+		shader.start();
+		shader.loadProjectionMatrix(projection);
+		shader.stop();
+	}
 }

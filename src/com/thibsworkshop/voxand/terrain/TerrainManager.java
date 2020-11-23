@@ -70,7 +70,7 @@ public class TerrainManager {
 			"Model Generation"
 		});
 
-		lastClean = Time.getMilliTime();
+		lastClean = Time.getFrameMilliTime();
 	}
 	
 	public void refreshChunks() {
@@ -80,13 +80,17 @@ public class TerrainManager {
 			return;
 
 		//TODO: Refactor the generation management (too many lists and hashmaps)
+		//TODO: incremental loading: load the chunk near the player and then those farther
+		//TODO: divide the chunks into sub chunks of 32*32 and render them separately
+		//TODO: refresh the chunks every 2 frames, but load them on separated frame,
+		// load several empty chunks on the same frame to avoid freezes
 
 		Timing.start(debugName,"Refreshing");
 
 		Map<Vector2i,Callable<Terrain>> gridsToCreate = new HashMap<Vector2i,Callable<Terrain>>();
 		
-		int camposX = (int)(Camera.mainCamera.getPosition().x/(float)Terrain.CHUNK_SIZE);
-		int camposZ = (int)(Camera.mainCamera.getPosition().z/(float)Terrain.CHUNK_SIZE);
+		int camposX = (int)(Camera.main.getPosition().x/(float)Terrain.CHUNK_SIZE);
+		int camposZ = (int)(Camera.main.getPosition().z/(float)Terrain.CHUNK_SIZE);
 		campos = new Vector2f(camposX,camposZ);
 
 		for(int x = -CHUNK_GENERATE_DIST; x <= CHUNK_GENERATE_DIST; x++) {
@@ -153,9 +157,9 @@ public class TerrainManager {
 			Timing.stop(debugName,"Model Generation");
 		}
 
-		if(lastClean - Time.getMilliTime() > cleanGap){
+		if(lastClean - Time.getFrameMilliTime() > cleanGap){
 			cleanTerrains();
-			lastClean = Time.getMilliTime();
+			lastClean = Time.getFrameMilliTime();
 		}
 
 	}
@@ -173,8 +177,10 @@ public class TerrainManager {
 		}
 	}
 
+	private boolean firstTime = true;
+
 	private void generateCalculatedTerrains() {
-		int i = 2;
+		int i = 4;
 
 		Iterator it = calculatedTerrains.entrySet().iterator();
 	    while (it.hasNext() && i > 0) {
@@ -240,15 +246,10 @@ public class TerrainManager {
 				}
 			}
 		});
-		
 
-		
 		for(Vector2i k:futuresToRemove){
 			gridsInCreation.remove(k);
 		}
-
-		
-		
 	}
 	
 	private void generateTerrains() {
