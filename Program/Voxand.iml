@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/res" type="java-resource" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/joml" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/joml" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/joml" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/joml" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-assimp" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-assimp" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-assimp" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-assimp" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-bgfx" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-bgfx" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-bgfx" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-bgfx" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-cuda" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-cuda" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-cuda" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-cuda" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-egl" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-egl" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-egl" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-egl" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-glfw" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-glfw" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-glfw" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-glfw" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-jawt" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-jawt" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-jawt" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-jawt" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-jemalloc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-jemalloc" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-jemalloc" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-jemalloc" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-libdivide" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-libdivide" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-libdivide" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-libdivide" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-llvm" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-llvm" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-llvm" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-llvm" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-lmdb" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-lmdb" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-lmdb" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-lmdb" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-lz4" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-lz4" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-lz4" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-lz4" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-meow" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-meow" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-meow" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-meow" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-nanovg" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-nanovg" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-nanovg" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-nanovg" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-nfd" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-nfd" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-nfd" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-nfd" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-nuklear" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-nuklear" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-nuklear" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-nuklear" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-odbc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-odbc" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-odbc" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-odbc" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-openal" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-openal" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-openal" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-openal" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-opencl" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-opencl" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-opencl" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-opencl" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-opengl" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-opengl" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-opengl" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-opengl" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-opengles" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-opengles" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-opengles" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-opengles" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-openvr" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-openvr" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-openvr" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-openvr" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-opus" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-opus" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-opus" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-opus" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-ovr" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-ovr" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-ovr" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-ovr" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-par" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-par" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-par" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-par" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-remotery" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-remotery" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-remotery" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-remotery" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-rpmalloc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-rpmalloc" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-rpmalloc" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-rpmalloc" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-shaderc" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-shaderc" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-shaderc" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-shaderc" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-sse" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-sse" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-sse" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-sse" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-stb" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-stb" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-stb" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-stb" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-tinyexr" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-tinyexr" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-tinyexr" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-tinyexr" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-tinyfd" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-tinyfd" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-tinyfd" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-tinyfd" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-tootle" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-tootle" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-tootle" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-tootle" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-vma" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-vma" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-vma" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-vma" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-vulkan" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-vulkan" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-vulkan" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-vulkan" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-xxhash" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-xxhash" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-xxhash" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-xxhash" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-yoga" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-yoga" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-yoga" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-yoga" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-zstd" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jars/lwjgl-zstd" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-zstd" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jars/lwjgl-zstd" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jars/json-20200518.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jars/pngdecoder-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

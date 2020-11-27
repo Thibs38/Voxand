@@ -1,0 +1,60 @@
+The Goal of the Game:
+A free, fun, money making, sandbox mmo with clean but simple visuals and pleasant sounds. A game that is easy to add to
+but complex in the depths of what it has to offer. I want you to feel alone but also with family. 
+A personal goal of mine is to make the game so that you can play peacfully. Just because it is a game of chaos doesn't mean
+you shouldn't be able to enjoy a flower. Animals, and creatures don't just kill you because that's just not how that works, 
+aside from purely chaotic things in life, becuase if you were to think of a bear in real life a bear doesn't just kill you 
+but it is protecting itself from you because as most things in life it's simply trying to survive. Unless you are in a world 
+of chaos you should not have to fight for your life. Players should be your biggest fear, not nature.
+
+-Ear Crisping sounds: https://www.youtube.com/watch?v=Lioz680IBWg
+- Amazing Depth and Intriguing Art
+- Spook Sounds: https://www.youtube.com/watch?v=IiJZkpEuecc
+- Good Connection: Let people from garbage cities play the game.
+
+The point of the game: The quests, and the creative freedom. Players need to enjoy the interactiviy of other players.
+
+
+People working on the Project:
+George Hennen: Lead, Design, Art
+Thibs: Lead, Programmer
+Wurmzy: Music and Audio
+
+
+Making the Game:
+
+Part 1: Core
+The core of the game is things like base networking and physics. Anything that will be needed later and wouldn't be wise
+to create later. (Libraries, Fonts, whatever).
+
+
+
+Part 2: The Players Core
+The Player needs a few things to make it so we can infinitally build off of him without needing to add new systems later
+for items, inventory, building.. so on. 
+
+
+
+Part 3: Online Services
+This is stuff like the main menu, joining the servers, chat, commands, fun stuff, groups, reporting people, admininstartion,
+cheating, ect.
+
+
+
+Part 4: AI Implementation
+Here we need to do like we did for the player and make a really good core to build off of so we never have to do it again.
+
+
+Part 5: World Generation
+Here we need to make the core of generation so we never have to do it again and make a world to make it so players can start
+playing around in the world and coming up with stuff they may want. Once this part is done we can have betas and by then
+there will be some traction to the game (enough to have proper play sessions).
+
+
+
+Part 6: The Rest
+The rest of the process will be making the game feature rich and using the systems we made before to make a lot of cool shit.
+
+
+
+
