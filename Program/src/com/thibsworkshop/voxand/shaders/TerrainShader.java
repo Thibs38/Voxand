@@ -9,8 +9,8 @@ import org.joml.Vector4f;
 
 public class TerrainShader extends BasicShader{
 	
-	private static final String VERTEX_FILE = "res/shaders/terrainVertexShader";
-	private static final String FRAGMENT_FILE = "res/shaders/terrainFragmentShader";
+	private static final String VERTEX_FILE = "terrainVertexShader";
+	private static final String FRAGMENT_FILE = "terrainFragmentShader";
 	
 	private int[] location_block_color;
 	private int[] location_block_reflectivity;

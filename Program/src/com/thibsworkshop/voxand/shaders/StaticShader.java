@@ -4,8 +4,8 @@ import org.joml.Matrix4f;
 
 public class StaticShader extends BasicShader{
 
-	private static final String VERTEX_FILE = "res/shaders/vertexShader";
-	private static final String FRAGMENT_FILE = "res/shaders/fragmentShader";
+	private static final String VERTEX_FILE = "vertexShader";
+	private static final String FRAGMENT_FILE = "fragmentShader";
 
 	private int location_shineDamper;
 	private int location_reflectivity;

@@ -12,8 +12,8 @@ public class LineShader extends ShaderProgram {
     private int location_linePosition;
     private int location_lineScale;
 
-    private static final String VERTEX_FILE = "res/shaders/lineVertexShader";
-    private static final String FRAGMENT_FILE = "res/shaders/lineFragmentShader";
+    private static final String VERTEX_FILE = "lineVertexShader";
+    private static final String FRAGMENT_FILE = "lineFragmentShader";
 
 
     public LineShader() {

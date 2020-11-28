@@ -23,7 +23,9 @@ public abstract class ShaderProgram {
 
 	private int attributeCount;
 
-	private String[] shaderTypeName = new String[]{ "Vertex", "Fragment"};
+	private static String[] shaderTypeName = new String[]{ "Vertex", "Fragment"};
+
+	private static final String path = "Program/res/shaders/";
 
 	private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 	
@@ -105,7 +107,7 @@ public abstract class ShaderProgram {
 		
 		StringBuilder shaderSource = new StringBuilder();
 		try{
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			BufferedReader reader = new BufferedReader(new FileReader(path + file));
 			String line;
 			while((line = reader.readLine())!=null){
 				shaderSource.append(line).append("//\n");
