@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.shaders;
 import java.util.List;
 
 import com.thibsworkshop.voxand.terrain.Block;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 
@@ -14,6 +15,8 @@ public class TerrainShader extends BasicShader{
 	private int[] location_block_color;
 	private int[] location_block_reflectivity;
 	private int[] location_block_shineDamper;
+
+	private int location_chunkPosition;
 
 	public TerrainShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -39,6 +42,8 @@ public class TerrainShader extends BasicShader{
 			location_block_reflectivity[i] = super.getUniformLocation("blocks["+i+"].reflectivity");
 			location_block_shineDamper[i] = super.getUniformLocation("blocks["+i+"].shineDamper");
 		}
+
+		location_chunkPosition = super.getUniformLocation("chunkPosition");
 	}
 	
 	public void loadBlocks(Block[] blocks) {
@@ -50,5 +55,9 @@ public class TerrainShader extends BasicShader{
 				super.loadFloat(location_block_shineDamper[i], b.getShineDamper());
 			}
 		}
+	}
+
+	public void loadPosition(Vector3f position){
+		super.loadVector(location_chunkPosition,position);
 	}
 }

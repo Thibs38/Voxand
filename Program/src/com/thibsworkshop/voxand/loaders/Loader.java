@@ -48,11 +48,10 @@ public class Loader {
 		return new RawModel(vaoID,iboID, indices.length);
 	}
 
-	public static RawModel loadToVAOLine(float[] positions, float[] colors, int[] indices){
+	public static RawModel loadToVAOLine(float[] positions, int[] indices){
 		int vaoID = createVAO();
 		int iboID = bindIndicesBuffer(indices);
 		storeDataInAttributeList(0,3,positions);
-		storeDataInAttributeList(1,3,colors);
 		unbindVAO();
 		return new RawModel(vaoID,iboID, indices.length);
 	}

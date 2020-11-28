@@ -13,7 +13,6 @@ import org.joml.Matrix4f;
 public class BasicShader extends ShaderProgram{
 
 	
-	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
 	private int[] location_lightPosition;
@@ -40,7 +39,6 @@ public class BasicShader extends ShaderProgram{
 		location_lightColour = new int[Light.MAX_LIGHT];
 		location_attenuation = new int[Light.MAX_LIGHT];
 		//Vertex
-		location_transformationMatrix = super.getUniformLocation("transformationMatrix");
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
 	
@@ -63,10 +61,6 @@ public class BasicShader extends ShaderProgram{
 		location_ambientLight = super.getUniformLocation("ambientLight");
 		location_skyColor = super.getUniformLocation("skyColor");
 
-	}
-	
-	public void loadTransformationMatrix(Matrix4f transformation) {
-		super.loadMatrix(location_transformationMatrix, transformation);	
 	}
 	
 	public void loadProjectionMatrix(Matrix4f projection) {

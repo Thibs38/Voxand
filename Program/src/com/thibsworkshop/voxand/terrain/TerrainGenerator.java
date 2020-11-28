@@ -4,67 +4,67 @@ import com.thibsworkshop.voxand.io.Time;
 
 public class TerrainGenerator {
 	
-	public static IndiceVerticeNormal generate(Terrain terrain) {
+	public static IndiceVerticeNormal generate(Chunk chunk) {
 
 		int verticesCountEstimate = 0;
 		
-		boolean[][] backOv = new boolean[Terrain.CHUNK_SIZE][Terrain.CHUNK_HEIGHT];
-		boolean[][] frontOv = new boolean[Terrain.CHUNK_SIZE][Terrain.CHUNK_HEIGHT];
-		boolean[][] rightOv = new boolean[Terrain.CHUNK_SIZE][Terrain.CHUNK_HEIGHT];
-		boolean[][] leftOv = new boolean[Terrain.CHUNK_SIZE][Terrain.CHUNK_HEIGHT];
+		boolean[][] backOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
+		boolean[][] frontOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
+		boolean[][] rightOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
+		boolean[][] leftOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
 
-		int chunkx = terrain.getChunkPos().x;
-		int chunkz = terrain.getChunkPos().y;
+		int chunkx = chunk.getChunkPos().x;
+		int chunkz = chunk.getChunkPos().y;
 
-		for(int x = 0; x < Terrain.CHUNK_SIZE;x++) {
-			for(int y = 0; y < Terrain.CHUNK_HEIGHT;y++) {
-				backOv[x][y] = TerrainManager.isTerrainTransparent(x, y, Terrain.CHUNK_SIZE-1, chunkx, chunkz-1);
+		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
+			for(int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
+				backOv[x][y] = TerrainManager.isTerrainTransparent(x, y, Chunk.CHUNK_SIZE-1, chunkx, chunkz-1);
 			}
 		}
 		
-		for(int x = 0; x < Terrain.CHUNK_SIZE;x++) {
-			for(int y = 0; y < Terrain.CHUNK_HEIGHT;y++) {
+		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
+			for(int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
 				frontOv[x][y] = TerrainManager.isTerrainTransparent(x, y, 0, chunkx, chunkz+1);
 			}
 		}
 		
-		for(int z = 0; z < Terrain.CHUNK_SIZE;z++) {
-			for(int y = 0; y < Terrain.CHUNK_HEIGHT;y++) {
-				leftOv[z][y] = TerrainManager.isTerrainTransparent(Terrain.CHUNK_SIZE-1, y, z, chunkx-1, chunkz);
+		for(int z = 0; z < Chunk.CHUNK_SIZE; z++) {
+			for(int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
+				leftOv[z][y] = TerrainManager.isTerrainTransparent(Chunk.CHUNK_SIZE-1, y, z, chunkx-1, chunkz);
 			}
 		}
 		
-		for(int z = 0; z < Terrain.CHUNK_SIZE;z++) {
-			for(int y = 0; y < Terrain.CHUNK_HEIGHT;y++) {
+		for(int z = 0; z < Chunk.CHUNK_SIZE; z++) {
+			for(int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
 				rightOv[z][y] = TerrainManager.isTerrainTransparent(0, y, z, chunkx+1, chunkz);
 			}
 		}
 		
-		for(int x = 0; x < Terrain.CHUNK_SIZE; x++) { //Here we estimate the number of vertices.
-			for (int z = 0; z < Terrain.CHUNK_SIZE; z++) {
-				for (int y = 0; y < Terrain.CHUNK_HEIGHT; y++) {
-					if(terrain.grid[x][y][z] > 0) { //If the cube is solid, We'll check for every face the adjacent cube if it solid or not
+		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) { //Here we estimate the number of vertices.
+			for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
+				for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
+					if(chunk.grid[x][y][z] > 0) { //If the cube is solid, We'll check for every face the adjacent cube if it solid or not
 						
-						if(y > 0 && terrain.grid[x][y - 1][z] == 0) { // Checking bottom face
+						if(y > 0 && chunk.grid[x][y - 1][z] == 0) { // Checking bottom face
 							verticesCountEstimate+=12;
 						}
-						if(y < Terrain.CHUNK_HEIGHT - 1 && terrain.grid[x][y + 1][z] == 0) { // Checking top face
-							verticesCountEstimate+=12;
-						}
-						
-						
-						if((z == 0 && backOv[x][y]) || (z > 0 && terrain.grid[x][y][z - 1] == 0)) { // Checking back face
-							verticesCountEstimate+=12;
-						}
-						if((z == Terrain.CHUNK_SIZE - 1 && frontOv[x][y]) || (z < Terrain.CHUNK_SIZE - 1 && terrain.grid[x][y][z + 1] == 0)) { // Checking front face
+						if(y < Chunk.CHUNK_HEIGHT - 1 && chunk.grid[x][y + 1][z] == 0) { // Checking top face
 							verticesCountEstimate+=12;
 						}
 						
 						
-						if((x  == 0 && leftOv[z][y]) || (x > 0 && terrain.grid[x - 1][y][z] == 0)) { // Checking left face
+						if((z == 0 && backOv[x][y]) || (z > 0 && chunk.grid[x][y][z - 1] == 0)) { // Checking back face
 							verticesCountEstimate+=12;
 						}
-						if((x == Terrain.CHUNK_SIZE - 1 && rightOv[z][y]) || (x < Terrain.CHUNK_SIZE - 1 && terrain.grid[x + 1][y][z] == 0)) { // Checking right face
+						if((z == Chunk.CHUNK_SIZE - 1 && frontOv[x][y]) || (z < Chunk.CHUNK_SIZE - 1 && chunk.grid[x][y][z + 1] == 0)) { // Checking front face
+							verticesCountEstimate+=12;
+						}
+						
+						
+						if((x  == 0 && leftOv[z][y]) || (x > 0 && chunk.grid[x - 1][y][z] == 0)) { // Checking left face
+							verticesCountEstimate+=12;
+						}
+						if((x == Chunk.CHUNK_SIZE - 1 && rightOv[z][y]) || (x < Chunk.CHUNK_SIZE - 1 && chunk.grid[x + 1][y][z] == 0)) { // Checking right face
 							verticesCountEstimate+=12;
 						}
 					}
@@ -85,13 +85,13 @@ public class TerrainGenerator {
 		byte[] blocks = new byte[verticesCountEstimate/3];
 		int blockI = 0;//counter for the colors
 		
-		for(int x = 0; x < Terrain.CHUNK_SIZE; x++) {
-			for (int z = 0; z < Terrain.CHUNK_SIZE; z++) {
-				for (int y = 0; y < Terrain.CHUNK_HEIGHT; y++) {
-					if(terrain.grid[x][y][z] > 0) { //If the cube is solid, We'll check for every face the adjacent cube if it solid or not
+		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
+			for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
+				for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
+					if(chunk.grid[x][y][z] > 0) { //If the cube is solid, We'll check for every face the adjacent cube if it solid or not
 						int faces = 0;
 						
-						if(y > 0 && terrain.grid[x][y - 1][z] == 0) { // Checking bottom face
+						if(y > 0 && chunk.grid[x][y - 1][z] == 0) { // Checking bottom face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z;
@@ -114,7 +114,7 @@ public class TerrainGenerator {
 							faces++;
 						}
 						
-						if(y < Terrain.CHUNK_HEIGHT && terrain.grid[x][y + 1][z] == 0) { // Checking top face
+						if(y < Chunk.CHUNK_HEIGHT && chunk.grid[x][y + 1][z] == 0) { // Checking top face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y + 1;
 							vertices[verticeI++] = z;
@@ -137,7 +137,7 @@ public class TerrainGenerator {
 							faces++;
 						}
 						
-						if((z == 0 && backOv[x][y]) || (z > 0 && terrain.grid[x][y][z - 1] == 0)) { // Checking back face
+						if((z == 0 && backOv[x][y]) || (z > 0 && chunk.grid[x][y][z - 1] == 0)) { // Checking back face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z;
@@ -160,7 +160,7 @@ public class TerrainGenerator {
 							faces++;
 						}
 						
-						if((z == Terrain.CHUNK_SIZE - 1 && frontOv[x][y]) || (z < Terrain.CHUNK_SIZE - 1 && terrain.grid[x][y][z + 1] == 0)) { // Checking front face
+						if((z == Chunk.CHUNK_SIZE - 1 && frontOv[x][y]) || (z < Chunk.CHUNK_SIZE - 1 && chunk.grid[x][y][z + 1] == 0)) { // Checking front face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z + 1;
@@ -183,7 +183,7 @@ public class TerrainGenerator {
 							faces++;
 						}
 						
-						if((x  == 0 && leftOv[z][y]) || (x > 0 && terrain.grid[x - 1][y][z] == 0)) { // Checking left face
+						if((x  == 0 && leftOv[z][y]) || (x > 0 && chunk.grid[x - 1][y][z] == 0)) { // Checking left face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z;
@@ -206,7 +206,7 @@ public class TerrainGenerator {
 							faces++;
 						}
 						
-						if((x == Terrain.CHUNK_SIZE - 1 && rightOv[z][y]) || (x < Terrain.CHUNK_SIZE - 1 && terrain.grid[x + 1][y][z] == 0)) { // Checking right face
+						if((x == Chunk.CHUNK_SIZE - 1 && rightOv[z][y]) || (x < Chunk.CHUNK_SIZE - 1 && chunk.grid[x + 1][y][z] == 0)) { // Checking right face
 							vertices[verticeI++] = x + 1;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z;
@@ -240,7 +240,7 @@ public class TerrainGenerator {
 							indices[indiceI++]= verticesCount;
 							
 							for(int j = 0; j < 4;j++)
-								blocks[blockI++]= terrain.grid[x][y][z];
+								blocks[blockI++]= chunk.grid[x][y][z];
 							
 							verticesCount += 4;
 						}
