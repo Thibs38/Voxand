@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.io;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
@@ -32,7 +33,8 @@ public class Input {
 	private static GLFWMouseButtonCallback mouseButtonCallback;
 
 	//TODO: mouse input lag
-
+	//TODO: current keyboard is american
+	//TODO: sometimes key is hold where it is not
 	public Input(Window window) {
 		
 		this.window = window;
@@ -47,17 +49,29 @@ public class Input {
 		keys.put(GLFW.GLFW_KEY_LEFT,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_KEY_RIGHT,KeyState.SLEEP);
 
-
 		keys.put(GLFW.GLFW_KEY_SPACE,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_KEY_LEFT_SHIFT,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_KEY_ESCAPE,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_KEY_ENTER,KeyState.SLEEP);
 
+		keys.put(GLFW.GLFW_KEY_F1, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F2, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F3, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F4, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F5, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F6, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F7, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F8, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F9, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F10, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F11, KeyState.SLEEP);
+		keys.put(GLFW.GLFW_KEY_F12, KeyState.SLEEP);
+
 
 		keys.put(GLFW.GLFW_MOUSE_BUTTON_LEFT,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_MOUSE_BUTTON_RIGHT,KeyState.SLEEP);
 		keys.put(GLFW.GLFW_MOUSE_BUTTON_MIDDLE,KeyState.SLEEP);
-		
+
 		mousePosition = new Vector2d();
 		lastMousePosition = new Vector2d();
 		mouseDelta = new Vector2d();
@@ -77,15 +91,34 @@ public class Input {
 		mousePosition.sub(lastMousePosition,mouseDelta);
 		lastMousePosition = new Vector2d(mousePosition);
 
-		nextState.forEach((k,v) -> {keys.put(k,v);}); //Update the key state
+		nextState.forEach((k,v) -> {
+			keys.put(k,v);
+		}); //Update the key state
+
 		nextState.clear();
-		
+
 		keys.forEach((k,v) -> { //Set the next key state for next frame
 			if(v == KeyState.DOWN)
 				nextState.put(k, KeyState.HOLD);
 			if(v == KeyState.UP)
 				nextState.put(k, KeyState.SLEEP);
     	});
+
+		//Debug inputs:
+
+		if(isKeyDown(GLFW_KEY_F1)){
+			Debug.setDebugMode(!Debug.isDebugMode());
+		}
+		if(isKeyDown(GLFW_KEY_F2)){
+			Debug.setChunkAABB(!Debug.isChunkAABB());
+		}
+		if(isKeyDown(GLFW_KEY_F3)){
+			Debug.setEntityAABB(!Debug.isEntityAABB());
+		}
+		if(isKeyDown(GLFW_KEY_F4)){
+			Debug.setTileEntityAABB(!Debug.isTileEntityAABB());
+		}
+
 	}
 	
 	///----------------------------------------///
@@ -126,7 +159,7 @@ public class Input {
 
 		    @Override
 		    public void invoke(long window, int key, int scancode, int action, int mods) {
-		    	
+
 		    	keys.forEach((k,v) -> {
 		    		if(key == k) {
 		    			if(action == GLFW.GLFW_PRESS)

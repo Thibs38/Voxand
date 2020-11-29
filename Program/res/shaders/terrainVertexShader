@@ -28,7 +28,7 @@ out float visibility;
 
 uniform Block blocks[MAX_BLOCKS];
 
-uniform mat4 transformationMatrix;
+uniform vec3 chunkPosition;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform vec3 lightPosition[MAX_LIGHTS];
@@ -42,7 +42,7 @@ uniform float fogGradient;
 
 void main(void){
 
-	vec4 worldPosition = transformationMatrix * vec4(position,1.0);
+	vec4 worldPosition = vec4(position + chunkPosition,1.0);
 	vec4 positionRelativeToCam = viewMatrix * worldPosition;
 	
 	gl_Position = projectionMatrix * positionRelativeToCam;
@@ -51,7 +51,7 @@ void main(void){
 	shineDamper_frag = blocks[block_id].shineDamper;
 	reflectivity_frag = blocks[block_id].reflectivity;
 	
-	unitNormal = normalize((transformationMatrix * normals[normal]).xyz);
+	unitNormal = normalize(normals[normal].xyz);
 	
 	for(int i = 0; i < lightCount;i++){
 		lightVector[i] = lightPosition[i] - worldPosition.xyz;

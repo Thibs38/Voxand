@@ -1,7 +1,6 @@
 package com.thibsworkshop.voxand.terrain;
 
-import com.thibsworkshop.voxand.terrain.Terrain;
-import com.thibsworkshop.voxand.terrain.Terrain.TerrainInfo;
+import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.SimplexNoise;
 import org.joml.Vector2i;
 
@@ -12,14 +11,14 @@ public class GridGenerator {
 
 	public static final int HEIGHT_OFFSET = 128;
 
-	public static Terrain generate(Vector2i chunkPos, TerrainInfo info) {
-		Terrain terrain = new Terrain(chunkPos);
+	public static Chunk generate(Vector2i chunkPos, TerrainInfo info) {
+		Chunk chunk = new Chunk(chunkPos);
 		
-		int realx = chunkPos.x * Terrain.CHUNK_SIZE;
-		int realz = chunkPos.y * Terrain.CHUNK_SIZE;
+		int realx = chunkPos.x * Chunk.CHUNK_SIZE;
+		int realz = chunkPos.y * Chunk.CHUNK_SIZE;
 
-		for(int x = 0; x < Terrain.CHUNK_SIZE; x++) {
-			for (int z = 0; z < Terrain.CHUNK_SIZE; z++) {
+		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
+			for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
 				
 				float simplex = HEIGHT_OFFSET;
 				float amplitude = 1;
@@ -43,7 +42,7 @@ public class GridGenerator {
 					simplex += (CalculateSimplex(fx,fz,info.scale*frequency))*info.heightScale*amplitude;
 				}
 				
-				for (int y = 0; y < Terrain.CHUNK_HEIGHT; y++) {
+				for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
 					/*float simplex3d = (float)SimplexNoise.noise(
 							((double)x/2d+realx)*0.01d,
 							((double)y/2d)*0.01d,
@@ -53,22 +52,22 @@ public class GridGenerator {
 					else {*/
 						if(simplex < 120) {
 							if(y <= simplex-5)
-								terrain.grid[x][y][z] = 3;
+								chunk.grid[x][y][z] = 3;
 							else if(y <= simplex-1)
-								terrain.grid[x][y][z] = 2;
+								chunk.grid[x][y][z] = 2;
 							else if(y <= simplex)
-								terrain.grid[x][y][z] = 1;
+								chunk.grid[x][y][z] = 1;
 							else 
-								terrain.grid[x][y][z] = 0;
+								chunk.grid[x][y][z] = 0;
 						}else{
 							if(y <= simplex-2)
-								terrain.grid[x][y][z] = 3;
+								chunk.grid[x][y][z] = 3;
 							else if(y <= simplex-1)
-								terrain.grid[x][y][z] = 2;
+								chunk.grid[x][y][z] = 2;
 							else if(y <= simplex)
-								terrain.grid[x][y][z] = 1;
+								chunk.grid[x][y][z] = 1;
 							else 
-								terrain.grid[x][y][z] = 0;
+								chunk.grid[x][y][z] = 0;
 						}
 						
 					//}
@@ -77,7 +76,7 @@ public class GridGenerator {
 			}
 		}
 				
-		return terrain;
+		return chunk;
 	}
 	
 	private static float CalculateSimplex(float x, float z,float scale) {

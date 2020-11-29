@@ -23,7 +23,9 @@ public abstract class ShaderProgram {
 
 	private int attributeCount;
 
-	private String[] shaderTypeName = new String[]{ "Vertex", "Fragment"};
+	private static String[] shaderTypeName = new String[]{ "Vertex", "Fragment"};
+
+	private static final String path = "Program/res/shaders/";
 
 	private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 	
@@ -105,7 +107,7 @@ public abstract class ShaderProgram {
 		
 		StringBuilder shaderSource = new StringBuilder();
 		try{
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			BufferedReader reader = new BufferedReader(new FileReader(path + file));
 			String line;
 			while((line = reader.readLine())!=null){
 				shaderSource.append(line).append("//\n");
@@ -120,7 +122,7 @@ public abstract class ShaderProgram {
 		GL20.glCompileShader(shaderID);
 		if(GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS )== GL11.GL_FALSE){
 			System.out.println(GL20.glGetShaderInfoLog(shaderID, 500));
-			System.err.println("Could not compile " + shaderTypeName[type == GL20.GL_VERTEX_SHADER?0:1] + " shader!");
+			System.err.println("Could not compile " + file + " !");
 			System.exit(-1);
 		}
 		return shaderID;

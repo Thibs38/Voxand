@@ -13,12 +13,19 @@ public class Time {
     private static long milliTime;
     private static long microTime;
 
+    private static final long ticklength = 50000;//in micro seconds
+    private static long lastTick;
+    private static long tick;
+    private static boolean doTick = false;
+
     private static int frameCount = 0;
 
     private static long lastSecond = 0;
 
     public static void init(){
+
         lastFrameTime = microTime;
+        lastTick = microTime;
     }
 
     public static void update(){
@@ -26,6 +33,8 @@ public class Time {
         time = (long) (glfwtime);
         milliTime = (long) (glfwtime * 1000);
         microTime = (long) (glfwtime * 1000000);
+
+        if(doTick) doTick = false;
 
         if(lastSecond < time){
             fps = frameCount;
@@ -35,6 +44,12 @@ public class Time {
 
         deltaTime = (float)(microTime - lastFrameTime)/1000000f;
         lastFrameTime = microTime;
+
+        if(lastTick + ticklength <= microTime){
+            tick++;
+            doTick = true;
+            lastTick = microTime;
+        }
 
         frameCount++;
     }
@@ -58,4 +73,8 @@ public class Time {
     public static int getFps() {
         return fps;
     }
+
+    public static boolean doTick(){ return doTick; }
+
+    public static long getTick(){ return tick; }
 }
