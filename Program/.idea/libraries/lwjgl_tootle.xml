@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="lwjgl-tootle">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tootle/lwjgl-tootle-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tootle/lwjgl-tootle-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tootle/lwjgl-tootle-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tootle/lwjgl-tootle-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tootle/lwjgl-tootle.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tootle/lwjgl-tootle-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tootle/lwjgl-tootle-javadoc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

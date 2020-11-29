@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-bgfx">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-bgfx/lwjgl-bgfx-natives-linux.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

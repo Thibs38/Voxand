@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-opus">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opus/lwjgl-opus-javadoc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

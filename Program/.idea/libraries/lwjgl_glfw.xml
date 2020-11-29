@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-glfw">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-glfw/lwjgl-glfw-natives-linux-arm32.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

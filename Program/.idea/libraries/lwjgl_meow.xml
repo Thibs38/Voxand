@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="lwjgl-meow">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-meow/lwjgl-meow.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-meow/lwjgl-meow-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-meow/lwjgl-meow-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-meow/lwjgl-meow-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-meow/lwjgl-meow-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-meow/lwjgl-meow-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-meow/lwjgl-meow-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-meow/lwjgl-meow-natives-windows-x86.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

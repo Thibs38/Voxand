@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-nanovg">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nanovg/lwjgl-nanovg-natives-linux-arm64.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-zstd">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-zstd/lwjgl-zstd-natives-windows-x86.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="lwjgl-sse">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-sse/lwjgl-sse-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-sse/lwjgl-sse-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-sse/lwjgl-sse-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-sse/lwjgl-sse.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-sse/lwjgl-sse-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-sse/lwjgl-sse-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-sse/lwjgl-sse-natives-linux.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

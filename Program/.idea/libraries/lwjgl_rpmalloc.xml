@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-rpmalloc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-rpmalloc/lwjgl-rpmalloc-natives-macos.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="lwjgl-ovr">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-ovr/lwjgl-ovr-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-ovr/lwjgl-ovr-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-ovr/lwjgl-ovr.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-ovr/lwjgl-ovr-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-ovr/lwjgl-ovr-natives-windows-x86.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

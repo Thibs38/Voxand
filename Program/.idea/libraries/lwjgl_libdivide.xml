@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-libdivide">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-libdivide/lwjgl-libdivide-javadoc.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

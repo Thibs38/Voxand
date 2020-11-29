@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-tinyfd">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-tinyfd/lwjgl-tinyfd-natives-linux.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

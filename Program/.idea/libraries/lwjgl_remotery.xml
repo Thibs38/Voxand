@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-remotery">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-remotery/lwjgl-remotery.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

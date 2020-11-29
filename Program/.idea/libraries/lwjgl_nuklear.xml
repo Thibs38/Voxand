@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-nuklear">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-nuklear/lwjgl-nuklear-natives-linux-arm32.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

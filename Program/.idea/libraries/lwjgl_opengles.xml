@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-opengles">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-opengles/lwjgl-opengles-natives-windows.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-shaderc">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-shaderc/lwjgl-shaderc-natives-windows-x86.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

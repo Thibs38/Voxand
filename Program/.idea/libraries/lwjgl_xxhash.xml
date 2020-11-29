@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="lwjgl-xxhash">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash-natives-linux-arm64.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash-natives-windows-x86.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash-natives-linux-arm32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash-natives-macos.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/lwjgl-xxhash/lwjgl-xxhash-natives-linux.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

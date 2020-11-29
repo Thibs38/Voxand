@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="jars">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jars/pngdecoder-1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jars/json-20200518.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
