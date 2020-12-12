@@ -24,6 +24,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Test {
 
+
     private Window window;
     private static GLFWErrorCallback errorCallback;
 
@@ -39,7 +40,7 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        window = new Window(1600,900,false);
+        window = new Window(1920,1080,true);
         Time.init();
         Loader.init();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -59,7 +60,6 @@ public class Test {
         Camera.main = camera;
 
         Player player = new Player(texturedModel,null,camera);
-
 
         Input input = new Input(window);
 

@@ -29,15 +29,16 @@ public class GameObjectManager {
         for(TexturedModel texturedModel : entities.keySet()){
             List<Entity> batch = entities.get(texturedModel);
             List<Entity> renderBatch = entitiesToRender.get(texturedModel);
-            for(int i = 0; i < batch.size(); i++){
-                Entity entity = batch.get(i);
+            for (Entity entity : batch) {
                 entity.update();
                 boolean render = renderBatch.contains(entity);
-                if(entity.chunk != null && entity.chunk.getSqr_distance() <= Config.sqr_entityViewDist){
-                    if(!render){ renderBatch.add(entity);
-                        System.out.println("ADDING ENTITY TO RENDER LIST");}
-                }else{
-                    if(render) renderBatch.remove(i);
+                if (entity.chunk != null && entity.chunk.getSqr_distance() <= Config.sqr_entityViewDist) {
+                    if (!render) {
+                        renderBatch.add(entity);
+                        //System.out.println("ADDING ENTITY TO RENDER LIST");
+                    }
+                } else {
+                    if (render) renderBatch.remove(entity);
                 }
             }
         }

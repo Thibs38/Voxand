@@ -12,7 +12,7 @@ import org.joml.Vector3f;
 public class Player extends Entity {
 
 	private final float speed = 20f;
-	private final float rotationSpeed = 20f;
+	private final float rotationSpeed = 30f;
 
 	private Camera camera;
 
@@ -32,7 +32,7 @@ public class Player extends Entity {
 
 	public void move() {
 		float realSpeed = speed * Time.getDeltaTime();
-		float realRotationSpeed = speed * Time.getDeltaTime();
+		float realRotationSpeed = rotationSpeed * Time.getDeltaTime();
 		float dx = 0;
 		float dy = 0;
 		float dz = 0;
@@ -41,11 +41,8 @@ public class Player extends Entity {
 		Vector3f camRot = camera.transform.rotation;
 
 		//Applying mouse rotation to the camera
-		if(Input.getMouseDelta().y != 0){
+		if(Input.hasMouseMoved()){
 			camRot.y += Input.getMouseDelta().x * realRotationSpeed;
-			moved = true;
-		}
-		if(Input.getMouseDelta().x != 0) {
 			camRot.x -= Input.getMouseDelta().y * realRotationSpeed;
 			moved = true;
 		}
@@ -63,72 +60,69 @@ public class Player extends Entity {
 		transform.rotate(rx,ry,rz);
 
 		//Applying Inputs
-		switch(mode){
-			case Survival:
-				if(Input.isKeyHold(GLFW.GLFW_KEY_Z)) {
-					dx += Math.cos(Math.toRadians(transform.rotation.y - 90))*realSpeed;
-					dz += Math.sin(Math.toRadians(transform.rotation.y - 90))*realSpeed;
+		switch (mode) {
+			case Survival -> {
+				if (Input.isKeyHold(GLFW.GLFW_KEY_Z)) {
+					dx += Math.cos(Math.toRadians(transform.rotation.y - 90)) * realSpeed;
+					dz += Math.sin(Math.toRadians(transform.rotation.y - 90)) * realSpeed;
 					moved = true;
 				}
-				if(Input.isKeyHold(GLFW.GLFW_KEY_S)) {
-					dx += Math.cos(Math.toRadians(transform.rotation.y + 90))*realSpeed;
-					dz += Math.sin(Math.toRadians(transform.rotation.y + 90))*realSpeed;
+				if (Input.isKeyHold(GLFW.GLFW_KEY_S)) {
+					dx += Math.cos(Math.toRadians(transform.rotation.y + 90)) * realSpeed;
+					dz += Math.sin(Math.toRadians(transform.rotation.y + 90)) * realSpeed;
 					moved = true;
 				}
-				if(Input.isKeyHold(GLFW.GLFW_KEY_Q)) {
-					dx -= Math.cos(Math.toRadians(transform.rotation.y))*realSpeed;
-					dz -= Math.sin(Math.toRadians(transform.rotation.y))*realSpeed;
+				if (Input.isKeyHold(GLFW.GLFW_KEY_Q)) {
+					dx -= Math.cos(Math.toRadians(transform.rotation.y)) * realSpeed;
+					dz -= Math.sin(Math.toRadians(transform.rotation.y)) * realSpeed;
 					moved = true;
 				}
-				if(Input.isKeyHold(GLFW.GLFW_KEY_D)) {
-					dx += Math.cos(Math.toRadians(transform.rotation.y))*realSpeed;
-					dz += Math.sin(Math.toRadians(transform.rotation.y))*realSpeed;
+				if (Input.isKeyHold(GLFW.GLFW_KEY_D)) {
+					dx += Math.cos(Math.toRadians(transform.rotation.y)) * realSpeed;
+					dz += Math.sin(Math.toRadians(transform.rotation.y)) * realSpeed;
 					moved = true;
 				}
-				if(Input.isKeyHold(GLFW.GLFW_KEY_SPACE)) {
-					dy+= realSpeed;
-					moved = true;
-				}
-				if(Input.isKeyHold(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-					dy-= realSpeed;
-					moved = true;
-				}
-				break;
-			case Spectator:
-				if(Input.isKeyHold(GLFW.GLFW_KEY_Z)) {
-					dx += Math.sin(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x))*realSpeed;
-					dz -= Math.cos(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x))*realSpeed;
-					dy -= Math.sin(Math.toRadians(camRot.x)) * realSpeed;
-					moved = true;
-				}
-
-				if(Input.isKeyHold(GLFW.GLFW_KEY_S)) {
-					dx -= Math.sin(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x))*realSpeed;
-					dz += Math.cos(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x))*realSpeed;
-					dy += Math.sin(Math.toRadians(camRot.x)) * realSpeed;
-					moved = true;
-				}
-
-				if(Input.isKeyHold(GLFW.GLFW_KEY_Q)) {
-					dx -= Math.cos(Math.toRadians(camRot.y))*realSpeed;
-					dz -= Math.sin(Math.toRadians(camRot.y))*realSpeed;
-					moved = true;
-				}
-				if(Input.isKeyHold(GLFW.GLFW_KEY_D)) {
-					dx += Math.cos(Math.toRadians(camRot.y))*realSpeed;
-					dz += Math.sin(Math.toRadians(camRot.y))*realSpeed;
-					moved = true;
-				}
-
-				if(Input.isKeyHold(GLFW.GLFW_KEY_SPACE)) {
+				if (Input.isKeyHold(GLFW.GLFW_KEY_SPACE)) {
 					dy += realSpeed;
 					moved = true;
 				}
-				if(Input.isKeyHold(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+				if (Input.isKeyHold(GLFW.GLFW_KEY_LEFT_SHIFT)) {
 					dy -= realSpeed;
 					moved = true;
 				}
-				break;
+			}
+			case Spectator -> {
+				if (Input.isKeyHold(GLFW.GLFW_KEY_Z)) {
+					dx += Math.sin(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x)) * realSpeed;
+					dz -= Math.cos(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x)) * realSpeed;
+					dy -= Math.sin(Math.toRadians(camRot.x)) * realSpeed;
+					moved = true;
+				}
+				if (Input.isKeyHold(GLFW.GLFW_KEY_S)) {
+					dx -= Math.sin(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x)) * realSpeed;
+					dz += Math.cos(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x)) * realSpeed;
+					dy += Math.sin(Math.toRadians(camRot.x)) * realSpeed;
+					moved = true;
+				}
+				if (Input.isKeyHold(GLFW.GLFW_KEY_Q)) {
+					dx -= Math.cos(Math.toRadians(camRot.y)) * realSpeed;
+					dz -= Math.sin(Math.toRadians(camRot.y)) * realSpeed;
+					moved = true;
+				}
+				if (Input.isKeyHold(GLFW.GLFW_KEY_D)) {
+					dx += Math.cos(Math.toRadians(camRot.y)) * realSpeed;
+					dz += Math.sin(Math.toRadians(camRot.y)) * realSpeed;
+					moved = true;
+				}
+				if (Input.isKeyHold(GLFW.GLFW_KEY_SPACE)) {
+					dy += realSpeed;
+					moved = true;
+				}
+				if (Input.isKeyHold(GLFW.GLFW_KEY_LEFT_SHIFT)) {
+					dy -= realSpeed;
+					moved = true;
+				}
+			}
 		}
 		
 

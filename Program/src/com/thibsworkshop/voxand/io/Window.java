@@ -26,6 +26,9 @@ public class Window {
 	private int WIDTH;
 	private int HEIGHT;
 
+	private double DWIDTH;
+	private double DHEIGHT;
+
 	private Vector2f viewport;
 
 	private float ASPECT_RATIO;
@@ -163,6 +166,10 @@ public class Window {
 	public int getWidth(){return WIDTH;}
 
 	public int getHeight(){return HEIGHT;}
+
+	public double getDHEIGHT(){return DHEIGHT;}
+
+	public double getDWIDTH(){return DWIDTH;}
 
 	public float getAspectRatio(){return ASPECT_RATIO;}
 

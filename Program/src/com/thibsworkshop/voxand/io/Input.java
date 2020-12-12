@@ -26,13 +26,14 @@ public class Input {
 
 	private static Vector2d mouseDelta;
 
+	private static boolean mouseMoved;
+
 	private Window window;
 	
 	private static GLFWKeyCallback keyCallback;
 	private static GLFWCursorPosCallback cursorPosCallback;
 	private static GLFWMouseButtonCallback mouseButtonCallback;
 
-	//TODO: mouse input lag
 	//TODO: current keyboard is american
 	//TODO: sometimes key is hold where it is not
 	public Input(Window window) {
@@ -83,13 +84,25 @@ public class Input {
 		setMouseCallback();
 		setKeyBoardCallback();
 	}
+
+	//To be called before eventpolling
+	public void preUpdate(){
+		mouseMoved = false;
+	}
 	
 	public void updateInput() {
 
+		preUpdate();
 		glfwWaitEventsTimeout(0.007);
 
-		mousePosition.sub(lastMousePosition,mouseDelta);
-		lastMousePosition = new Vector2d(mousePosition);
+		mouseDelta.x = mousePosition.x - lastMousePosition.x;
+		mouseDelta.y = mousePosition.y - lastMousePosition.y;
+
+		//if(mousePosition.x != lastMousePosition.x || mousePosition.y != lastMousePosition.y)
+		//	System.out.println("current: " + mousePosition + " last: " + lastMousePosition + " delta: " + mouseDelta);
+		lastMousePosition.x = mousePosition.x;
+		lastMousePosition.y = mousePosition.y;
+
 
 		nextState.forEach((k,v) -> {
 			keys.put(k,v);
@@ -130,7 +143,8 @@ public class Input {
 		    @Override
 		    public void invoke(long window, double xpos, double ypos) {
 		    	mousePosition.x = xpos;
-		    	mousePosition.y = Input.this.window.getHeight() - ypos;
+		    	mousePosition.y = Input.this.window.getDHEIGHT() - ypos;
+				mouseMoved = true;
 		    }
 
 		}));
@@ -201,4 +215,6 @@ public class Input {
 	public static Vector2d getMousePosition() {
 		return mousePosition;
 	}
+
+	public static boolean hasMouseMoved(){ return mouseMoved; }
 }
