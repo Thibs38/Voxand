@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.thibsworkshop.voxand.debugging.Debug;
 import org.joml.Vector2d;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -25,6 +27,11 @@ public class Input {
 	private static Vector2d lastMousePosition;
 
 	private static Vector2d mouseDelta;
+
+	private static Vector2f acceleration;
+
+	private static Vector2d lastDelta;
+	private static Vector2d lastLastDelta;
 
 	private static boolean mouseMoved;
 
@@ -77,6 +84,10 @@ public class Input {
 		lastMousePosition = new Vector2d();
 		mouseDelta = new Vector2d();
 
+		lastLastDelta = new Vector2d();
+		lastDelta = new Vector2d();
+		acceleration = new Vector2f(1);
+
 		glfwSetInputMode(window.window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
 		if (glfwRawMouseMotionSupported())
 			glfwSetInputMode(window.window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
@@ -98,8 +109,20 @@ public class Input {
 		mouseDelta.x = mousePosition.x - lastMousePosition.x;
 		mouseDelta.y = mousePosition.y - lastMousePosition.y;
 
-		//if(mousePosition.x != lastMousePosition.x || mousePosition.y != lastMousePosition.y)
-		//	System.out.println("current: " + mousePosition + " last: " + lastMousePosition + " delta: " + mouseDelta);
+		if(lastLastDelta.x + lastDelta.x + mouseDelta.x <= 1)
+			acceleration.x = 0.5f;
+		else acceleration.x = 1f;
+
+		if(lastLastDelta.y + lastDelta.y + mouseDelta.y <= 1)
+			acceleration.y = 0.5f;
+		else acceleration.y = 1f;
+
+		lastLastDelta.x = lastDelta.x;
+		lastLastDelta.y = lastDelta.y;
+
+		lastDelta.x = mouseDelta.x;
+		lastDelta.y = mouseDelta.y;
+
 		lastMousePosition.x = mousePosition.x;
 		lastMousePosition.y = mousePosition.y;
 
@@ -211,6 +234,8 @@ public class Input {
 	public static Vector2d getMouseDelta() {
 		return mouseDelta;
 	}
+
+	public static Vector2f getAcceleration(){ return acceleration; }
 	
 	public static Vector2d getMousePosition() {
 		return mousePosition;

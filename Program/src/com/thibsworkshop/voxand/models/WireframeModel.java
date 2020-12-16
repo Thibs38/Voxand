@@ -16,7 +16,6 @@ public class WireframeModel {
     }
 
     public WireframeModel(AABB aabb, Vector3f color){
-
         this.color = color;
 
         float x = aabb.min.x;
@@ -25,7 +24,6 @@ public class WireframeModel {
         float a = aabb.max.x;
         float b = aabb.max.y;
         float c = aabb.max.z;
-
 
         float[] positions = new float[]{
                 x,y,z,
@@ -40,20 +38,14 @@ public class WireframeModel {
         };
 
         int[] indices = new int[]{
-                0,1,
-                1,2,
-                2,3,
-                3,0,
+                0,1,1,2,
+                2,3,3,0,
 
-                4,5,
-                5,6,
-                6,7,
-                7,4,
+                4,5,5,6,
+                6,7,7,4,
 
-                0,4,
-                1,5,
-                2,6,
-                3,7
+                0,4,1,5,
+                2,6,3,7
         };
         this.rawModel = Loader.loadToVAOLine(positions,indices);
     }

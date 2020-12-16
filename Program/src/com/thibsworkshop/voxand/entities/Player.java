@@ -12,7 +12,7 @@ import org.joml.Vector3f;
 public class Player extends Entity {
 
 	private final float speed = 20f;
-	private final float rotationSpeed = 30f;
+	private final float rotationSpeed = 20f;
 
 	private Camera camera;
 
@@ -32,7 +32,8 @@ public class Player extends Entity {
 
 	public void move() {
 		float realSpeed = speed * Time.getDeltaTime();
-		float realRotationSpeed = rotationSpeed * Time.getDeltaTime();
+		float realRotationSpeedx = rotationSpeed * Time.getDeltaTime() * Input.getAcceleration().x;
+		float realRotationSpeedy = rotationSpeed * Time.getDeltaTime() * Input.getAcceleration().y;
 		float dx = 0;
 		float dy = 0;
 		float dz = 0;
@@ -42,8 +43,8 @@ public class Player extends Entity {
 
 		//Applying mouse rotation to the camera
 		if(Input.hasMouseMoved()){
-			camRot.y += Input.getMouseDelta().x * realRotationSpeed;
-			camRot.x -= Input.getMouseDelta().y * realRotationSpeed;
+			camRot.y += Input.getMouseDelta().x * realRotationSpeedx;
+			camRot.x -= Input.getMouseDelta().y * realRotationSpeedy;
 			moved = true;
 		}
 

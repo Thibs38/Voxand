@@ -40,7 +40,7 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        window = new Window(1920,1080,true);
+        window = new Window(1600,800,false);
         Time.init();
         Loader.init();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
