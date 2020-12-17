@@ -11,6 +11,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.system.CallbackI;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -30,8 +31,9 @@ public class Input {
 
 	private static Vector2f acceleration;
 
-	private static Vector2d lastDelta;
-	private static Vector2d lastLastDelta;
+	private static Vector2d absDelta;
+	private static Vector2d absLastDelta;
+	private static Vector2d absLastLastDelta;
 
 	private static boolean mouseMoved;
 
@@ -84,8 +86,9 @@ public class Input {
 		lastMousePosition = new Vector2d();
 		mouseDelta = new Vector2d();
 
-		lastLastDelta = new Vector2d();
-		lastDelta = new Vector2d();
+		absDelta = new Vector2d();
+		absLastDelta = new Vector2d();
+		absLastLastDelta = new Vector2d();
 		acceleration = new Vector2f(1);
 
 		glfwSetInputMode(window.window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
@@ -109,19 +112,22 @@ public class Input {
 		mouseDelta.x = mousePosition.x - lastMousePosition.x;
 		mouseDelta.y = mousePosition.y - lastMousePosition.y;
 
-		if(lastLastDelta.x + lastDelta.x + mouseDelta.x <= 1)
+		absDelta.x = Math.abs(mouseDelta.x);
+		absDelta.y = Math.abs(mouseDelta.y);
+
+		if(absLastLastDelta.x + absLastDelta.x + absDelta.x <= 1)
 			acceleration.x = 0.5f;
 		else acceleration.x = 1f;
 
-		if(lastLastDelta.y + lastDelta.y + mouseDelta.y <= 1)
+		if(absLastLastDelta.y + absLastDelta.y + mouseDelta.y <= 1)
 			acceleration.y = 0.5f;
 		else acceleration.y = 1f;
 
-		lastLastDelta.x = lastDelta.x;
-		lastLastDelta.y = lastDelta.y;
+		absLastLastDelta.x = absLastDelta.x;
+		absLastLastDelta.y = absLastDelta.y;
 
-		lastDelta.x = mouseDelta.x;
-		lastDelta.y = mouseDelta.y;
+		absLastDelta.x = absDelta.x;
+		absLastDelta.y = absDelta.y;
 
 		lastMousePosition.x = mousePosition.x;
 		lastMousePosition.y = mousePosition.y;
@@ -140,8 +146,11 @@ public class Input {
 				nextState.put(k, KeyState.SLEEP);
     	});
 
-		//Debug inputs:
+		debugInputs();
 
+	}
+
+	private void debugInputs(){
 		if(isKeyDown(GLFW_KEY_F1)){
 			Debug.setDebugMode(!Debug.isDebugMode());
 		}
@@ -155,6 +164,9 @@ public class Input {
 			Debug.setTileEntityAABB(!Debug.isTileEntityAABB());
 		}
 
+		if(isKeyDown(GLFW_KEY_F12)){
+			Debug.clearWireframeModels();
+		}
 	}
 	
 	///----------------------------------------///

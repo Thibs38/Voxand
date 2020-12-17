@@ -23,6 +23,10 @@ public class Collider {
 			wireModel = new WireframeModel(aabb, Color.green);
 	}
 
+	public void destroyWireframe(){
+		wireModel = null;
+	}
+
 	public WireframeModel getWireframeModel(){ return wireModel; }
 
 	public AABB getAabb(){ return aabb; }

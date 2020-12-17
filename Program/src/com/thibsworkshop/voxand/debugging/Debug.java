@@ -101,4 +101,13 @@ public class Debug {
         else
             printWarningDebugModeNotEnabled("Tile Entity Collider Wireframe");
     }
+
+    public static void clearWireframeModels(){
+        System.out.println("WARNING: Clearing debugging models, disabling visualization");
+        setTileEntityAABB(false);
+        setEntityAABB(false);
+        setChunkAABB(false);
+        Chunk.destroyWireframe();
+        GameObjectManager.destroyWireframes();
+    }
 }

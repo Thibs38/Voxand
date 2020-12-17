@@ -111,6 +111,17 @@ public class GameObjectManager {
         }
     }
 
+    public static void destroyWireframes(){
+        for(TexturedModel texturedModel : entities.keySet()) {
+            if(texturedModel.collider != null)
+                texturedModel.collider.destroyWireframe();
+        }
+        for(TexturedModel texturedModel : tileEntities.keySet()) {
+            if(texturedModel.collider != null)
+                texturedModel.collider.destroyWireframe();
+        }
+    }
+
     public Map<TexturedModel,List<TileEntity>> getTileEntitiesToRender(){ return tileEntitiesToRender; }
 
     public Map<TexturedModel,List<Entity>> getEntitiesToRender(){ return entitiesToRender; }

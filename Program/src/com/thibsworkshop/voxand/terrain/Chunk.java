@@ -49,7 +49,7 @@ public class Chunk{
 	public void generateTerrain(float[] vertices, int[] indices, byte[] blocks, byte[] normals){
 		model = Loader.loadToVAOColor(vertices,indices,blocks, normals);
 		if(model == null) {
-			System.err.println("ERROR COULDNT CREATE TERRAIN MODEL: " + "\nvertices: " + vertices.length + "\n indices: " + indices.length + "\n normals: "+normals);
+			System.err.println("ERROR COULDN'T CREATE TERRAIN MODEL: " + "\nvertices: " + vertices.length + "\n indices: " + indices.length + "\n normals: "+normals);
 			return;
 		}
 		generated = true;
@@ -63,6 +63,10 @@ public class Chunk{
 	public static void genWireframe(){
 		if(wireModel == null)
 			wireModel = new WireframeModel(aabb,Color.white);
+	}
+
+	public static void destroyWireframe(){
+		wireModel = null;
 	}
 
 	public int getSqr_distance(){ return sqr_distance; }
