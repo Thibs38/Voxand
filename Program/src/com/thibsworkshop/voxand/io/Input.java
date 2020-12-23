@@ -99,7 +99,7 @@ public class Input {
 		setKeyBoardCallback();
 	}
 
-	//To be called before eventpolling
+	//To be called before event polling
 	public void preUpdate(){
 		mouseMoved = false;
 	}
