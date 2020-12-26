@@ -1,25 +1,17 @@
 package com.thibsworkshop.voxand.network.client;
 
+import com.thibsworkshop.voxand.network.Network;
 import com.thibsworkshop.voxand.network.UUIDUtils;
-import com.thibsworkshop.voxand.network.server.Server;
-import com.thibsworkshop.voxand.network.server.Server.ServerError;
+import com.thibsworkshop.voxand.network.Network.ServerError;
+import com.thibsworkshop.voxand.network.Network.ClientDataType;
 
 import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
+import java.nio.charset.CharsetEncoder;
 import java.util.UUID;
 
 public class Client implements Runnable{
-
-    enum DataType{
-        CONNEXION((short)0),
-        COMMAND((short)1);
-
-        private short v;
-        DataType(short var){
-            v = var;
-        }
-    }
 
     private UUID uuid;
     public String name = "";
@@ -28,98 +20,41 @@ public class Client implements Runnable{
     private String host = "127.0.0.1";
     private int port = 45545;
 
-    private InetAddress adress;
+    private InetAddress address;
     private DatagramSocket socket;
     private DatagramPacket sendPacket;
     private DatagramPacket receivePacket;
 
-    private boolean created;
+    private boolean connected;
 
     private ByteBuffer sendBuffer;
-    private int sendBufferPos = 0;
     private ByteBuffer receiveBuffer;
-    private int receiveBufferPos = 0;
 
-    private int bufferLength = 1472;
+
 
     public Client(String pName, long sleep){
+        if(pName.getBytes().length > Network.NAME_LENGTH)
         name = pName;
         sleepTime = sleep;
         uuid = UUID.randomUUID();
 
-        sendBuffer = ByteBuffer.allocate(bufferLength);
-        receiveBuffer = ByteBuffer.allocate(bufferLength);
+        sendBuffer = ByteBuffer.allocate(Network.PACKET_LENGTH);
+        receiveBuffer = ByteBuffer.allocate(Network.PACKET_LENGTH);
 
         create();
     }
 
-    public boolean create() { //TODO: Initialize packet here and socket, but don't connect yet
-        created = true;
-        if(socket != null){
+    public void create() {
+        if(socket == null){
             try {
                 socket = new DatagramSocket(); //Creating a new socket
             } catch (SocketException e) {
                 e.printStackTrace();
-                created = false;
-            }
-        }
-
-        try {
-            adress = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
-            System.err.println("[NETWORK ERROR] Can't resolve hostname");
-            e.printStackTrace();
-            created = false;
-        }
-        if(sendPacket == null)
-            sendPacket = new DatagramPacket(sendBuffer.array(), bufferLength, adress, port);
-        if(receivePacket == null)
-            receivePacket = new DatagramPacket(receiveBuffer.array(), bufferLength, adress, port);
-
-        if(!created)
-            System.err.println("[NETWORK ERROR] Couldn't connect to server");
-
-        return created;
-    }
-
-    public void run(){
-        int nbre = 0;
-
-        while(true){
-            String envoi = name + "-" + (++nbre);
-
-            try {
-
-                //On envoie au serveur
-                socket.send(packet);
-
-                //Et on récupère la réponse du serveur
-                byte[] buffer2 = new byte[8196];
-                DatagramPacket packet2 = new DatagramPacket(buffer2, buffer2.length, adresse, port);
-                socket.receive(packet2);
-                System.out.println(envoi + " a reçu une réponse du serveur : ");
-                System.out.println(new String(packet2.getData()));
-
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            } catch (SocketException e) {
-                e.printStackTrace();
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
 
-    private void send(DataType dataType) throws SocketException, UnknownHostException {
-        if(!created){
-            if(!create()) return;
-        } // If not created we create the client socket, if the creation fails then we leave.
+    private void send(ClientDataType dataType){
 
         ServerError error = ServerError.OK;
         sendBuffer.clear(); //Clearing the data before filling it and then sending it
@@ -139,26 +74,54 @@ public class Client implements Runnable{
             case ALREADY_CONNECTED:
                 System.err.println("[NETWORK ERROR] Can't connect to server: already connected");
                 break;
+            case CANT_RESOLVE_HOSTNAME:
+                System.err.println("[NETWORK ERROR] Can't resolve hostname");
+                break;
             case TIMEOUT:
                 System.err.println("[NETWORK ERROR] Timed out from the server");
                 break;
+            case UNKNOWN:
             default:
                 System.err.println("[NETWORK ERROR] Unknown error, what happened?");
                 break;
         }
     }
 
-    private ServerError connect() throws SocketException, UnknownHostException {
+    private ServerError connect() {
+        try {
+            address = InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return ServerError.CANT_RESOLVE_HOSTNAME;
+        }
 
-        sendBuffer.putShort(DataType.CONNEXION.v);
-        System.arraycopy(UUIDUtils.asBytes(uuid),0,sendBuffer,0,16);
-        System.arraycopy(name.getBytes(),0,sendBuffer,16,name.length());
+        sendPacket = new DatagramPacket(sendBuffer.array(), Network.PACKET_LENGTH, address, port);
+        receivePacket = new DatagramPacket(receiveBuffer.array(), Network.PACKET_LENGTH, address, port);
 
+        sendBuffer.putShort(ClientDataType.CONNEXION.v); // 2B
+        sendBuffer.put(UUIDUtils.asBytes(uuid)); // 16B
+        sendBuffer.put(Network.charset.encode(name)); //
 
+        //We send the data
+        try {
+            socket.send(sendPacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ServerError.UNKNOWN;
+        }
+
+        //We wait an answer from the server
+        try {
+            socket.receive(receivePacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ServerError.UNKNOWN;
+        }
+
+        connected = true;
         return ServerError.OK;
     }
 
-    int addToBuffer
 }
 
 

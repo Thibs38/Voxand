@@ -1,21 +1,33 @@
 package com.thibsworkshop.voxand.network.server;
 
-import com.thibsworkshop.voxand.network.client.Client;
+import com.thibsworkshop.voxand.network.Network;
+import com.thibsworkshop.voxand.network.Network.ClientDataType;
+import com.thibsworkshop.voxand.network.Network.ServerDataType;
+import com.thibsworkshop.voxand.network.Network.ServerError;
+import com.thibsworkshop.voxand.network.UUIDUtils;
+
 
 import java.io.IOException;
 import java.net.*;
+import java.nio.BufferOverflowException;
+import java.nio.BufferUnderflowException;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.UUID;
+
+import
+
+import javax.xml.crypto.Data;
 
 public class Server{
 
-    public enum ServerError{ OK, TIMEOUT, ALREADY_CONNECTED}
-
     private ServerConfig config;
 
-    private SClient[] clients;
+    private final HashMap<InetAddress,SClient> clients;
 
-    private ServerSocket server;
     private boolean isRunning = true;
     private boolean started = false;
+
 
     /* The server has three components:
      *     • The getter, which collect data coming from the clients
@@ -34,70 +46,187 @@ public class Server{
 
     public Server(ServerConfig config){
         this.config = config;
-        clients = new SClient[config.MAX_PLAYER];
-
-
-
-        //System.out.println("Started server: " + server.getInetAddress().getHostAddress() + ":" + port);
+        clients = new HashMap<>();
     }
 
+
     public void start(){
-        if(started){
-            System.err.println("[LOW ERROR] Can't start server: server already started");
+        ByteBuffer receiveBuffer;
+        DatagramPacket receivePacket;
+        DatagramSocket socket;
+
+        if(started){ //If the server is already started we won't start it again
+            System.err.println("[SERVER ERROR] Couldn't start server: server already started");
             return;
         }
+
+        try {
+            socket = new DatagramSocket(config.PORT); //Creating a new socket
+        } catch (SocketException e) {
+            System.err.println("[SERVER ERROR] Couldn't start server: port not available");
+            return;
+        }
+
+        receiveBuffer = ByteBuffer.allocate(Network.PACKET_LENGTH);
+        receivePacket = new DatagramPacket(receiveBuffer.array(), Network.PACKET_LENGTH);
+
+
         //New thread to not block everything else
         Thread t = new Thread(new Runnable(){
-            public void run(){
-                try {
+            public void run() {
 
-                    //Creation of server connexion on the selected port
-                    DatagramSocket server = new DatagramSocket(config.PORT);
+                started = true;
 
-                    while(isRunning){
+                while (isRunning) {
 
-                        //Packet object
-                        byte[] buffer = new byte[1472];
-                        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-
-                        //Fetching the datagram from the client
-                        //Blocking the thread until it received something
-                        server.receive(packet);
-
-                        //When received, we print it
-                        String str = new String(packet.getData());
-                        System.out.println("Reçu de la part de " + packet.getAddress()
-                                + " sur le port " + packet.getPort() + " : ");
-                        System.out.println(str);
-
-                        //Reinitializing the packet length for future receptions
-                        packet.setLength(buffer.length);
-
-                        //Answer to the client
-                        byte[] buffer2 = new String("Réponse du serveur à " + str + "! ").getBytes();
-                        DatagramPacket packet2 = new DatagramPacket(
-                                buffer2,             //Data
-                                buffer2.length,      //Data size
-                                packet.getAddress(), //Sender adress
-                                packet.getPort()     //Sender port
-                        );
-
-                        //Send the datagram to the previous sender
-                        server.send(packet2);
-                        packet2.setLength(buffer2.length);
+                    //Fetching the datagram from the client
+                    //Blocking the thread until it received something
+                    try {
+                        socket.receive(receivePacket);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        continue;
                     }
-                } catch (IOException e) {
-                    System.err.println("[HIGH ERROR] Connexion lost");
-                    e.printStackTrace();
-                }
 
+                    //Here we are defining a protocol:
+                    //First we get the client
+                    SClient client = clients.get(receivePacket.getAddress());
+                    ClientDataType dataType; //The command sent by the client
+
+                    //If it is null, then we add it to the list, and then try to create it
+                    if(client == null) {
+                        createClient(receivePacket.getAddress(), receivePacket.getPort());
+                    }
+
+                    //If the packet is less than 2 bytes long, then we send an error to the client
+                    if(receivePacket.getLength() < 2) {
+                        sendError(ServerError.TOO_SMALL_PACKET, client);
+                    }
+
+                    dataType = ClientDataType.values[receiveBuffer.getShort()];
+
+                        //TODO: make a timeout code to disconnect client not answering for x seconds
+                        //TODO: fill connexion code, add switch to determine what to do with the info.
+
+                    process(dataType,receiveBuffer, client);
+                }
             }
         });
 
         t.start();
     }
 
-    public void close(){
-        isRunning = false;
+    private void process(ClientDataType dataType, ByteBuffer buffer, SClient client){
+
+        ServerError error = ServerError.OK;
+        switch (dataType){
+
+            case CONNEXION -> {
+                error = connectClient(buffer, client);
+            }
+            case COMMAND -> {
+
+            }
+            default -> {
+                error = ServerError.UNKNOWN_COMMAND;
+            }
+        }
+
+        switch (error) {
+            case OK -> {
+
+            }
+            case UNKNOWN_COMMAND, CORRUPTED_DATA, UNKNOWN, NOT_CONNECTED -> {
+                //For these cases, we will always use the sendError pattern
+                sendError(error,dataType,client);
+            }
+            case ALREADY_CONNECTED -> {
+            }
+            case TIMEOUT -> {
+            }
+            case TOO_SMALL_PACKET -> {
+            }
+            case CONNEXION_REFUSED -> {
+            }
+            default -> {
+                //TODO: there's an error in the error management code
+            }
+        }
     }
+
+    private ServerError connectClient(ByteBuffer receiveBuffer, SClient client){
+        //To connect: retrieve UUID, retrieve Name, fill SClient with them
+        //Send to the client that he is connected
+
+        //--- Getting uuid ---//
+
+        byte[] uuidBuffer = new byte[16];
+
+        if(!readBuffer(receiveBuffer,uuidBuffer)){
+            return ServerError.CORRUPTED_DATA;
+        }
+        UUID uuid = UUIDUtils.asUuid(uuidBuffer);
+
+        //--- Getting name ---//
+
+        byte[] nameBuffer = new byte[Network.NAME_LENGTH];
+
+        if(!readBuffer(receiveBuffer,nameBuffer)){
+            return ServerError.CORRUPTED_DATA;
+        }
+        String name = Network.charset.decode(ByteBuffer.wrap(nameBuffer)).toString();
+
+        //--- Creating client ---//
+
+        client.connect(uuid, name);
+
+        //--- Sending connexion validation to client ---//
+
+        DatagramPacket sendPacket = client.getSendPacket();
+        ByteBuffer sendBuffer = client.getBuffer();
+        sendBuffer.putShort(ServerDataType.CONNEXION.v);
+
+
+        return ServerError.OK;
+    }
+
+    private void createClient(InetAddress address, int port) {
+        clients.put(address, new SClient(address, port));
+    }
+
+
+    private void sendError(DatagramSocket socket, ServerError error, ClientDataType dataType, SClient client){
+        //To send an error: we get the buffer and the packet of the client
+        //We fill it with the server data type error, followed by the error and the command the client tried to use
+
+        DatagramPacket sendPacket = client.getSendPacket();
+        ByteBuffer buffer = client.getBuffer();
+        buffer.putShort(ServerDataType.ERROR.v);
+        buffer.putShort(error.v);
+        buffer.putShort(dataType.v);
+
+        try {
+            socket.send(sendPacket);
+        } catch (IOException e) {
+            e.printStackTrace();
+            //TODO: client might be unreachable, try
+        }
+    }
+
+    private boolean readBuffer(ByteBuffer buffer, byte[] array){
+        try{
+            buffer.get(array);
+        }catch (BufferUnderflowException e){
+            return false;
+        }
+        return true;
+    }
+
+    public void close(){
+
+        isRunning = false;
+        started = false;
+    }
+
+    public boolean isStarted(){ return started; }
 }
