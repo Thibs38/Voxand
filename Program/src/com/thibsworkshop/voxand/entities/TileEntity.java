@@ -5,19 +5,14 @@ import com.thibsworkshop.voxand.physics.Collider;
 
 public class TileEntity extends GameObject {
 
-    Collider collider;
-    public TileEntity(Transform transform, TexturedModel texturedModel, Collider collider) {
-        super(transform, texturedModel);
-        this.collider = collider;
-    }
-
+    boolean hasCollider;
     public TileEntity(Transform transform, TexturedModel texturedModel) {
         super(transform, texturedModel);
-        this.collider = null;
+        hasCollider = texturedModel.collider != null;
     }
+
 
     @Override
     public void update(){
-
     }
 }

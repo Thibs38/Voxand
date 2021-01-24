@@ -46,8 +46,8 @@ public class LineRenderer extends Renderer{
     }
 
     private void renderChunks(){
-        shader.loadColor(Chunk.getWireframeModel().color);
-        RawModel rawModel = Chunk.getWireframeModel().getRawModel();
+        shader.loadColor(Chunk.wireModel.color);
+        RawModel rawModel = Chunk.wireModel.getRawModel();
         prepareModel(rawModel);
         for(Chunk chunk: terrainManager.getTerrainsToRender().values()){
             shader.loadTransformation(chunk.getPosition(),Chunk.CHUNK_SCALE);
@@ -63,7 +63,7 @@ public class LineRenderer extends Renderer{
             RawModel rawModel = wireframe.getRawModel();
             prepareModel(rawModel);
             for(Entity entity : v) {
-                shader.loadTransformation(entity.transform.position,entity.transform.scale);
+                shader.loadTransformation(entity.transform.getPosition(),entity.transform.getScale());
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });
@@ -78,7 +78,7 @@ public class LineRenderer extends Renderer{
             RawModel rawModel = wireframe.getRawModel();
             prepareModel(rawModel);
             for(TileEntity entity : v) {
-                shader.loadTransformation(entity.transform.position,entity.transform.scale);
+                shader.loadTransformation(entity.transform.getPosition(),entity.transform.getScale());
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });

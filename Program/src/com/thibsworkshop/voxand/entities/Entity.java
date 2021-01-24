@@ -17,6 +17,10 @@ public class Entity extends GameObject {
 
 	public boolean grounded = false;
 
+	public Entity(TexturedModel texturedModel, Transform transform, float mass) {
+		super(transform, texturedModel);
+		this.rigidbody = new Rigidbody(mass,this);
+	}
 	public Entity(TexturedModel texturedModel, Transform transform, Rigidbody rigidbody) {
 		super(transform, texturedModel);
 		this.rigidbody = rigidbody;
@@ -24,8 +28,9 @@ public class Entity extends GameObject {
 
 	@Override
 	public void update(){
-		transform.update();
-		chunk = TerrainManager.getChunk(transform.chunkPos);
+		rigidbody.update(); //Physics simulation, will move the entity & resolve collisions
+		transform.update(); //Will update the transform's matrices & variables
+
 	}
 	
 

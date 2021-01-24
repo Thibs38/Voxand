@@ -20,17 +20,19 @@ public class Player extends Entity {
 
 	private Mode mode = Mode.Spectator;
 	
-	public Player(TexturedModel texturedModel, Rigidbody rigidbody, Camera camera) {
-		super(texturedModel, new Transform(), rigidbody);
+	public Player(TexturedModel texturedModel, float mass, Camera camera) {
+		super(texturedModel, new Transform(), mass);
 		this.camera = camera;
-		camera.transform.position = new Vector3f(transform.position);
+		camera.transform.setPosition(transform.getPosition());
 		camera.transform.translate(0,3,0);
 	}
 
 	@Override
-	public void update() { }
+	public void update() {
+		move();
+	}
 
-	public void move() {
+	public boolean move() {
 		float realSpeed = speed * Time.getDeltaTime();
 		float realRotationSpeedx = rotationSpeed * Time.getDeltaTime() * Input.getAcceleration().x;
 		float realRotationSpeedy = rotationSpeed * Time.getDeltaTime() * Input.getAcceleration().y;
@@ -39,7 +41,7 @@ public class Player extends Entity {
 		float dz = 0;
 
 		boolean moved = false;
-		Vector3f camRot = camera.transform.rotation;
+		Vector3f camRot = camera.transform.getRotation();
 
 		//Applying mouse rotation to the camera
 		if(Input.hasMouseMoved()){
@@ -55,32 +57,33 @@ public class Player extends Entity {
 
 		camRot.y = camRot.y % 360;
 
-		float rx = camRot.x - transform.rotation.x;
-		float ry = camRot.y - transform.rotation.y;
-		float rz = camRot.z - transform.rotation.z;
+		Vector3f rot = transform.getRotation();
+		float rx = camRot.x - rot.x;
+		float ry = camRot.y - rot.y;
+		float rz = camRot.z - rot.z;
 		transform.rotate(rx,ry,rz);
 
 		//Applying Inputs
 		switch (mode) {
 			case Survival -> {
 				if (Input.isKeyHold(GLFW.GLFW_KEY_Z)) {
-					dx += Math.cos(Math.toRadians(transform.rotation.y - 90)) * realSpeed;
-					dz += Math.sin(Math.toRadians(transform.rotation.y - 90)) * realSpeed;
+					dx += Math.cos(Math.toRadians(rot.y - 90)) * realSpeed;
+					dz += Math.sin(Math.toRadians(rot.y - 90)) * realSpeed;
 					moved = true;
 				}
 				if (Input.isKeyHold(GLFW.GLFW_KEY_S)) {
-					dx += Math.cos(Math.toRadians(transform.rotation.y + 90)) * realSpeed;
-					dz += Math.sin(Math.toRadians(transform.rotation.y + 90)) * realSpeed;
+					dx += Math.cos(Math.toRadians(rot.y + 90)) * realSpeed;
+					dz += Math.sin(Math.toRadians(rot.y + 90)) * realSpeed;
 					moved = true;
 				}
 				if (Input.isKeyHold(GLFW.GLFW_KEY_Q)) {
-					dx -= Math.cos(Math.toRadians(transform.rotation.y)) * realSpeed;
-					dz -= Math.sin(Math.toRadians(transform.rotation.y)) * realSpeed;
+					dx -= Math.cos(Math.toRadians(rot.y)) * realSpeed;
+					dz -= Math.sin(Math.toRadians(rot.y)) * realSpeed;
 					moved = true;
 				}
 				if (Input.isKeyHold(GLFW.GLFW_KEY_D)) {
-					dx += Math.cos(Math.toRadians(transform.rotation.y)) * realSpeed;
-					dz += Math.sin(Math.toRadians(transform.rotation.y)) * realSpeed;
+					dx += Math.cos(Math.toRadians(rot.y)) * realSpeed;
+					dz += Math.sin(Math.toRadians(rot.y)) * realSpeed;
 					moved = true;
 				}
 				if (Input.isKeyHold(GLFW.GLFW_KEY_SPACE)) {
@@ -128,14 +131,12 @@ public class Player extends Entity {
 		
 
 		if(moved){
-			transform.translate(dx,dy,dz); //We move based on the inputs
-			Vector3f correction = texturedModel.collider.detectCollision(transform.position); //We calculate the correction due to collisions
-			transform.translate(correction);//We apply the correction
-			correction.add(dx,dy,dz);//We calculate the final translation of the frame
-			camera.transform.translate(correction);//We apply the final translation to the camera
+			rigidbody.setVelocity(dx,dy,dz); //We set the velocity based on the inputs
+			super.update(); //We update the entity, which will trigger physics calculation and calculate the final pos
+			camera.transform.setPosition(transform.getPosition());//We apply the final translation to the camera
 			camera.updateMatrices();
-			super.update();
 		}
+		return moved;
 	}
 
 	

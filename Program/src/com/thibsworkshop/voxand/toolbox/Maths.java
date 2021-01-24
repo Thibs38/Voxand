@@ -7,32 +7,37 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
+import java.util.Vector;
+
 public class Maths {
 
 	public static final Vector3f right = new Vector3f(1, 0, 0);
 	public static final Vector3f up = new Vector3f(0, 1, 0);
 	public static final Vector3f forward = new Vector3f(0, 0, 1);
+	public static final Vector3f zero = new Vector3f(0,0,0);
 
 	public static Matrix4f createTransformationMatrix(Transform transform) {
 		Matrix4f matrix = new Matrix4f();
-		matrix.translate(transform.position);
+		matrix.translate(transform.getPosition());
+		Vector3f rotation = transform.getRotation();
 
-		matrix.rotate((float) Math.toRadians(transform.rotation.x), right);
-		matrix.rotate((float) Math.toRadians(transform.rotation.y), up);
-		matrix.rotate((float) Math.toRadians(transform.rotation.z), forward);
+		matrix.rotate((float) Math.toRadians(rotation.x), right);
+		matrix.rotate((float) Math.toRadians(rotation.y), up);
+		matrix.rotate((float) Math.toRadians(rotation.z), forward);
 
-		matrix.scale(transform.scale);
+		matrix.scale(transform.getScale());
 		return matrix;
 	}
 
 	public static Matrix4f createViewMatrix(Camera camera) {
 		Matrix4f viewMatrix = new Matrix4f();
+		Vector3f rotation = camera.transform.getRotation();
 
-		viewMatrix.rotate((float) Math.toRadians(camera.transform.rotation.x), right);
-		viewMatrix.rotate((float) Math.toRadians(camera.transform.rotation.y), up);
-		viewMatrix.rotate((float) Math.toRadians(camera.transform.rotation.z), forward);
+		viewMatrix.rotate((float) Math.toRadians(rotation.x), right);
+		viewMatrix.rotate((float) Math.toRadians(rotation.y), up);
+		viewMatrix.rotate((float) Math.toRadians(rotation.z), forward);
 
-		Vector3f cameraPos = camera.transform.position;
+		Vector3f cameraPos = camera.transform.getPosition();
 		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 		viewMatrix.translate(negativeCameraPos);
 		return viewMatrix;

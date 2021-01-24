@@ -27,8 +27,8 @@ public class Chunk{
 	private int sqr_distance;
 	private long lastTickUpdate;
 
-	private static AABB aabb = AABB.createMinMax(new Vector3f(0), new Vector3f(CHUNK_SIZE,CHUNK_HEIGHT,CHUNK_SIZE));
-	private static WireframeModel wireModel;
+	public static AABB aabb = AABB.createMinMax(new Vector3f(0), new Vector3f(CHUNK_SIZE,CHUNK_HEIGHT,CHUNK_SIZE));
+	public static WireframeModel wireModel;
 
 	public boolean generated = false;
 	
@@ -87,18 +87,22 @@ public class Chunk{
 		return model;
 	}
 
-	public static AABB getAABB(){ return aabb; }
 
-	public static WireframeModel getWireframeModel(){ return wireModel; }
+
+	public static Vector2i positionToChunkPos(float x, float z){
+		return new Vector2i((int)Math.floor(x/F_CHUNK_SIZE),(int)Math.floor(z/F_CHUNK_SIZE));
+	}
 
 	public static Vector2i positionToChunkPos(Vector3f position){
-		return new Vector2i((int)Math.floor(position.x/F_CHUNK_SIZE),(int)Math.floor(position.z/F_CHUNK_SIZE));
+		return positionToChunkPos(position.x,position.z);
 	}
 
 	public static void positionToChunkPos(Vector3f position, Vector2i chunkPos){
 		chunkPos.x = (int)Math.floor(position.x/F_CHUNK_SIZE);
 		chunkPos.y = (int)Math.floor(position.z/F_CHUNK_SIZE);
 	}
+
+
 
 	public static class TerrainInfo{
 		

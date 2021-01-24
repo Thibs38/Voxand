@@ -32,7 +32,7 @@ public class GameObjectManager {
             for (Entity entity : batch) {
                 entity.update();
                 boolean render = renderBatch.contains(entity);
-                if (entity.chunk != null && entity.chunk.getSqr_distance() <= Config.sqr_entityViewDist) {
+                if (entity.transform.chunk != null && entity.transform.chunk.getSqr_distance() <= Config.sqr_entityViewDist) {
                     if (!render) {
                         renderBatch.add(entity);
                         //System.out.println("ADDING ENTITY TO RENDER LIST");
@@ -50,7 +50,7 @@ public class GameObjectManager {
                 TileEntity tileEntity = batch.get(i);
                 tileEntity.update();
                 boolean render = renderBatch.contains(tileEntity);
-                if(tileEntity.chunk.getSqr_distance() <= Config.sqr_tileEntityViewDist){
+                if(tileEntity.transform.chunk.getSqr_distance() <= Config.sqr_tileEntityViewDist){
                     if(!render) renderBatch.add(tileEntity);
                 }else{
                     if(render) renderBatch.remove(i);

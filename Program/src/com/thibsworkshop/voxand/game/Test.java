@@ -11,6 +11,7 @@ import com.thibsworkshop.voxand.models.TexturedModel;
 import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.physics.Collider;
+import com.thibsworkshop.voxand.physics.Rigidbody;
 import com.thibsworkshop.voxand.rendering.MasterRenderer;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.textures.Material;
@@ -61,7 +62,8 @@ public class Test {
         Camera camera = new Camera();
         Camera.main = camera;
 
-        Player player = new Player(texturedModel,null,camera);
+        Player player = new Player(texturedModel,1,camera);
+        player.transform.setPosition(0,150,0);
 
         Input input = new Input(window);
 
@@ -78,10 +80,10 @@ public class Test {
 
         GameObjectManager gameObjectManager = new GameObjectManager();
 
-        Entity entity = new Entity(texturedModel, new Transform(new Vector3f(0,0,5)),null);
-        Entity entity2 = new Entity(texturedModel,new Transform(new Vector3f(0,0,-5)),null);
-        Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),null);
-        Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),null);
+        Entity entity = new Entity(texturedModel, new Transform(new Vector3f(0,0,5)),1);
+        Entity entity2 = new Entity(texturedModel,new Transform(new Vector3f(0,0,-5)),1);
+        Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),1);
+        Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),1);
 
         gameObjectManager.processEntity(entity);
         gameObjectManager.processEntity(entity2);

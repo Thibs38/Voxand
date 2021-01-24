@@ -260,7 +260,6 @@ public class TerrainManager {
 		});
 	}
 
-	
 	public void cleanUp() {
 		executor.shutdown(); // Disable new tasks from being submitted
 		   try {
@@ -331,22 +330,31 @@ public class TerrainManager {
 			return t.grid[x][y][z];
 		}
 	}
-	
-	public static boolean isTerrainTransparent(int x, int y, int z, int chunkx, int chunky) {
-		byte blockid = getBlock(x, y, z, chunkx, chunky);
+
+	public static byte getBlock(int x, int y, int z, Vector2i chunkPos){
+		return getBlock(x,y,z,chunkPos.x,chunkPos.y);
+	}
+
+	public static boolean isTerrainTransparent(int x, int y, int z, int chunkx, int chunkz) {
+		byte blockid = getBlock(x, y, z, chunkx, chunkz);
 		if(blockid == -1)
 			return false;
-		
+
 		return Block.blocks[blockid].getTransparency() < 1;
 	}
-	
-	
-	public static boolean isTerrainSolid(int x, int y, int z, int chunkx, int chunky) {
 
-		byte blockid = getBlock(x, y, z, chunkx, chunky);
+
+	public static boolean isTerrainSolid(int x, int y, int z, int chunkx, int chunkz) {
+
+		byte blockid = getBlock(x, y, z, chunkx, chunkz);
 		if(blockid == -1)
 			return false;
-		
+
 		return Block.blocks[blockid].isSolid();
+	}
+
+	public static boolean isTerrainSolid(int x, int y, int z, Vector2i chunkPos) {
+
+		return isTerrainSolid(x,y,z,chunkPos.x,chunkPos.y);
 	}
 }

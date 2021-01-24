@@ -8,7 +8,6 @@ public abstract class GameObject {
 
     public Transform transform;
     protected TexturedModel texturedModel;
-    public Chunk chunk;
 
     public GameObject(Transform transform, TexturedModel texturedModel){
         this.transform = transform;
