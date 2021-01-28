@@ -44,6 +44,15 @@ public class Maths {
 	}
 
 
+	public static double floatMod(double x, double y){
+		// x mod y behaving the same way as Math.floorMod but with doubles
+		return (x - Math.floor(x/y) * y);
+	}
+
+	public static float sign(float a){
+		return a >= 0 ? 1 : -1;
+	}
+
 	public static boolean compareDist(Vector2f a, Vector2f b, float d) {
 		return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) <= d * d;
 	}

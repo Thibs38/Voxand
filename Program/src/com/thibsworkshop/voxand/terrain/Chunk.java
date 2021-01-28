@@ -16,6 +16,7 @@ public class Chunk{
 	
 	public static final int CHUNK_SIZE = 32;
 	public static final float F_CHUNK_SIZE = 32f;
+	public static final double D_CHUNK_SIZE = 32d;
 	public static final int CHUNK_HEIGHT = 256;
 
 	public static final Vector3f CHUNK_SCALE = new Vector3f(1);

@@ -11,7 +11,7 @@ import java.util.Vector;
 
 public class Transform {
 
-    private Vector3f position;
+    private Vector3f position; //TODO change for doubles (will break a lot of code)
     private Vector3f rotation;
     private Vector3f scale;
 
@@ -91,6 +91,11 @@ public class Transform {
         this.position.z = position.z;
         changed = true;
         positionChanged = true;
+    }
+
+    public void updateChunkPos(){
+        Chunk.positionToChunkPos(position, chunkPos);
+        chunk = TerrainManager.getChunk(chunkPos);
     }
 
     public Vector3f getPosition(){ return position; }

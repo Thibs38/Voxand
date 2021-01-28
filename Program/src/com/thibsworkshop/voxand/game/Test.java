@@ -41,7 +41,7 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        window = new Window(1920,1080,true);
+        window = new Window(1600,800,false);
         //window = new Window(1600,900,false);
 
         Time.init();
@@ -80,16 +80,16 @@ public class Test {
 
         GameObjectManager gameObjectManager = new GameObjectManager();
 
-        Entity entity = new Entity(texturedModel, new Transform(new Vector3f(0,0,5)),1);
-        Entity entity2 = new Entity(texturedModel,new Transform(new Vector3f(0,0,-5)),1);
-        Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),1);
-        Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),1);
+        //Entity entity = new Entity(texturedModel, new Transform(new Vector3f(0,0,5)),1);
+        //Entity entity2 = new Entity(texturedModel,new Transform(new Vector3f(0,0,-5)),1);
+        //Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),1);
+        //Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),1);
 
-        gameObjectManager.processEntity(entity);
-        gameObjectManager.processEntity(entity2);
-        gameObjectManager.processEntity(entity3);
-        gameObjectManager.processEntity(entity4);
-
+        //gameObjectManager.processEntity(entity);
+        //gameObjectManager.processEntity(entity2);
+        //gameObjectManager.processEntity(entity3);
+        //gameObjectManager.processEntity(entity4);
+            gameObjectManager.processEntity(player);
         //Timing.enable(TerrainManager.debugName);
         //Timing.enable(MasterRenderer.debugName);
 

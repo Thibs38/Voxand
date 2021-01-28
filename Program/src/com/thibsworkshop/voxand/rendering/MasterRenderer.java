@@ -93,6 +93,10 @@ public class MasterRenderer {
 		terrainShader.stop();
 
 		Timing.stop(debugName,"Terrain");
+
+		glClear(GL_DEPTH_BUFFER_BIT); //Clear the depth buffer, start rendering overlays
+
+
 	}
 
 	public void prepare() {

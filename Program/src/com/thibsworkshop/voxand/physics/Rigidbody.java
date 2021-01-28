@@ -24,16 +24,16 @@ public class Rigidbody {
 
     public void update(){
         //First we detect the collisions based on the velocity
-        if(velocity != Maths.zero){
+        if(!velocity.equals(Maths.zero)){
             //With the correction vector, we can move the entity to its real position
-            if(entity.getModel().collider.detectCollision(this, correction))
-                entity.transform.translate(correction);
+            entity.getModel().collider.detectCollision(this);
+            velocity.set(0);
         }
     }
 
     public void setVelocity(float x, float y, float z){
-        velocity.x = x;
-        velocity.y = y;
-        velocity.z = z;
+        velocity.set(x,y,z);
     }
+
+    public void addVelocity(float dx, float dy, float dz) { velocity.add(dx,dy,dz); }
 }

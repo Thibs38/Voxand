@@ -17,6 +17,8 @@ public class Entity extends GameObject {
 
 	public boolean grounded = false;
 
+	public boolean render = true;
+
 	public Entity(TexturedModel texturedModel, Transform transform, float mass) {
 		super(transform, texturedModel);
 		this.rigidbody = new Rigidbody(mass,this);

@@ -25,6 +25,7 @@ public class Player extends Entity {
 		this.camera = camera;
 		camera.transform.setPosition(transform.getPosition());
 		camera.transform.translate(0,3,0);
+		render = false;
 	}
 
 	@Override
@@ -131,7 +132,7 @@ public class Player extends Entity {
 		
 
 		if(moved){
-			rigidbody.setVelocity(dx,dy,dz); //We set the velocity based on the inputs
+			rigidbody.addVelocity(dx,dy,dz); //We set the velocity based on the inputs
 			super.update(); //We update the entity, which will trigger physics calculation and calculate the final pos
 			camera.transform.setPosition(transform.getPosition());//We apply the final translation to the camera
 			camera.updateMatrices();
