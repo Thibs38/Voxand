@@ -12,6 +12,7 @@ import com.thibsworkshop.voxand.models.RawModel;
 import com.thibsworkshop.voxand.shaders.LineShader;
 import com.thibsworkshop.voxand.shaders.StaticShader;
 import com.thibsworkshop.voxand.shaders.TerrainShader;
+import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.FrustumIntersection;
 import org.joml.Vector3f;
 
@@ -75,7 +76,7 @@ public class MasterRenderer {
 
 		Timing.stop(debugName,"Entities");
 
-		if(Debug.isChunkAABB() || Debug.isEntityAABB() || Debug.isTileEntityAABB()){
+		if(Debug.isDebugMode()){
 			lineShader.start();
 			lineShader.loadRenderingVariables(camera.getProjectionViewMatrix());
 			lineRenderer.render(camera);
@@ -96,6 +97,11 @@ public class MasterRenderer {
 
 		glClear(GL_DEPTH_BUFFER_BIT); //Clear the depth buffer, start rendering overlays
 
+		if(Debug.isDebugMode()){
+			lineShader.start();
+			lineRenderer.renderXYZ(camera);
+			lineShader.stop();
+		}
 
 	}
 

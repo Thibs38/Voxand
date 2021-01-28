@@ -6,12 +6,10 @@ import java.util.Map;
 import com.thibsworkshop.voxand.debugging.Debug;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import org.lwjgl.system.CallbackI;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -165,7 +163,7 @@ public class Input {
 		}
 
 		if(isKeyDown(GLFW_KEY_F12)){
-			Debug.clearWireframeModels();
+			Debug.clear();
 		}
 	}
 	

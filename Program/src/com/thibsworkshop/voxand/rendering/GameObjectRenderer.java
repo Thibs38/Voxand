@@ -5,10 +5,8 @@ import com.thibsworkshop.voxand.entities.*;
 import com.thibsworkshop.voxand.models.TexturedModel;
 import com.thibsworkshop.voxand.models.RawModel;
 import com.thibsworkshop.voxand.shaders.StaticShader;
-import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.textures.Material;
 import com.thibsworkshop.voxand.textures.Texture;
-import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.FrustumIntersection;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -18,10 +16,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL15;
 import org.joml.Matrix4f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class GameObjectRenderer extends Renderer {
@@ -51,9 +46,9 @@ public class GameObjectRenderer extends Renderer {
 			prepareTexturedModel(texturedModel);
 			List<Entity> batch = gameObjectManager.getEntitiesToRender().get(texturedModel);
 			for(Entity entity:batch) {
-				if(entity.render){
-					Vector3f worldMin = entity.transform.localToWorldPosition(entity.getModel().collider.getAabb().min);
-					Vector3f worldMax = entity.transform.localToWorldPosition(entity.getModel().collider.getAabb().max);
+				if(entity.render){ //TODO: needs to be optimized, maybe cache the position in the entity and update when it moves
+					Vector3f worldMin = entity.transform.localToWorldPositionUnrotated(entity.getModel().collider.getAabb().min);
+					Vector3f worldMax = entity.transform.localToWorldPositionUnrotated(entity.getModel().collider.getAabb().max);
 					if(frustumIntersection.testAab(worldMin, worldMax)){
 						loadTransformation(entity);
 						GL11.glDrawElements(GL11.GL_TRIANGLES, texturedModel.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
@@ -68,8 +63,8 @@ public class GameObjectRenderer extends Renderer {
 			prepareTexturedModel(texturedModel);
 			List<TileEntity> batch = gameObjectManager.getTileEntitiesToRender().get(texturedModel);
 			for(TileEntity tileEntity:batch) {
-				Vector3f worldMin = tileEntity.transform.localToWorldPosition(tileEntity.getModel().collider.getAabb().min);
-				Vector3f worldMax = tileEntity.transform.localToWorldPosition(tileEntity.getModel().collider.getAabb().max);
+				Vector3f worldMin = tileEntity.transform.localToWorldPositionUnrotated(tileEntity.getModel().collider.getAabb().min);
+				Vector3f worldMax = tileEntity.transform.localToWorldPositionUnrotated(tileEntity.getModel().collider.getAabb().max);
 				if(frustumIntersection.testAab(worldMin, worldMax)){
 					loadTransformation(tileEntity);
 					GL11.glDrawElements(GL11.GL_TRIANGLES, texturedModel.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);

@@ -8,6 +8,7 @@ import com.thibsworkshop.voxand.models.WireframeModel;
 import com.thibsworkshop.voxand.shaders.LineShader;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
+import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2i;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -43,6 +44,19 @@ public class LineRenderer extends Renderer{
             renderEntitiesCollider();
         if (Debug.isTileEntityAABB())
             renderTileEntitiesCollider();
+
+        unbindModel();
+    }
+
+    public void renderXYZ(Camera camera){
+        camera.forward.add(camera.transform.getPosition(),Debug.axesPosition);
+        shader.loadTransformation(Debug.axesPosition,Maths.quarter);
+        for(WireframeModel model: Debug.getAxisModels()){
+            shader.loadColor(model.color);
+            prepareModel(model.getRawModel());
+            GL11.glDrawElements(GL11.GL_LINES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
+        }
+        unbindModel();
     }
 
     private void renderChunks(){
@@ -53,7 +67,6 @@ public class LineRenderer extends Renderer{
             shader.loadTransformation(chunk.getPosition(),Chunk.CHUNK_SCALE);
             GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
         }
-        unbindModel();
     }
 
     private void renderEntitiesCollider(){
@@ -67,8 +80,6 @@ public class LineRenderer extends Renderer{
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });
-
-        unbindModel();
     }
 
     private void renderTileEntitiesCollider(){
@@ -82,8 +93,6 @@ public class LineRenderer extends Renderer{
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });
-
-        unbindModel();
     }
 
     private void prepareModel(RawModel rawModel) {

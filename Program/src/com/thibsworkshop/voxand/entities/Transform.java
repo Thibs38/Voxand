@@ -6,6 +6,8 @@ import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.lwjgl.system.CallbackI;
 
 import java.util.Vector;
 
@@ -17,7 +19,7 @@ public class Transform {
 
     public Vector2i chunkPos;
     public Chunk chunk;
-    protected Matrix4f transformationMatrix;
+    private Matrix4f transformationMatrix;
 
     private boolean changed = false; // Has any of position, rotation or scale changed since last update of the transformationMatrix?
     private boolean positionChanged = false; // Has position changed since last update?
@@ -61,9 +63,27 @@ public class Transform {
     }
 
     //return a position transformed from local space to world space, not rotated however
-    public Vector3f localToWorldPosition(Vector3f localPosition){
+    public Vector3f localToWorldPositionUnrotated(Vector3f localPosition){
         return new Vector3f(localPosition).mul(scale).add(position);
     }
+
+    //TODO: not working
+    /*
+    public Vector3f localToWorldPosition(Vector3f localPosition){
+        Vector3f v = new Vector3f();
+        return transformationMatrix.transformPosition(localPosition,v);
+    }
+    public Vector3f localToWorldDirection(Vector3f localDirection){
+        Vector3f v = new Vector3f();
+        return transformationMatrix.transformDirection(localDirection,v);
+    }
+
+    public Vector3f forward(){
+        Vector3f v = new Vector3f();
+        transformationMatrix.(v);
+        return v;
+    }*/
+
 
     public void translate(Vector3f translation) {
         translate(translation.x, translation.y, translation.z);
@@ -93,6 +113,10 @@ public class Transform {
         positionChanged = true;
     }
 
+    public void setTransformationMatrix(Matrix4f matrix){
+        transformationMatrix.set(matrix);
+    }
+
     public void updateChunkPos(){
         Chunk.positionToChunkPos(position, chunkPos);
         chunk = TerrainManager.getChunk(chunkPos);
@@ -103,6 +127,8 @@ public class Transform {
     public Vector3f getRotation(){ return rotation; }
 
     public Vector3f getScale(){ return scale;}
+
+    public Matrix4f getTransformation(){ return transformationMatrix; }
 
     public void rotate(Vector3f rotation) {
         rotate(rotation.x, rotation.y, rotation.z);
@@ -115,6 +141,17 @@ public class Transform {
         changed = true;
     }
 
+    public void setRotation(Vector3f rotation){
+        setRotation(rotation.x,rotation.y,rotation.z);
+    }
+
+    public void setRotation(float x, float y, float z){
+        this.rotation.x = x;
+        this.rotation.y = y;
+        this.rotation.z = z;
+        changed = true;
+
+    }
     public Matrix4f getTransformationMatrix(){ return transformationMatrix; }
 
 }

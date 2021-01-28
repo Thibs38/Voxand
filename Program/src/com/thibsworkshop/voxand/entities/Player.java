@@ -16,12 +16,15 @@ public class Player extends Entity {
 
 	private Camera camera;
 
+	public static Player player;
+
 	enum Mode { Survival, Spectator};
 
 	private Mode mode = Mode.Spectator;
 	
 	public Player(TexturedModel texturedModel, float mass, Camera camera) {
 		super(texturedModel, new Transform(), mass);
+		player = this;
 		this.camera = camera;
 		camera.transform.setPosition(transform.getPosition());
 		camera.transform.translate(0,3,0);
@@ -58,14 +61,13 @@ public class Player extends Entity {
 
 		camRot.y = camRot.y % 360;
 
+		transform.setRotation(camRot.x, 0, camRot.z);
+		//camera.transform.setRotation(camRot);
+
 		Vector3f rot = transform.getRotation();
-		float rx = camRot.x - rot.x;
-		float ry = camRot.y - rot.y;
-		float rz = camRot.z - rot.z;
-		transform.rotate(rx,ry,rz);
 
 		//Applying Inputs
-		switch (mode) {
+		switch (mode) { //TODO: can be optimized using matrices
 			case Survival -> {
 				if (Input.isKeyHold(GLFW.GLFW_KEY_Z)) {
 					dx += Math.cos(Math.toRadians(rot.y - 90)) * realSpeed;

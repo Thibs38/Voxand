@@ -2,11 +2,10 @@ package com.thibsworkshop.voxand.toolbox;
 
 import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.entities.Transform;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
+import org.joml.*;
+import org.lwjgl.system.CallbackI;
 
+import java.lang.Math;
 import java.util.Vector;
 
 public class Maths {
@@ -14,7 +13,12 @@ public class Maths {
 	public static final Vector3f right = new Vector3f(1, 0, 0);
 	public static final Vector3f up = new Vector3f(0, 1, 0);
 	public static final Vector3f forward = new Vector3f(0, 0, 1);
-	public static final Vector3f zero = new Vector3f(0,0,0);
+	public static final Vector3f zero = new Vector3f(0);
+	public static final Vector3f one = new Vector3f(1);
+	public static final Vector3f half = new Vector3f(0.5f);
+	public static final Vector3f quarter = new Vector3f(0.25f);
+
+	public static final Matrix4f identity = new Matrix4f().identity();
 
 	public static Matrix4f createTransformationMatrix(Transform transform) {
 		Matrix4f matrix = new Matrix4f();
@@ -29,8 +33,9 @@ public class Maths {
 		return matrix;
 	}
 
-	public static Matrix4f createViewMatrix(Camera camera) {
-		Matrix4f viewMatrix = new Matrix4f();
+	public static void updateViewMatrix(Camera camera) {
+		Matrix4f viewMatrix = camera.getViewMatrix();
+		viewMatrix.identity();
 		Vector3f rotation = camera.transform.getRotation();
 
 		viewMatrix.rotate((float) Math.toRadians(rotation.x), right);
@@ -40,7 +45,14 @@ public class Maths {
 		Vector3f cameraPos = camera.transform.getPosition();
 		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 		viewMatrix.translate(negativeCameraPos);
-		return viewMatrix;
+	}
+
+	public static Vector4f mul(Vector3f v, Matrix4f m){
+		return new Vector4f(v.x,v.y,v.z,1).mul(m);
+	}
+
+	public static Vector3f vector4fToVector3f(Vector4f v4){
+		return new Vector3f(v4.x,v4.y, v4.z);
 	}
 
 

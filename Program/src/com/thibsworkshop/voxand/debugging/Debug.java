@@ -4,8 +4,13 @@ package com.thibsworkshop.voxand.debugging;
 //TODO: add a method to destroy the wireframe, and more generally destroy every debug tool.
 
 import com.thibsworkshop.voxand.entities.GameObjectManager;
+import com.thibsworkshop.voxand.models.WireframeModel;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
+import com.thibsworkshop.voxand.toolbox.Color;
+import com.thibsworkshop.voxand.toolbox.Maths;
+import org.joml.Vector3f;
+import org.lwjgl.system.CallbackI;
 
 // A class to manage debugging tools
 public class Debug {
@@ -16,6 +21,10 @@ public class Debug {
     private static boolean entityAABB = false;
     private static boolean tileEntityAABB = false;
 
+    private static WireframeModel[] axisModels;
+
+    public static Vector3f axesPosition;
+
     public static boolean isDebugMode(){
         return debugMode;
     }
@@ -24,6 +33,14 @@ public class Debug {
         Debug.debugMode = debugMode;
         if(debugMode){
             printWarningDebugToolEnabled("Debug Mode");
+            if(axisModels == null){
+                axisModels = new WireframeModel[3];
+                axisModels[0] = new WireframeModel(Maths.zero,Maths.right, Color.red);
+                axisModels[1] = new WireframeModel(Maths.zero,Maths.up, Color.green);
+                axisModels[2] = new WireframeModel(Maths.zero,Maths.forward, Color.blue);
+            }
+            if(axesPosition == null)
+                axesPosition = new Vector3f();
         }else{
             timing = false;
             chunkAABB = false;
@@ -31,6 +48,8 @@ public class Debug {
             tileEntityAABB = false;
         }
     }
+
+    public static WireframeModel[] getAxisModels(){ return axisModels; }
 
     private static void printWarningDebugModeNotEnabled(String toolName){
         System.out.println("WARNING: Debug mode is not enabled, can't enabled " + toolName);
@@ -102,12 +121,13 @@ public class Debug {
             printWarningDebugModeNotEnabled("Tile Entity Collider Wireframe");
     }
 
-    public static void clearWireframeModels(){
+    public static void clear(){
         System.out.println("WARNING: Clearing debugging models, disabling visualization");
         setTileEntityAABB(false);
         setEntityAABB(false);
         setChunkAABB(false);
         Chunk.destroyWireframe();
         GameObjectManager.destroyWireframes();
+        axisModels = null;
     }
 }

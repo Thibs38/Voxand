@@ -46,7 +46,7 @@ public class Collider {
 		Vector3f velocity = rigidbody.velocity;
 
 		float minTime = collisionLoop(transform,velocity);
-		System.out.println("vx: " + velocity.x + " vy: " + velocity.y + " vz: " + velocity.z);
+		//System.out.println("vx: " + velocity.x + " vy: " + velocity.y + " vz: " + velocity.z);
 
 		//System.out.println(minTime);
 		transform.translate(velocity.x * minTime,velocity.y * minTime, velocity.z * minTime);
