@@ -9,6 +9,7 @@ import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.system.CallbackI;
 
@@ -129,5 +130,12 @@ public class Debug {
         Chunk.destroyWireframe();
         GameObjectManager.destroyWireframes();
         axisModels = null;
+    }
+
+    public static void printVector(Vector3f v){
+        System.out.printf("(%.2f, %.2f, %2f)\n", v.x, v.y, v.z);
+    }
+    public static void printVector(Vector2f v){
+        System.out.printf("(%.2f, %.2f)\n", v.x, v.y);
     }
 }

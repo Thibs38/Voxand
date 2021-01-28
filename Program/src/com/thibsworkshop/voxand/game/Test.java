@@ -55,7 +55,7 @@ public class Test {
 
         Material mat = new Material(10,1);
 
-        AABB aabb = AABB.createCenterSize(new Vector3f(0),1,2,1);
+        AABB aabb = AABB.createCenterSize(new Vector3f(0),0.9f,1.8f,0.9f);
         Collider collider = new Collider(aabb);
         TexturedModel texturedModel = new TexturedModel("chr_knight","chr_knight", mat,collider);
 

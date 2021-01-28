@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.physics;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.Entity;
 import com.thibsworkshop.voxand.entities.Transform;
 import com.thibsworkshop.voxand.models.WireframeModel;
@@ -50,6 +51,8 @@ public class Collider {
 
 		//System.out.println(minTime);
 		transform.translate(velocity.x * minTime,velocity.y * minTime, velocity.z * minTime);
+		if(minTime > 0)
+			transform.translate(normal.x * 0.00001f, normal.y * 0.00001f, normal.z * 0.00001f);
 		float remainingTime = 1.0f - minTime;
 		if(remainingTime <= 0) return false;
 
@@ -68,15 +71,18 @@ public class Collider {
 
 		for(int i = 0; i < 2; i++){
 			if(remainingTime > 0) {
-				float dotProd = velocity.dot(normal);
+				//float dotProd = velocity.dot(normal);
 				velocity.set(
-						velocity.x * remainingTime - dotProd * normal.x,
-						velocity.y * remainingTime - dotProd * normal.y,
-						velocity.z * remainingTime - dotProd * normal.z);
-
+						velocity.x * (1 - Math.abs(normal.x)) * remainingTime,
+						velocity.y * (1 - Math.abs(normal.y)) * remainingTime ,
+						velocity.z * (1 - Math.abs(normal.z)) * remainingTime);
+				System.out.print("i: " + i + " velocity: ");Debug.printVector(velocity);
 				minTime = collisionLoop(transform, velocity);
-
+				System.out.println(minTime);
+				System.out.print("normal: "); Debug.printVector(normal);
 				transform.translate(velocity.x * minTime, velocity.y * minTime, velocity.z * minTime);
+				if(minTime > 0)
+					transform.translate(normal.x * 0.00001f, normal.y * 0.00001f, normal.z * 0.00001f);
 				remainingTime -= minTime;
 			}
 		}
@@ -201,7 +207,6 @@ public class Collider {
 
 		float entryTime = Math.max(Math.max(entry.x,entry.z),entry.y);
 
-		System.out.println("Checking collisions!");
 		if(entryTime >= minTime || entryTime < 0) return 1.0f;
 
 		float exitTime = Math.min(Math.min(exit.x,exit.z),exit.y);
@@ -224,25 +229,25 @@ public class Collider {
 		}
 
 
-		if (entry.x > entry.y) {
-			if(entry.x > entry.z){
+		if (entry.x > entry.z) {
+			if(entry.x > entry.y){
 				normal.x = -Maths.sign(velocity.x);
 				normal.y = 0.0f;
 				normal.z = 0.0f;
 			}else{
 				normal.x = 0.0f;
-				normal.y = 0.0f;
-				normal.z = -Maths.sign(velocity.z);
+				normal.y = -Maths.sign(velocity.y);
+				normal.z = 0.0f;
 			}
 		} else {
-			if (entry.y > entry.z) {
+			if (entry.z > entry.y) {
+				normal.x = 0.0f;
+				normal.y = 0.0f;
+				normal.z = -Maths.sign(velocity.z);
+			} else {
 				normal.x = 0.0f;
 				normal.y = -Maths.sign(velocity.y);
 				normal.z = 0.0f;
-			} else {
-				normal.x = 0.0f;
-				normal.y = 0.0f;
-				normal.z = -Maths.sign(velocity.z);
 			}
 		}
 		return entryTime;
