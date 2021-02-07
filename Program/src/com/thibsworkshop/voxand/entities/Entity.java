@@ -18,6 +18,7 @@ public class Entity extends GameObject {
 	public boolean grounded = false;
 
 	public boolean render = true;
+	public boolean enabled = true;
 
 	public Entity(TexturedModel texturedModel, Transform transform, float mass) {
 		super(transform, texturedModel);
@@ -30,9 +31,10 @@ public class Entity extends GameObject {
 
 	@Override
 	public void update(){
-		rigidbody.update(); //Physics simulation, will move the entity & resolve collisions
-		transform.update(); //Will update the transform's matrices & variables
-
+		if(enabled){
+			rigidbody.update(); //Physics simulation, will move the entity & resolve collisions
+			transform.update(); //Will update the transform's matrices & variables
+		}
 	}
 	
 

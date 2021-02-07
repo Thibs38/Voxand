@@ -4,14 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.thibsworkshop.voxand.debugging.Debug;
+import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
-import org.lwjgl.glfw.GLFW;
+import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Input {
 
@@ -19,8 +18,16 @@ public class Input {
 	public enum KeyState{
 		SLEEP, DOWN, HOLD, UP
 	}
+
+
+	public enum AxisName{ Horizontal, Vertical }
 	private static Map<Integer,KeyState> keys = new HashMap<Integer, KeyState>();
 	private Map<Integer,KeyState> nextState = new HashMap<Integer, KeyState>();
+	private static Map<AxisName,Axis> axes = new HashMap<>();
+
+	private float axesSpeed = 0.75f;
+	private float axesGravity = 0.75f;
+	private float dead = 0.001f;
 	
 	private static Vector2d mousePosition;
 	private static Vector2d lastMousePosition;
@@ -47,38 +54,41 @@ public class Input {
 		
 		this.window = window;
 		
-		keys.put(GLFW.GLFW_KEY_Z,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_Q,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_S,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_D,KeyState.SLEEP);
+		keys.put(GLFW_KEY_W,KeyState.SLEEP);
+		keys.put(GLFW_KEY_A,KeyState.SLEEP);
+		keys.put(GLFW_KEY_S,KeyState.SLEEP);
+		keys.put(GLFW_KEY_D,KeyState.SLEEP);
 
-		keys.put(GLFW.GLFW_KEY_UP,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_DOWN,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_LEFT,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_RIGHT,KeyState.SLEEP);
+		keys.put(GLFW_KEY_UP,KeyState.SLEEP);
+		keys.put(GLFW_KEY_DOWN,KeyState.SLEEP);
+		keys.put(GLFW_KEY_LEFT,KeyState.SLEEP);
+		keys.put(GLFW_KEY_RIGHT,KeyState.SLEEP);
 
-		keys.put(GLFW.GLFW_KEY_SPACE,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_LEFT_SHIFT,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_ESCAPE,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_ENTER,KeyState.SLEEP);
+		keys.put(GLFW_KEY_SPACE,KeyState.SLEEP);
+		keys.put(GLFW_KEY_LEFT_SHIFT,KeyState.SLEEP);
+		keys.put(GLFW_KEY_ESCAPE,KeyState.SLEEP);
+		keys.put(GLFW_KEY_ENTER,KeyState.SLEEP);
 
-		keys.put(GLFW.GLFW_KEY_F1, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F2, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F3, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F4, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F5, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F6, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F7, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F8, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F9, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F10, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F11, KeyState.SLEEP);
-		keys.put(GLFW.GLFW_KEY_F12, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F1, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F2, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F3, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F4, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F5, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F6, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F7, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F8, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F9, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F10, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F11, KeyState.SLEEP);
+		keys.put(GLFW_KEY_F12, KeyState.SLEEP);
 
 
-		keys.put(GLFW.GLFW_MOUSE_BUTTON_LEFT,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_MOUSE_BUTTON_RIGHT,KeyState.SLEEP);
-		keys.put(GLFW.GLFW_MOUSE_BUTTON_MIDDLE,KeyState.SLEEP);
+		keys.put(GLFW_MOUSE_BUTTON_LEFT,KeyState.SLEEP);
+		keys.put(GLFW_MOUSE_BUTTON_RIGHT,KeyState.SLEEP);
+		keys.put(GLFW_MOUSE_BUTTON_MIDDLE,KeyState.SLEEP);
+
+		axes.put(AxisName.Horizontal,new Axis(AxisName.Horizontal,GLFW_KEY_D, GLFW_KEY_A));
+		axes.put(AxisName.Vertical,new Axis(AxisName.Vertical,GLFW_KEY_W, GLFW_KEY_S));
 
 		mousePosition = new Vector2d();
 		lastMousePosition = new Vector2d();
@@ -89,7 +99,7 @@ public class Input {
 		absLastLastDelta = new Vector2d();
 		acceleration = new Vector2f(1);
 
-		glfwSetInputMode(window.window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(window.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		if (glfwRawMouseMotionSupported())
 			glfwSetInputMode(window.window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 		
@@ -136,6 +146,22 @@ public class Input {
 		}); //Update the key state
 
 		nextState.clear();
+
+		axes.forEach((k,v)->{
+			boolean pos = isKeyHold(v.positiveKey);
+			boolean neg = isKeyHold(v.negativeKey);
+			float rSensitivity = Math.min(v.sensitivity * Time.getDeltaTime(),1);
+			if((pos && neg) || (!pos && !neg)){
+				v.value = Maths.lerp(0,v.value,rSensitivity);
+				if(v.value <= v.dead) v.value = 0;
+			}
+			if(pos)
+				v.value = Maths.lerp(v.value,1,rSensitivity);
+			if(neg)
+				v.value = Maths.lerp(v.value,-1,rSensitivity);
+		});
+
+		//System.out.println(getAxis(AxisName.Horizontal) + " " + getAxis(AxisName.Vertical));
 
 		keys.forEach((k,v) -> { //Set the next key state for next frame
 			if(v == KeyState.DOWN)
@@ -188,9 +214,9 @@ public class Input {
 		    public void invoke(long window, int button, int action, int mods) {
 		        keys.forEach((k,v) -> {
 		        	if(button == k) {
-		    			if(action == GLFW.GLFW_PRESS)
+		    			if(action == GLFW_PRESS)
 		    				keys.put(k,KeyState.DOWN);
-		    			else if (action == GLFW.GLFW_RELEASE)
+		    			else if (action == GLFW_RELEASE)
 		    				keys.put(k,KeyState.UP);
 		    		}
 		        });
@@ -209,9 +235,9 @@ public class Input {
 
 		    	keys.forEach((k,v) -> {
 		    		if(key == k) {
-		    			if(action == GLFW.GLFW_PRESS)
+		    			if(action == GLFW_PRESS)
 		    				keys.put(k,KeyState.DOWN);
-		    			else if (action == GLFW.GLFW_RELEASE)
+		    			else if (action == GLFW_RELEASE)
 		    				keys.put(k,KeyState.UP);
 		    		}
 		    	});
@@ -227,6 +253,8 @@ public class Input {
 	public static KeyState getKeyState(int key) {
 		return keys.get(key);
 	}
+
+	public static float getAxis(AxisName axis){ return axes.get(axis).value; }
 	
 	public static boolean isKeyDown(int key) {
 		return keys.get(key) == KeyState.DOWN;
@@ -252,4 +280,27 @@ public class Input {
 	}
 
 	public static boolean hasMouseMoved(){ return mouseMoved; }
+
+	public class Axis{
+		public AxisName name;
+		public int positiveKey;
+		public int negativeKey;
+		public float dead;
+		public float sensitivity;
+		public float value;
+
+		public Axis(AxisName name, int positiveKey, int negativeKey, float dead, float sensitivity) {
+			this.name = name;
+			this.positiveKey = positiveKey;
+			this.negativeKey = negativeKey;
+			this.dead = dead;
+			this.sensitivity = sensitivity;
+			this.value = 0f;
+		}
+		
+		public Axis(AxisName name, int positiveKey, int negativeKey){
+			this(name,positiveKey,negativeKey,0.001f,3f);
+		}
+	}
+
 }

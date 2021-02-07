@@ -41,7 +41,7 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        window = new Window(1600,800,false);
+        window = new Window(1280,720,false);
         //window = new Window(1600,900,false);
 
         Time.init();
@@ -63,13 +63,13 @@ public class Test {
         Camera.main = camera;
 
         Player player = new Player(texturedModel,1,camera);
-        player.transform.setPosition(0,150,0);
+        player.transform.setPosition(0,200,0);
 
         Input input = new Input(window);
 
         DirectionalLight sun = new DirectionalLight(new Vector3f(1,1,1), 1, new Vector3f(1,0,0));
         sun.rotate(new Vector3f(0,3.14f/4f,0));
-        sun.rotate(new Vector3f(3.14f/4f,0,0));
+        sun.rotate(new Vector3f(3.14f/4f+0.2f,0,0));
 
         PointLight[] lights = new PointLight[MasterRenderer.MAX_LIGHT];
 
@@ -80,7 +80,7 @@ public class Test {
 
         GameObjectManager gameObjectManager = new GameObjectManager();
 
-        //Entity entity = new Entity(texturedModel, new Transform(new Vector3f(0,0,5)),1);
+        Entity entity = new Entity(texturedModel, new Transform(new Vector3f(0,200,5)),1);
         //Entity entity2 = new Entity(texturedModel,new Transform(new Vector3f(0,0,-5)),1);
         //Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),1);
         //Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),1);
@@ -93,11 +93,14 @@ public class Test {
         //Timing.enable(TerrainManager.debugName);
         //Timing.enable(MasterRenderer.debugName);
 
+        float wait = 3;
+        float time = Time.getTime() + wait;
+
         while ( !window.shouldWindowClose() ) {
             Time.update();
             input.updateInput();
+            if(Time.getTime() > time)
             player.move();
-
 
             //Game Logic
 

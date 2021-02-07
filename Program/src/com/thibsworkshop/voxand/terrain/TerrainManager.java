@@ -349,7 +349,7 @@ public class TerrainManager {
 		byte blockid = getBlock(x, y, z, chunkx, chunkz);
 		if(blockid == -1)
 			return false;
-
+		System.out.println(blockid);
 		return Block.blocks[blockid].isSolid();
 	}
 

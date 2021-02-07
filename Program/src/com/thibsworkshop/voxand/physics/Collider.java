@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.physics;
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.Entity;
 import com.thibsworkshop.voxand.entities.Transform;
+import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.models.WireframeModel;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
@@ -21,7 +22,7 @@ public class Collider {
 
 	private WireframeModel wireModel;
 
-	private Vector3f normal = new Vector3f();
+	private Vector3f normal = new Vector3f(0);
 
 
 	public Collider(AABB aabb) {
@@ -40,23 +41,50 @@ public class Collider {
 	public WireframeModel getWireframeModel(){ return wireModel; }
 
 	public AABB getAabb(){ return aabb; }
-	
-	public boolean detectCollision(Rigidbody rigidbody) {
 
-		Transform transform = rigidbody.entity.transform;
-		Vector3f velocity = rigidbody.velocity;
+	public boolean isGrounded(Transform transform){
+		Vector3f pos = transform.getPosition();
+		real.set((float)Maths.floatMod(pos.x,Chunk.D_CHUNK_SIZE),
+				pos.y - 10 * Maths.EPSILON,
+				(float)Maths.floatMod(pos.z, Chunk.D_CHUNK_SIZE));
 
-		float minTime = collisionLoop(transform,velocity);
-		//System.out.println("vx: " + velocity.x + " vy: " + velocity.y + " vz: " + velocity.z);
+		min.set(aabb.min.x + real.x, aabb.min.y + real.y, aabb.min.z + real.z);
+		max.set(aabb.max.x + real.x, aabb.max.y + real .y, aabb.max.z + real.z);
+		Debug.printVector(min);
+		Debug.printVector(max);
+		Vector2i chunkPos = transform.chunkPos; //By default the real chunk pos is the initial player one
+		for (int x = (int)Math.floor(min.x); x <= (int)Math.floor(max.x); x ++) {
+			int rx = Math.floorMod(x, Chunk.CHUNK_SIZE);
+			chunkPosR.x = chunkPos.x + Math.floorDiv(x, Chunk.CHUNK_SIZE);
 
-		//System.out.println(minTime);
-		transform.translate(velocity.x * minTime,velocity.y * minTime, velocity.z * minTime);
-		if(minTime > 0)
-			transform.translate(normal.x * 0.00001f, normal.y * 0.00001f, normal.z * 0.00001f);
-		float remainingTime = 1.0f - minTime;
-		if(remainingTime <= 0) return false;
+			for (int z = (int) Math.floor(min.z); z <= (int) Math.floor(max.z); z++) {
+				int rz = Math.floorMod(z, Chunk.CHUNK_SIZE);
+				chunkPosR.y = chunkPos.y + Math.floorDiv(z, Chunk.CHUNK_SIZE);
 
-		/* We calculated the correct position of the object, now we need to apply a response: sliding.
+				int y = (int) Math.floor(min.y);
+				System.out.println(x + " " + y + " " + z + " | " + rx + " " + rz + " : " + TerrainManager.isTerrainSolid(rx, y, rz, chunkPosR));
+
+				if (y >= 0 && y < Chunk.CHUNK_HEIGHT && TerrainManager.isTerrainSolid(rx, y, rz, chunkPosR)) {
+					if (aabbVSaabb(min, max, x, y, z)){
+						System.out.println("----------");
+						return true;
+
+					}
+				}
+			}
+		}
+		System.out.println("----------");
+		return false;
+	}
+
+	public boolean aabbVSaabb(Vector3f minA, Vector3f maxA, float x, float y, float z){
+			return (minA.x <= x + 1 && maxA.x >= x) &&
+					(minA.y <= y + 1 && maxA.y >= y) &&
+					(minA.z <= z + 1 && maxA.z >= z);
+
+	}
+
+	/* We calculated the correct position of the object, now we need to apply a response: sliding.
 		   We first checked the remaining time, or the "velocity left". If it is null, then we stop here.
 		   Else, we need to project the remaining velocity on the plane on which we collided: this is the new
 		   velocity.
@@ -68,26 +96,40 @@ public class Collider {
 		   axis or z axis depending on the collision normal.
 		   So we need to apply the sliding algorithm twice, and update the remaining velocity accordingly.
 		 */
+	public boolean detectCollision(Transform transform, Vector3f movement) {
 
-		for(int i = 0; i < 2; i++){
-			if(remainingTime > 0) {
-				//float dotProd = velocity.dot(normal);
-				velocity.set(
-						velocity.x * (1 - Math.abs(normal.x)) * remainingTime,
-						velocity.y * (1 - Math.abs(normal.y)) * remainingTime ,
-						velocity.z * (1 - Math.abs(normal.z)) * remainingTime);
-				System.out.print("i: " + i + " velocity: ");Debug.printVector(velocity);
-				minTime = collisionLoop(transform, velocity);
-				System.out.println(minTime);
-				System.out.print("normal: "); Debug.printVector(normal);
-				transform.translate(velocity.x * minTime, velocity.y * minTime, velocity.z * minTime);
-				if(minTime > 0)
-					transform.translate(normal.x * 0.00001f, normal.y * 0.00001f, normal.z * 0.00001f);
-				remainingTime -= minTime;
-			}
+		boolean grounded = false;
+		if(movement.y == 0) grounded = true;
+		float minTime = 0;
+		float remainingTime = 1;
+
+		for(int i = 0; i < 3; i++){
+
+			movement.set(
+					movement.x * (1 - Math.abs(normal.x)) * remainingTime,
+					movement.y * (1 - Math.abs(normal.y)) * remainingTime ,
+					movement.z * (1 - Math.abs(normal.z)) * remainingTime);
+			normal.set(0);
+
+			minTime = collisionLoop(transform,movement);
+
+			//if(minTime > 0.00001f){
+				transform.translate(movement.x * minTime,movement.y * minTime, movement.z * minTime);
+				if(minTime < 1.0f){
+					if(normal.y > 0) grounded = true;
+					transform.translate(normal.x * Maths.EPSILON, normal.y * Maths.EPSILON, normal.z * Maths.EPSILON);
+				}
+				remainingTime = 1.0f - minTime;
+				//System.out.print("i: " + i + " Entry time: " + minTime + " normal: "); Debug.printVector(normal);
+			//}
+
+
+			//System.out.println(i + " : " +remainingTime);
+
+			if(remainingTime <= 0) break;
 		}
-
-		return true;
+		movement.set(0);
+		return grounded;
 	}
 
 	private Vector3f real = new Vector3f(); //player position in chunk space
@@ -121,15 +163,15 @@ public class Collider {
 		float minTime = 1.0f;
 		Vector2i chunkPos = transform.chunkPos; //By default the real chunk pos is the initial player one
 
-		for (int x = (int)Math.floor(Math.min(min.x,minI.x)); x <= (int)Math.floor(Math.max(max.x,maxI.x)); x ++) {
+		for (int x = (int)Math.floor(Math.min(min.x,minI.x))-1; x <= (int)Math.floor(Math.max(max.x,maxI.x))+1; x ++) {
 			int rx = Math.floorMod(x, Chunk.CHUNK_SIZE);
 			chunkPosR.x = chunkPos.x + Math.floorDiv(x, Chunk.CHUNK_SIZE);
 			
-			for (int z = (int) Math.floor(Math.min(min.z,minI.z)); z <= (int) Math.floor(Math.max(max.z,maxI.z)); z++) {
+			for (int z = (int) Math.floor(Math.min(min.z,minI.z))-1; z <= (int) Math.floor(Math.max(max.z,maxI.z))+1; z++) {
 				int rz = Math.floorMod(z, Chunk.CHUNK_SIZE);
 				chunkPosR.y = chunkPos.y + Math.floorDiv(z, Chunk.CHUNK_SIZE);
 
-				for (int y = (int) Math.floor(Math.min(min.y,minI.y)); y <= (int) Math.floor(Math.max(max.y,maxI.y)); y++) {
+				for (int y = (int) Math.floor(Math.min(min.y,minI.y))-1; y <= (int) Math.floor(Math.max(max.y,maxI.y))+1; y++) {
 					if (y >= 0 && y < Chunk.CHUNK_HEIGHT && TerrainManager.isTerrainSolid(rx, y, rz, chunkPosR)){
 						//System.out.println("rx: " + rx + " ry: " + y + " rz: " + rz + " chunkx: " + chunkPosR.x + " chunky: " + chunkPosR.y);
 						float collisionTime = sweptAABB(velocity,x,y,z,minTime);
@@ -201,9 +243,6 @@ public class Collider {
 			exit.z = Float.MAX_VALUE;
 		}
 		// find the earliest/latest times of collision
-		//if (entry.x > 1.0f) entry.x = -Float.MAX_VALUE;
-		//if (entry.y > 1.0f) entry.y = -Float.MAX_VALUE;
-		//if (entry.z > 1.0f) entry.z = -Float.MAX_VALUE;
 
 		float entryTime = Math.max(Math.max(entry.x,entry.z),entry.y);
 
@@ -227,7 +266,6 @@ public class Collider {
 			if(max.z < z || min.z > z + 1)
 				return 1.0f;
 		}
-
 
 		if (entry.x > entry.z) {
 			if(entry.x > entry.y){

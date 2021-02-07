@@ -17,6 +17,10 @@ public class Transform {
     private Vector3f rotation;
     private Vector3f scale;
 
+    private Vector3f forward;
+    private Vector3f right;
+
+
     public Vector2i chunkPos;
     public Chunk chunk;
     private Matrix4f transformationMatrix;
@@ -30,6 +34,8 @@ public class Transform {
         this.scale = scale;
         this.chunkPos = Chunk.positionToChunkPos(position);
         this.transformationMatrix = Maths.createTransformationMatrix(this);
+        this.forward = new Vector3f(0,0,1);
+        this.right = new Vector3f(1,0,0);
     }
 
     public Transform(Vector3f position, Vector3f rotation, float scale){
@@ -84,6 +90,15 @@ public class Transform {
         return v;
     }*/
 
+    public Vector3f forward(){
+        transformationMatrix.positiveZ(forward).negate();
+        return forward;
+    }
+
+    public Vector3f right(){
+        transformationMatrix.positiveX(right);
+        return right;
+    }
 
     public void translate(Vector3f translation) {
         translate(translation.x, translation.y, translation.z);

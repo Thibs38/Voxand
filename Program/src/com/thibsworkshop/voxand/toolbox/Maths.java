@@ -20,6 +20,8 @@ public class Maths {
 
 	public static final Matrix4f identity = new Matrix4f().identity();
 
+	public static final float EPSILON = 0.00001f;
+
 	public static Matrix4f createTransformationMatrix(Transform transform) {
 		Matrix4f matrix = new Matrix4f();
 		matrix.translate(transform.getPosition());
@@ -71,6 +73,10 @@ public class Maths {
 
 	public static float sqrDistance(Vector2f a, Vector2f b) {
 		return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+	}
+
+	public static float lerp(float a, float b, float t){
+		return a + (b - a) * t;
 	}
 
 	public static int sqrDistance(Vector2i a, Vector2i b) {
