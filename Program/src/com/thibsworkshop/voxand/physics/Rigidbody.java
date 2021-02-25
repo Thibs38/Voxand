@@ -41,7 +41,7 @@ public class Rigidbody {
         velocity.mul(1,rDrag,1);
 
         if(!velocity.equals(Maths.zero))
-            grounded = collider.detectCollision(entity.transform, movement);
+             collider.detectCollision(entity.transform, movement);
 
         grounded = collider.isGrounded(entity.transform);
             //velocity.set(0);

@@ -101,7 +101,7 @@ public class Player extends Entity {
 					dz += Math.sin(Math.toRadians(rot.y)) * realSpeed;
 					moved = true;
 				}*/
-				if(Input.isKeyDown(GLFW.GLFW_KEY_SPACE) && rigidbody.grounded){
+				if(Input.isKeyHold(GLFW.GLFW_KEY_SPACE) && rigidbody.grounded){
 					dy += jumpSpeed;
 					moved = true;
 				}
@@ -139,7 +139,6 @@ public class Player extends Entity {
 				}
 			}
 		}
-
 		Vector3f currentVelocity = rigidbody.velocity;
 		currentVelocity.x = dx;
 		currentVelocity.z = dz;

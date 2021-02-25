@@ -11,6 +11,7 @@ import com.thibsworkshop.voxand.models.TexturedModel;
 import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.physics.Collider;
+import com.thibsworkshop.voxand.physics.CollisionEngine;
 import com.thibsworkshop.voxand.physics.Rigidbody;
 import com.thibsworkshop.voxand.rendering.MasterRenderer;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
@@ -42,7 +43,7 @@ public class Test {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
         window = new Window(1280,720,false);
-        //window = new Window(1600,900,false);
+        //window = new Window(1920,1080,true);
 
         Time.init();
         Loader.init();
@@ -52,6 +53,8 @@ public class Test {
     }
 
     private void loop() {
+
+        CollisionEngine collisionEngine = new CollisionEngine();
 
         Material mat = new Material(10,1);
 
@@ -103,6 +106,8 @@ public class Test {
             player.move();
 
             //Game Logic
+
+            //Debug.printVector(player.transform.forward());
 
             if(Input.isKeyHold(GLFW_KEY_UP)){
                 sun.rotate(new Vector3f(0.025f,0,0));

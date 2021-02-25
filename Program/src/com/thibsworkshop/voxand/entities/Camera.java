@@ -47,7 +47,7 @@ public class Camera {
 		projectionMatrix.mul(viewMatrix,projectionViewMatrix);
 		frustumIntersection.set(projectionViewMatrix);
 		viewMatrix.positiveZ(forward).negate();
-
+		//transform.update();
 	}
 
 	public Matrix4f getProjectionMatrix(){ return projectionMatrix; }

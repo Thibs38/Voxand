@@ -323,8 +323,8 @@ public class TerrainManager {
 
 	public static byte getBlock(int x, int y, int z, int chunkx, int chunkz) {
 
-		Chunk t = chunks.get(new Vector2i(chunkx,chunkz));
-		if(t == null || t.grid ==null) {
+		Chunk t = chunks.get(new Vector2i(chunkx, chunkz));
+		if (t == null || t.grid == null) {
 			return -1;
 		} else {
 			return t.grid[x][y][z];
@@ -349,7 +349,6 @@ public class TerrainManager {
 		byte blockid = getBlock(x, y, z, chunkx, chunkz);
 		if(blockid == -1)
 			return false;
-		System.out.println(blockid);
 		return Block.blocks[blockid].isSolid();
 	}
 

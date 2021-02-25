@@ -88,8 +88,6 @@ public class Chunk{
 		return model;
 	}
 
-
-
 	public static Vector2i positionToChunkPos(float x, float z){
 		return new Vector2i((int)Math.floor(x/F_CHUNK_SIZE),(int)Math.floor(z/F_CHUNK_SIZE));
 	}
@@ -101,6 +99,25 @@ public class Chunk{
 	public static void positionToChunkPos(Vector3f position, Vector2i chunkPos){
 		chunkPos.x = (int)Math.floor(position.x/F_CHUNK_SIZE);
 		chunkPos.y = (int)Math.floor(position.z/F_CHUNK_SIZE);
+	}
+
+	/**
+	 * Returns chunkPos + floorDiv(pos,CHUNK_SIZE)
+	 * @param chunkPos the chunk position to correct
+	 * @param pos the relative position from this chunk position
+	 * @return the corrected chunk position +- 1
+	 */
+	public static int chunkPosCorrect(int chunkPos, int pos){
+		return chunkPos + Math.floorDiv(pos, CHUNK_SIZE);
+	}
+
+	/**
+	 * Returns floorMod(pos, CHUNK_SIZE)
+	 * @param pos the position to correct
+	 * @return the corrected position
+	 */
+	public static int posCorrect(int pos){
+		return Math.floorMod(pos, Chunk.CHUNK_SIZE);
 	}
 
 
