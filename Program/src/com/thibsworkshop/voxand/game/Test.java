@@ -42,8 +42,8 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        window = new Window(1280,720,false);
-        //window = new Window(1920,1080,true);
+        //window = new Window(1280,720,false);
+        window = new Window(1920,1080,true);
 
         Time.init();
         Loader.init();

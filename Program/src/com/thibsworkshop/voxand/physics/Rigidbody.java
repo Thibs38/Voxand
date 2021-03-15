@@ -36,18 +36,15 @@ public class Rigidbody {
     }
 
     public void update(){
-        movement.set(velocity).mul(Time.getDeltaTime());
-        float rDrag = Math.max(1-drag*Time.getDeltaTime(),0);
-        velocity.mul(1,rDrag,1);
 
-        if(!velocity.equals(Maths.zero))
-             collider.detectCollision(entity.transform, movement);
+        if(!velocity.equals(Maths.zero)){
+            movement.set(velocity).mul(Time.getDeltaTime());
+            float rDrag = Math.max(1-drag*Time.getDeltaTime(),0);
+            velocity.mul(1,rDrag,1);
+            collider.detectCollision(entity.transform, movement);
+            grounded = collider.isGrounded(entity.transform);
 
-        grounded = collider.isGrounded(entity.transform);
-            //velocity.set(0);
-        //}
-        //System.out.print("grounded: " + grounded);Debug.printVector(velocity);
-        //System.out.println(entity.transform.getPosition());
+        }
 
         if(grounded)
             velocity.y = 0;
@@ -61,5 +58,7 @@ public class Rigidbody {
 
     public void addVelocity(float dx, float dy, float dz) { velocity.add(dx,dy,dz); }
     public void addVelocity(Vector3f v) { velocity.add(v); }
+
+    public Collider getCollider(){ return collider; }
 
 }

@@ -1,20 +1,12 @@
 package com.thibsworkshop.voxand.physics;
 
-import com.thibsworkshop.voxand.debugging.Debug;
-import com.thibsworkshop.voxand.entities.Entity;
 import com.thibsworkshop.voxand.entities.Transform;
-import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.models.WireframeModel;
-import com.thibsworkshop.voxand.terrain.Chunk;
-import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.AABB;
 import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-import org.joml.Vector4f;
-import org.lwjgl.system.CallbackI;
 
 public class Collider {
 
@@ -35,7 +27,7 @@ public class Collider {
 	}
 
 	public void detectCollision(Transform transform, Vector3f movement){
-		collisionEngine.detectCollision(transform, movement, aabb, aura);
+		collisionEngine.entityVSterrain(transform, movement, aabb, aura);
 	}
 
 	public boolean isGrounded(Transform transform){

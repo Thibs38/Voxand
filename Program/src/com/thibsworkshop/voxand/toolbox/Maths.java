@@ -112,7 +112,22 @@ public class Maths {
 	 * @return squared distance between a and b
 	 */
 	public static float sqrDistance(Vector2f a, Vector2f b) {
-		return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+		float x = a.x - b.x;
+		float y = a.y - b.y;
+		return x * x + y * y;
+	}
+
+	/**
+	 * Calculates the squared distance between a and b
+	 * @param a first point
+	 * @param b second point
+	 * @return squared distance between a and b
+	 */
+	public static float sqrDistance(Vector3f a, Vector3f b) {
+		float x = a.x - b.x;
+		float y = a.y - b.y;
+		float z = a.z - b.z;
+		return x * x + y * y + z * z;
 	}
 
 	/**
@@ -122,7 +137,9 @@ public class Maths {
 	 * @return squared distance between a and b
 	 */
 	public static int sqrDistance(Vector2i a, Vector2i b) {
-		return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+		int x = a.x - b.x;
+		int y = a.y - b.y;
+		return x * x + y * y;
 	}
 
 	/**
