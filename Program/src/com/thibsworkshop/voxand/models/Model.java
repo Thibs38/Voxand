@@ -13,13 +13,13 @@ public class Model {
 	
 	public Model(String rawModel, String texture, Material material) {
 		this.rawModel = OBJLoader.loadObjModel(rawModel);
-		this.texture = new Texture(Loader.loadTexture(texture));
+		this.texture = Loader.loadTexture(texture);
 		this.material = material;
 	}
 
 	public Model(RawModel rawModel, String texture, Material material) {
 		this.rawModel = rawModel;
-		this.texture = new Texture(Loader.loadTexture(texture));
+		this.texture = Loader.loadTexture(texture);
 		this.material = material;
 	}
 

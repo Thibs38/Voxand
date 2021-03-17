@@ -9,7 +9,7 @@ import java.util.List;
 import com.thibsworkshop.voxand.models.RawModel;
 import com.thibsworkshop.voxand.terrain.Block;
 import com.thibsworkshop.voxand.textures.Texture;
-import org.lwjgl.BufferUtils;
+import com.thibsworkshop.voxand.toolbox.BufferTools;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -22,7 +22,10 @@ public class Loader {
 	private static List<Integer> vaos = new ArrayList<Integer>();
 	private static List<Integer> vbos = new ArrayList<Integer>();
 	private static List<Integer> textures = new ArrayList<Integer>();
-	
+
+	/**
+	 * Initializes loaders
+	 */
 	public static void init() {
 		Block.blocks = JsonLoader.loadBlocks("Program/res/data/blocks");
 	}
@@ -56,14 +59,11 @@ public class Loader {
 		return new RawModel(vaoID,iboID, indices.length);
 	}
 	
-	public static int loadTexture(String fileName) {
+	public static Texture loadTexture(String fileName) {
 		Texture texture = TextureLoader.loadTexture("PNG", "Program/res/textures/"+fileName+".png");
-		if(texture == null)
-			return 0;
-
-		int textureID = texture.getID();
-		textures.add(textureID);
-		return textureID;
+		if(texture == null) return null;
+		textures.add(texture.getID());
+		return texture;
 	}
 	
 	public static void cleanUp() {
@@ -94,7 +94,7 @@ public class Loader {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER,vboID);
-		FloatBuffer buffer = storeDataInFloatBuffer(data);
+		FloatBuffer buffer = BufferTools.storeDataInFloatBuffer(data);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 		GL20.glVertexAttribPointer(attributeNumber, coordsSize, GL11.GL_FLOAT, false, 0,0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -104,7 +104,7 @@ public class Loader {
 		int vboID = GL15.glGenBuffers();
 		vbos.add(vboID);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER,vboID);
-		ByteBuffer buffer = storeDataInByteBuffer(data);
+		ByteBuffer buffer = BufferTools.storeDataInByteBuffer(data);
 		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
 		GL30.glVertexAttribIPointer(attributeNumber, coordsSize, GL11.GL_BYTE, 0,0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
@@ -118,31 +118,9 @@ public class Loader {
 		int iboID = GL15.glGenBuffers();
 		vbos.add(iboID);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
-		IntBuffer buffer = storeDataInIntBuffer(indices);
+		IntBuffer buffer = BufferTools.storeDataInIntBuffer(indices);
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER,buffer,GL15.GL_STATIC_DRAW);
 		return iboID;
 		}
-	
-	private static IntBuffer storeDataInIntBuffer(int[] data) {
-		IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
-		buffer.put(data);
-		buffer.flip();
-		return buffer;
-	}
-	
-	private static ByteBuffer storeDataInByteBuffer(byte[] data) {
-		ByteBuffer buffer = BufferUtils.createByteBuffer(data.length);
-		buffer.put(data);
-		buffer.flip();
-		return buffer;
-	}
-	
-	
-	private static FloatBuffer storeDataInFloatBuffer(float[] data) {
-		FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
-		buffer.put(data);
-		buffer.flip();
-		return buffer;
-	}
 	
 }

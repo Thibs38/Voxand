@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.physics;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.Transform;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
@@ -8,8 +9,6 @@ import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-
-import java.util.Vector;
 
 public class CollisionEngine {
 
@@ -34,29 +33,22 @@ public class CollisionEngine {
                 pos.y - 2 * Maths.EPSILON,
                 (float)Maths.floatMod(pos.z, Chunk.D_CHUNK_SIZE));
 
+        //Debug.printVector(pos); Debug.printVector(real);
+        //Debug.printVector(transform.chunkPos);
+        //System.out.println("------------------");
+
         min.set(aabb.min.x + real.x, aabb.min.y + real.y, aabb.min.z + real.z);
-        max.set(aabb.max.x + real.x, aabb.max.y + real .y, aabb.max.z + real.z);
+        max.set(aabb.max.x + real.x, aabb.max.y + real.y, aabb.max.z + real.z);
 
         Vector2i chunkPos = transform.chunkPos; //By default the real chunk pos is the initial player one
         int y = (int) Math.floor(min.y);
 
-        for (int x = (int)Math.floor(min.x); x <= (int)Math.floor(max.x); x ++) {
-            int rx = Math.floorMod(x, Chunk.CHUNK_SIZE);
-            chunkPosR.x = chunkPos.x + Math.floorDiv(x, Chunk.CHUNK_SIZE);
-
-            for (int z = (int) Math.floor(min.z); z <= (int) Math.floor(max.z); z++) {
-                int rz = Math.floorMod(z, Chunk.CHUNK_SIZE);
-                chunkPosR.y = chunkPos.y + Math.floorDiv(z, Chunk.CHUNK_SIZE);
-
-                if (y >= 0 && y < Chunk.CHUNK_HEIGHT && TerrainManager.isTerrainSolid(rx, y, rz, chunkPosR)) {
-                    //if (aabbVSaabb(min, max, x, y, z, x + 1, y + 1, z + 1)) {
-                    return true;
-
-                    //}
-                }
-            }
-        }
-        return false;
+        boolean ok = checkSolid(
+                (int)Math.floor(min.x), y, (int) Math.floor(min.z),
+                (int)Math.floor(max.x), y, (int) Math.floor(max.z),
+                chunkPos.x,chunkPos.y
+                );
+        return ok;
     }
 
     private Vector3f AB = new Vector3f();
@@ -112,14 +104,20 @@ public class CollisionEngine {
      */
     public boolean checkSolid(int x, int y, int z, int X, int Y, int Z, int chunkX, int chunkZ) {
         for (int i = x; i <= X; i++) {
-            int rChunkX = Chunk.chunkPosCorrect(chunkX, i);
             int rx = Chunk.posCorrect(i);
+            int rChunkX = Chunk.chunkPosCorrect(chunkX, i);
             for (int k = z; k <= Z; k++) {
-                int rChunkZ = Chunk.chunkPosCorrect(chunkZ, k);
                 int rz = Chunk.posCorrect(k);
+                int rChunkZ = Chunk.chunkPosCorrect(chunkZ, k);
                 for (int j = y; j <= Y; j++) {
-                    if ( j >= 0 && j < Chunk.CHUNK_HEIGHT && TerrainManager.isTerrainSolid(rx, j, rz, rChunkX, rChunkZ))
+                    if ( j >= 0 && j < Chunk.CHUNK_HEIGHT && TerrainManager.isBlockSolid(rx, j, rz, rChunkX, rChunkZ)){
+                        //System.out.println("x: " + i + " y: " + j + " z: " + k + " chunkX: " + chunkX + " chunkZ: " + chunkZ);
+                        //System.out.println("rx: " + rx + " ry: " + y + " rz: " + rz + " rchunkX: " + rChunkX + " rchunkZ: " + rChunkZ);
+                        //System.out.println("---------------");
+
                         return true;
+                    }
+
                 }
             }
         }
@@ -218,7 +216,7 @@ public class CollisionEngine {
 
                 for (int y = minY; y <= maxY; y++) {
 
-                    if (y >= 0 && y < Chunk.CHUNK_HEIGHT && TerrainManager.isTerrainSolid(rx, y, rz, chunkPosR)){
+                    if (y >= 0 && y < Chunk.CHUNK_HEIGHT && TerrainManager.isBlockSolid(rx, y, rz, chunkPosR)){
                         float collisionTime = sweptAABB(velocity,x,y,z,minTime);
                         if(y == minIint.y && collisionTime < 1 && zOK){
                             //If the block we collided with is close to the entity,

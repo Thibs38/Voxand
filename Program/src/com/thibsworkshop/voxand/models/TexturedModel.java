@@ -21,7 +21,7 @@ public class TexturedModel {
 	}
 
 	public TexturedModel(String rawModel, String texture, Material material, Collider collider) {
-		this(OBJLoader.loadObjModel(rawModel),new Texture(Loader.loadTexture(texture)),material,collider);
+		this(OBJLoader.loadObjModel(rawModel),Loader.loadTexture(texture),material,collider);
 	}
 
 	public RawModel getRawModel() {

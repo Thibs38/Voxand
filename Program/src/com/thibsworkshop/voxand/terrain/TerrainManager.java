@@ -13,8 +13,8 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.debugging.Timing;
-import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.entities.Player;
 import com.thibsworkshop.voxand.game.Config;
 import com.thibsworkshop.voxand.io.Time;
@@ -24,7 +24,6 @@ import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 
 public class TerrainManager {
 
@@ -321,9 +320,23 @@ public class TerrainManager {
 		return chunks.get(coords);
 	}
 
+	private static final Vector2i getBlockBuffer = new Vector2i(0); //TODO: REALLY BAD IDEA
+	/**
+	 * Retrieves the block at the specified position.
+	 * Use preferably {@link #getBlock(int, int, int, Vector2i) getBlock}.
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 * @param chunkx chunk x coordinate
+	 * @param chunkz chunk z coordinate
+	 * @return The block type
+	 */
 	public static byte getBlock(int x, int y, int z, int chunkx, int chunkz) {
+		getBlockBuffer.set(chunkx,chunkz);
+		System.out.print("chunkx: " + chunkx + " chunkz: " + chunkz + "  ");
+		Debug.printVector(getBlockBuffer);
+		Chunk t = chunks.get(getBlockBuffer);
 
-		Chunk t = chunks.get(new Vector2i(chunkx, chunkz));
 		if (t == null || t.grid == null) {
 			return -1;
 		} else {
@@ -331,8 +344,21 @@ public class TerrainManager {
 		}
 	}
 
+	/**
+	 * Retrieves the block at the specified position.
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 * @param chunkPos chunk position
+	 * @return The block type
+	 */
 	public static byte getBlock(int x, int y, int z, Vector2i chunkPos){
-		return getBlock(x,y,z,chunkPos.x,chunkPos.y);
+		Chunk t = chunks.get(chunkPos);
+		if (t == null || t.grid == null) {
+			return -1;
+		} else {
+			return t.grid[x][y][z];
+		}
 	}
 
 	public static boolean isTerrainTransparent(int x, int y, int z, int chunkx, int chunkz) {
@@ -343,8 +369,17 @@ public class TerrainManager {
 		return Block.blocks[blockid].getTransparency() < 1;
 	}
 
-
-	public static boolean isTerrainSolid(int x, int y, int z, int chunkx, int chunkz) {
+	/**
+	 * Tests if the block specified with the arguments is solid or not.
+	 * Use preferably {@link #isBlockSolid(int, int, int, Vector2i) isBlockSolid}.
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 * @param chunkx x chunk coordinate
+	 * @param chunkz z chunk coordinate
+	 * @return true if the block is solid, false otherwise
+	 */
+	public static boolean isBlockSolid(int x, int y, int z, int chunkx, int chunkz) {
 
 		byte blockid = getBlock(x, y, z, chunkx, chunkz);
 		if(blockid == -1)
@@ -352,8 +387,19 @@ public class TerrainManager {
 		return Block.blocks[blockid].isSolid();
 	}
 
-	public static boolean isTerrainSolid(int x, int y, int z, Vector2i chunkPos) {
+	/**
+	 * Tests if the block specified with the arguments is solid or not.
+	 * @param x x coordinate
+	 * @param y y coordinate
+	 * @param z z coordinate
+	 * @param chunkPos chunk position
+	 * @return true if the block is solid, false otherwise
+	 */
+	public static boolean isBlockSolid(int x, int y, int z, Vector2i chunkPos) {
 
-		return isTerrainSolid(x,y,z,chunkPos.x,chunkPos.y);
+		byte blockid = getBlock(x, y, z, chunkPos);
+		if(blockid == -1)
+			return false;
+		return Block.blocks[blockid].isSolid();
 	}
 }

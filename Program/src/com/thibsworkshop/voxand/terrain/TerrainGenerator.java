@@ -3,7 +3,8 @@ package com.thibsworkshop.voxand.terrain;
 import com.thibsworkshop.voxand.io.Time;
 
 public class TerrainGenerator {
-	
+
+	//TODO: Create n generators with global variables to speed things up.
 	public static IndiceVerticeNormal generate(Chunk chunk) {
 
 		int verticesCountEstimate = 0;

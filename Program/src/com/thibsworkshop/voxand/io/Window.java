@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.io;
 
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL;
 
@@ -69,6 +70,8 @@ public class Window {
 		long monitor = 0;
 		if(FULLSCREEN) {
 		    monitor = glfwGetPrimaryMonitor();
+			PointerBuffer p = glfwGetMonitors();
+			monitor = p.get(1);
 		    //Retrieve the desktop resolution
 		    GLFWVidMode vidMode = glfwGetVideoMode(monitor);
 		    windowWidth = vidMode.width();

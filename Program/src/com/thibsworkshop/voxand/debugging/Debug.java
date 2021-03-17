@@ -10,6 +10,7 @@ import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2f;
+import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.system.CallbackI;
 
@@ -137,5 +138,9 @@ public class Debug {
     }
     public static void printVector(Vector2f v){
         System.out.printf("(%.2f, %.2f)\n", v.x, v.y);
+    }
+
+    public static void printVector(Vector2i v){
+        System.out.printf("(%d, %d)\n", v.x, v.y);
     }
 }
