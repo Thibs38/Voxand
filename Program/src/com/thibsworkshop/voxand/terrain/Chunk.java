@@ -99,6 +99,7 @@ public class Chunk{
 	public static void positionToChunkPos(Vector3f position, Vector2i chunkPos){
 		chunkPos.x = (int)Math.floor(position.x/F_CHUNK_SIZE);
 		chunkPos.y = (int)Math.floor(position.z/F_CHUNK_SIZE);
+		chunkPos.y = (int)Math.floor(position.z/F_CHUNK_SIZE);
 	}
 
 	/**

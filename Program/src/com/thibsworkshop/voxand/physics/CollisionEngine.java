@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.physics;
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.Transform;
 import com.thibsworkshop.voxand.terrain.Chunk;
+import com.thibsworkshop.voxand.terrain.TerrainGenerator;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.AABB;
 import com.thibsworkshop.voxand.toolbox.Maths;
@@ -36,7 +37,6 @@ public class CollisionEngine {
         //Debug.printVector(pos); Debug.printVector(real);
         //Debug.printVector(transform.chunkPos);
         //System.out.println("------------------");
-
         min.set(aabb.min.x + real.x, aabb.min.y + real.y, aabb.min.z + real.z);
         max.set(aabb.max.x + real.x, aabb.max.y + real.y, aabb.max.z + real.z);
 
@@ -48,6 +48,15 @@ public class CollisionEngine {
                 (int)Math.floor(max.x), y, (int) Math.floor(max.z),
                 chunkPos.x,chunkPos.y
                 );
+        /*if(ok){
+            System.out.print("Pos: ");Debug.printVector(pos);
+            System.out.print("Real: ");Debug.printVector(real);
+            System.out.println("CollisionEngine.isGrounded: ok: x: " +
+                    (int)Math.floor(min.x) + " y: " + y + " z: " + (int) Math.floor(min.z) + " X: " +
+                    (int)Math.floor(max.x) + " Y: " + y + " Z: " + (int) Math.floor(max.z) +
+                    " chunkx: " + chunkPos.x + " chunkz: " + chunkPos.y + "\n------------------");
+        }*/
+
         return ok;
     }
 
@@ -90,6 +99,8 @@ public class CollisionEngine {
                 (minA.z <= maxB.z && maxA.z >= minB.z);
     }
 
+    private final Vector2i getChunkPos = new Vector2i(0);
+
     /**
      * Check every block in the given boundaries and return false if none of them is solid
      * @param x min x
@@ -110,11 +121,15 @@ public class CollisionEngine {
                 int rz = Chunk.posCorrect(k);
                 int rChunkZ = Chunk.chunkPosCorrect(chunkZ, k);
                 for (int j = y; j <= Y; j++) {
-                    if ( j >= 0 && j < Chunk.CHUNK_HEIGHT && TerrainManager.isBlockSolid(rx, j, rz, rChunkX, rChunkZ)){
-                        //System.out.println("x: " + i + " y: " + j + " z: " + k + " chunkX: " + chunkX + " chunkZ: " + chunkZ);
-                        //System.out.println("rx: " + rx + " ry: " + y + " rz: " + rz + " rchunkX: " + rChunkX + " rchunkZ: " + rChunkZ);
-                        //System.out.println("---------------");
+                    getChunkPos.set(rChunkX, rChunkZ);
+                    if ( j >= 0 && j < Chunk.CHUNK_HEIGHT && TerrainManager.isBlockSolid(rx, j, rz, getChunkPos)){
+                        /*//System.out.println("x: " + i + " y: " + j + " z: " + k + " chunkX: " + chunkX + " chunkZ: " + chunkZ);
+                        System.out.println("rx: " + rx + " ry: " + y + " rz: " + rz + " rchunkX: " + rChunkX + " rchunkZ: " + rChunkZ);
+                        //System.out.println("Block: " + TerrainManager.getBlock(rx, j, rz, getChunkPos));
+                        //System.out.println("Chunk: " + TerrainManager.getChunk(getChunkPos).getChunkPos());
+                        System.out.println("Block in chunk: " + TerrainManager.getChunk(getChunkPos).grid[rx][j][rz]);
 
+                        //System.out.println("---------------");*/
                         return true;
                     }
 

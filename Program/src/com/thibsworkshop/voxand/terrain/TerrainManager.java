@@ -323,30 +323,6 @@ public class TerrainManager {
 		return chunks.get(coords);
 	}
 
-	private static final Vector2i getBlockBuffer = new Vector2i(0); //TODO: REALLY BAD IDEA
-	/**
-	 * Retrieves the block at the specified position.
-	 * Use preferably {@link #getBlock(int, int, int, Vector2i) getBlock}.
-	 * @param x x coordinate
-	 * @param y y coordinate
-	 * @param z z coordinate
-	 * @param chunkx chunk x coordinate
-	 * @param chunkz chunk z coordinate
-	 * @return The block type
-	 */
-	public static byte getBlock(int x, int y, int z, int chunkx, int chunkz) {
-		getBlockBuffer.set(chunkx,chunkz);
-		System.out.print("chunkx: " + chunkx + " chunkz: " + chunkz + "  ");
-		Debug.printVector(getBlockBuffer);
-		Chunk t = chunks.get(getBlockBuffer);
-
-		if (t == null || t.grid == null) {
-			return -1;
-		} else {
-			return t.grid[x][y][z];
-		}
-	}
-
 	/**
 	 * Retrieves the block at the specified position.
 	 * @param x x coordinate
@@ -370,24 +346,6 @@ public class TerrainManager {
 			return false;
 
 		return Block.blocks[blockid].getTransparency() < 1;
-	}
-
-	/**
-	 * Tests if the block specified with the arguments is solid or not.
-	 * Use preferably {@link #isBlockSolid(int, int, int, Vector2i) isBlockSolid}.
-	 * @param x x coordinate
-	 * @param y y coordinate
-	 * @param z z coordinate
-	 * @param chunkx x chunk coordinate
-	 * @param chunkz z chunk coordinate
-	 * @return true if the block is solid, false otherwise
-	 */
-	public static boolean isBlockSolid(int x, int y, int z, int chunkx, int chunkz) {
-
-		byte blockid = getBlock(x, y, z, chunkx, chunkz);
-		if(blockid == -1)
-			return false;
-		return Block.blocks[blockid].isSolid();
 	}
 
 	/**

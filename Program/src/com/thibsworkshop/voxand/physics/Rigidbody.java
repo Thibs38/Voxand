@@ -42,6 +42,7 @@ public class Rigidbody {
             float rDrag = Math.max(1-drag*Time.getDeltaTime(),0);
             velocity.mul(1,rDrag,1);
             collider.detectCollision(entity.transform, movement);
+            entity.transform.update();
             grounded = collider.isGrounded(entity.transform);
 
         }

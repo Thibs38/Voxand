@@ -33,7 +33,7 @@ public class Entity extends GameObject {
 	public void update(){
 		if(enabled){
 			rigidbody.update(); //Physics simulation, will move the entity & resolve collisions
-			transform.update(); //Will update the transform's matrices & variables
+			//transform.update(); //Update is done in rigidbody class
 		}
 	}
 	
