@@ -5,13 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.debugging.Timing;
@@ -22,12 +16,15 @@ import com.thibsworkshop.voxand.rendering.MasterRenderer;
 import com.thibsworkshop.voxand.terrain.TerrainGenerator.IndiceVerticeNormal;
 import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.Maths;
+import com.thibsworkshop.voxand.toolbox.Utility;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 public class TerrainManager {
 
 	public static Map<Vector2i, Chunk> chunks = new HashMap<Vector2i, Chunk>();
+
+	private Map<Vector2i,Callable<Chunk>> gridsToCreate = new HashMap<Vector2i,Callable<Chunk>>();
 
 	private Map<Vector2i,Future<Chunk>> gridsInCreation = new HashMap<Vector2i, Future<Chunk>>();
 	
@@ -47,6 +44,7 @@ public class TerrainManager {
 	private Vector2f campos;
 	
 	ExecutorService executor;
+	TerrainGenerator[] terrainGenerators;
 
 	public static String debugName = "Terrain Generation";
 
@@ -58,8 +56,10 @@ public class TerrainManager {
 		this.terrainInfo = terrainInfo;
 		MasterRenderer.terrainRenderer.linkManager(this);
 		MasterRenderer.lineRenderer.linkTerrainManager(this);
-		executor = new ThreadPoolExecutor(Config.chunkGenDist*2,Config.chunkGenDist*4*(Config.chunkGenDist+1)+1,5,TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
-
+		//executor = new ThreadPoolExecutor(Config.chunkGenDist*2,Config.chunkGenDist*4*(Config.chunkGenDist+1)+1,5,TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
+		executor = Executors.newFixedThreadPool(Utility.cores);
+		terrainGenerators = new TerrainGenerator[Utility.cores + 1];
+		for(int i = 0; i < Utility.cores + 1; i++) terrainGenerators[i] = new TerrainGenerator();
 		Timing.add(debugName,new String[]{
 			"Refreshing",
 			"Grid Generation",
@@ -81,7 +81,6 @@ public class TerrainManager {
 
 		Timing.start(debugName,"Refreshing");
 
-		Map<Vector2i,Callable<Chunk>> gridsToCreate = new HashMap<Vector2i,Callable<Chunk>>();
 
 		Vector2i playerPos = player.transform.chunkPos;
 
@@ -132,6 +131,7 @@ public class TerrainManager {
 		if(gridsToCreate.size() > 0) { //If we have grids to create
 			Timing.start(debugName,"Grid Generation");
 			generateGrids(gridsToCreate);
+			gridsToCreate.clear();
 			Timing.stop(debugName,"Grid Generation");
 		}
 
@@ -288,8 +288,11 @@ public class TerrainManager {
 
 		@Override
 		public IndiceVerticeNormal call() throws Exception {
-
-	        return TerrainGenerator.generate(chunk);
+			for(int i = 0; i < Utility.cores; i++){
+				if(!terrainGenerators[i].busy)
+					return terrainGenerators[i].generate(chunk);
+			}
+			return terrainGenerators[Utility.cores].generate(chunk);
 		}
 	}
 	
@@ -361,8 +364,8 @@ public class TerrainManager {
 		}
 	}
 
-	public static boolean isTerrainTransparent(int x, int y, int z, int chunkx, int chunkz) {
-		byte blockid = getBlock(x, y, z, chunkx, chunkz);
+	public static boolean isTerrainTransparent(int x, int y, int z, Vector2i chunkPos) {
+		byte blockid = getBlock(x, y, z, chunkPos);
 		if(blockid == -1)
 			return false;
 

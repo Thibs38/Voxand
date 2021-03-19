@@ -1,43 +1,52 @@
 package com.thibsworkshop.voxand.terrain;
 
 import com.thibsworkshop.voxand.io.Time;
+import org.joml.Vector2i;
+
+import java.util.Vector;
 
 public class TerrainGenerator {
 
-	//TODO: Create n generators with global variables to speed things up.
-	public static IndiceVerticeNormal generate(Chunk chunk) {
+	public boolean busy = false;
 
+	private final Vector2i chunkPos = new Vector2i(0);
+
+
+	public IndiceVerticeNormal generate(Chunk chunk) {
+		busy = true;
 		int verticesCountEstimate = 0;
-		
-		boolean[][] backOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
-		boolean[][] frontOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
-		boolean[][] rightOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
-		boolean[][] leftOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
 
 		int chunkx = chunk.getChunkPos().x;
 		int chunkz = chunk.getChunkPos().y;
-
+		final boolean[][] backOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
+		final boolean[][] frontOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
+		final boolean[][] rightOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
+		final boolean[][] leftOv = new boolean[Chunk.CHUNK_SIZE][Chunk.CHUNK_HEIGHT];
 		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
 			for(int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
-				backOv[x][y] = TerrainManager.isTerrainTransparent(x, y, Chunk.CHUNK_SIZE-1, chunkx, chunkz-1);
+				chunkPos.set(chunkx, chunkz-1);
+				backOv[x][y] = TerrainManager.isTerrainTransparent(x, y, Chunk.CHUNK_SIZE-1, chunkPos);
 			}
 		}
 		
 		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
 			for(int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
-				frontOv[x][y] = TerrainManager.isTerrainTransparent(x, y, 0, chunkx, chunkz+1);
+				chunkPos.set(chunkx, chunkz+1);
+				frontOv[x][y] = TerrainManager.isTerrainTransparent(x, y, 0, chunkPos);
 			}
 		}
 		
 		for(int z = 0; z < Chunk.CHUNK_SIZE; z++) {
 			for(int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
-				leftOv[z][y] = TerrainManager.isTerrainTransparent(Chunk.CHUNK_SIZE-1, y, z, chunkx-1, chunkz);
+				chunkPos.set(chunkx-1, chunkz);
+				leftOv[z][y] = TerrainManager.isTerrainTransparent(Chunk.CHUNK_SIZE-1, y, z, chunkPos);
 			}
 		}
 		
 		for(int z = 0; z < Chunk.CHUNK_SIZE; z++) {
 			for(int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
-				rightOv[z][y] = TerrainManager.isTerrainTransparent(0, y, z, chunkx+1, chunkz);
+				chunkPos.set(chunkx+1, chunkz);
+				rightOv[z][y] = TerrainManager.isTerrainTransparent(0, y, z, chunkPos);
 			}
 		}
 		
@@ -73,17 +82,17 @@ public class TerrainGenerator {
 			}
 		}
 		
-		float[] vertices = new float[verticesCountEstimate];
+		final float[] vertices = new float[verticesCountEstimate];
 		int verticeI = 0;//counter for the vertices
 		int verticesCount = 0;
-		
-		byte[] normals = new byte[verticesCountEstimate/3];
+
+		final byte[] normals = new byte[verticesCountEstimate/3];
 		int normalI = 0;//counter for the normals
-		
-		int[] indices = new int[(verticesCountEstimate/2) * 3];
+
+		final int[] indices = new int[(verticesCountEstimate/2) * 3];
 		int indiceI = 0;//counter for the indices
-		
-		byte[] blocks = new byte[verticesCountEstimate/3];
+
+		final byte[] blocks = new byte[verticesCountEstimate/3];
 		int blockI = 0;//counter for the colors
 		
 		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
@@ -229,8 +238,7 @@ public class TerrainGenerator {
 							
 							faces++;
 						}
-						
-						
+
 						for(int i = 0; i < faces; i++) {
 							
 							indices[indiceI++]= verticesCount;
@@ -245,21 +253,20 @@ public class TerrainGenerator {
 							
 							verticesCount += 4;
 						}
-						
 					}
 				}
 			}
 		}
-
-		long verticeTimeE = Time.getFrameMilliTime();
-
+		//long verticeTimeE = Time.getFrameMilliTime();
+		IndiceVerticeNormal ind = new IndiceVerticeNormal(vertices, indices, normals,blocks);
+		busy = false;
 		/*System.out.println(String.format("estimation: %d + Init time: %d grid time: %d vertice time: %d total time: %d", 
 				verticesCountEstimate,
 				initializationTimeE-initializationTime,
 				gridTimeE-offTimeE,
 				verticeTimeE-gridTimeE,
 				verticeTimeE-initializationTime));*/
-		return new IndiceVerticeNormal(vertices, indices, normals,blocks);
+		return ind;
 	}
 	
     public static class IndiceVerticeNormal{
