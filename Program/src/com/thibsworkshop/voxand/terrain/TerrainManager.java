@@ -1,264 +1,368 @@
 package com.thibsworkshop.voxand.terrain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Player;
 import com.thibsworkshop.voxand.game.Config;
+import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Time;
-import com.thibsworkshop.voxand.rendering.MasterRenderer;
-import com.thibsworkshop.voxand.terrain.TerrainGenerator.IndiceVerticeNormal;
+import com.thibsworkshop.voxand.rendering.renderers.MasterRenderer;
+import com.thibsworkshop.voxand.terrain.TerrainGenerator.IndicesVerticesNormals;
 import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import com.thibsworkshop.voxand.toolbox.Utility;
-import org.joml.Vector2f;
+
+import static org.lwjgl.glfw.GLFW.*;
 import org.joml.Vector2i;
 
 public class TerrainManager {
 
-	public static Map<Vector2i, Chunk> chunks = new HashMap<Vector2i, Chunk>();
+	public static final HashMap<Vector2i, Chunk> chunks = new HashMap<>();
 
-	private Map<Vector2i,Callable<Chunk>> gridsToCreate = new HashMap<Vector2i,Callable<Chunk>>();
+	private final HashMap<Vector2i,Future<Chunk>> gridsInCreation = new HashMap<>();
 
-	private Map<Vector2i,Future<Chunk>> gridsInCreation = new HashMap<Vector2i, Future<Chunk>>();
-	
-	private Map<Vector2i,Callable<IndiceVerticeNormal>> terrainsToCreate = new HashMap<Vector2i, Callable<IndiceVerticeNormal>>();
-	
-	private Map<Vector2i,Callable<IndiceVerticeNormal>> terrainsWaitingToCreate = new HashMap<Vector2i, Callable<IndiceVerticeNormal>>();
-	
-	private Map<Vector2i, Future<IndiceVerticeNormal>> terrainsInCreation = new HashMap<Vector2i, Future<IndiceVerticeNormal>>();
-	
-	private Map<Vector2i,IndiceVerticeNormal> calculatedTerrains = new HashMap<Vector2i,IndiceVerticeNormal>(); //Calculated terrains waited to be created
+	private final HashMap<Vector2i,Callable<IndicesVerticesNormals>> terrainsWaitingToCreate = new HashMap<>();
 
-	private Map<Vector2i,Chunk> terrainsToRender = new HashMap<>();
-	private TerrainInfo terrainInfo;
+	private final TreeMap<Vector2i,Callable<IndicesVerticesNormals>> terrainsToCreate = new TreeMap<>(layerComparator);
+
+	private final ArrayList<Future<IndicesVerticesNormals>> terrainsInCreation = new ArrayList<Future<IndicesVerticesNormals>>();
 	
-	private boolean refresh = false; // refresh the chunk every two frames
-	
-	private Vector2f campos;
-	
+	private final LinkedList<IndicesVerticesNormals> calculatedTerrains = new LinkedList<IndicesVerticesNormals>(); //Calculated terrains waited to be created
+
+	private final TerrainInfo terrainInfo;
+
 	ExecutorService executor;
-	TerrainGenerator[] terrainGenerators;
 
 	public static String debugName = "Terrain Generation";
 
-	private long lastClean = 0;
-	private long cleanGap = 5; // in seconds
+	private static final Vector2i playerChunkPos = Player.player.transform.chunkPos;
 
-	
+	public enum State{ LOOP, WAIT_GRIDS, ASSIGN_GRIDS, START_MODELS, WAIT_MODELS, LOAD_MODELS}
+
+	private State state;
+
+	public static TerrainManager main;
+
+	//<editor-fold desc="Comparators">
+	/**
+	 * Lookup table that associates a chunkPosition to an order and a layer
+	 */
+	private static final Map<Vector2i,Vector2i>  chunkOrder = new HashMap<>(Config.chunkGenDist*Config.chunkGenDist);
+
+	/**
+	 * Initialize the lookup table of chunk ordering.
+	 */
+	public static void init(){
+		int k = 0;
+		chunkOrder.put(new Vector2i(0,0), new Vector2i(k++,0));
+
+		for(int i = 1; i <= Config.chunkGenDist; i++){
+			for(int j = 0; j < i * 2; j++){
+				chunkOrder.put(new Vector2i(-i+j,-i), new Vector2i(k++,i));
+			}
+
+			for(int j = 0; j < i * 2; j++){
+				chunkOrder.put(new Vector2i(i,-i+j), new Vector2i(k++,i));
+			}
+
+			for(int j = 0; j < i * 2; j++){
+				chunkOrder.put(new Vector2i(i-j,i), new Vector2i(k++,i));
+			}
+
+			for(int j = 0; j < i * 2; j++){
+				chunkOrder.put(new Vector2i(-i,i-j), new Vector2i(k++,i));
+			}
+		}
+	}
+
+	private static final Vector2i compare1 = new Vector2i(0);
+	private static final Vector2i compare2 = new Vector2i(0);
+
+	/**
+	 * This position is set up at the loop state, and then doesn't change to ensure that the chunks that are currently
+	 * being treated are using the same position as reference.
+	 */
+	private static final Vector2i playerChunkPosTemp = new Vector2i(0);
+
+	/**
+	 * Compare two Vector2i based on the layer order:
+	 * 7 6 5
+	 * 8 0 4
+	 * 1 2 3
+	 */
+	public static Comparator<Vector2i> layerComparator = ( o1, o2 ) -> {
+		compare1.set(o1.x - playerChunkPosTemp.x, o1.y - playerChunkPosTemp.y);
+		compare2.set(o2.x - playerChunkPosTemp.x, o2.y - playerChunkPosTemp.y);
+		return chunkOrder.get(compare1).x - chunkOrder.get(compare2).x;
+	};
+
+	/**
+	 * Compare two Vector2i based on their length.
+	 */
+	public static Comparator<Vector2i> distanceComparator = (o1, o2) -> o1.x * o1.x + o1.y * o1.y - o2.x * o2.x - o2.y * o2.y;
+	//</editor-fold>
+
 	public TerrainManager(TerrainInfo terrainInfo) {
 		this.terrainInfo = terrainInfo;
 		MasterRenderer.terrainRenderer.linkManager(this);
 		MasterRenderer.lineRenderer.linkTerrainManager(this);
 		//executor = new ThreadPoolExecutor(Config.chunkGenDist*2,Config.chunkGenDist*4*(Config.chunkGenDist+1)+1,5,TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
 		executor = Executors.newFixedThreadPool(Utility.cores);
-		terrainGenerators = new TerrainGenerator[Utility.cores + 1];
-		for(int i = 0; i < Utility.cores + 1; i++) terrainGenerators[i] = new TerrainGenerator();
 		Timing.add(debugName,new String[]{
 			"Refreshing",
 			"Grid Generation",
 			"Model Generation"
 		});
+		init();
+		state = State.LOOP;
+		main = this;
 
-		lastClean = Time.getFrameMilliTime();
 	}
-	
-	public void refreshChunks(Player player) {
 
-		refresh = !refresh;
-		if(!refresh)
-			return;
+	//<editor-fold desc="Management">
+	private final Vector2i chunkPosTemp = new Vector2i(0);
+	public int currentLayer = 0;
 
-		//TODO: incremental loading: load the chunk near the player and then those farther
-		//TODO: divide the chunks into sub chunks of 32*32 and render them separately
-		// load several empty chunks on the same frame to avoid freezes
+	//OPTIMIZE: divide the chunks into sub chunks of 32*32 and render them separately
+	// load several empty chunks on the same frame to avoid freezes
 
-		Timing.start(debugName,"Refreshing");
+	/**
+	 * Refreshes the state of the manager.
+	 */
+	public void refreshChunks() {
+		switch (state) {
+			case LOOP -> {
+				//System.out.println("LOOP");
+				Timing.start(debugName,"Refreshing");
+				if(loopChunk())
+					state = State.WAIT_GRIDS;
+				Timing.stop(debugName,"Refreshing");
 
+				refreshChunks();
+			}
+			case WAIT_GRIDS -> {
+				//System.out.println("WAIT GRIDS");
+				if(checkForFutureGrids())
+					state = State.ASSIGN_GRIDS;
+			}
+			case ASSIGN_GRIDS -> {
+				//System.out.println("ASSIGN GRIDS");
+				Timing.start(debugName,"Refreshing");
+				assignGrids();
+				Timing.stop(debugName,"Refreshing");
+				state = State.START_MODELS;
+				refreshChunks();
+			}
+			case START_MODELS -> {
+				//System.out.println("START MODELS");
+				generateModels();
+				state = State.WAIT_MODELS;
+			}
+			case WAIT_MODELS -> {
+				//System.out.println("WAIT MODELS");
+				if(checkForFutureModels())
+					state = State.LOAD_MODELS;
+			}
+			case LOAD_MODELS -> {
+				//System.out.println("LOAD MODELS");
+				if(loadModels()){
+					//if(Input.isKeyDown(GLFW_KEY_ENTER))
+						state = State.LOOP;
+				}
+			}
+		}
+	}
 
-		Vector2i playerPos = player.transform.chunkPos;
+	/**
+	 * Loops through chunks around the player, and update them or add them to generation lists.
+	 */
+	private boolean loopChunk(){
+		playerChunkPosTemp.set(playerChunkPos);
 
-		for(int x = -Config.chunkGenDist; x <= Config.chunkGenDist; x++) {
-			for(int z = -Config.chunkGenDist; z <= Config.chunkGenDist; z++) {
-				int rx = x + playerPos.x;
-				int rz = z + playerPos.y;
+		boolean stop = false;
+		for(int i = 0; i < Config.chunkGenDist; i++){
+			for(int x = -i; x <= i; x++) {
+				for (int z = -i; z <= i; z++) {
+					int rx = x + playerChunkPosTemp.x;
+					int rz = z + playerChunkPosTemp.y;
 
-				Vector2i key = new Vector2i(rx,rz);
-				Chunk value = chunks.get(key);
+					chunkPosTemp.set(rx, rz);
+					Chunk value = chunks.get(chunkPosTemp);
 
-				int sqr_distance = Maths.sqrDistance(key,playerPos);
-
-				if(sqr_distance <= Config.sqr_chunkGenDist) {
-
-					boolean inRenderList = terrainsToRender.containsKey(key);
-
-					if(value == null) { //If the terrain doesn't exist, let's create it
-						if(!gridsInCreation.containsKey(key)) { // If the grid doesn't exist and it is not in creation, then we'll create it
-							gridsToCreate.put(key,new GridGeneratorCallable(key,terrainInfo));
-						}
-						continue;
-					}
-
-					value.update(sqr_distance);
-
-					if(sqr_distance <= Config.sqr_chunkLoadDist){ //At this distance we generate the model, keeping a grid-only border
-						if(terrainsWaitingToCreate.containsKey(key)) { // if the terrain has a grid and is waiting, we create it
-							terrainsToCreate.put(key,terrainsWaitingToCreate.get(key));
-							terrainsWaitingToCreate.remove(key);
-						}
-
-						if(sqr_distance <= Config.sqr_chunkViewDist) {
-							if(value.generated && !inRenderList) // If the terrain has a model and is not in the render list
-								terrainsToRender.put(key,value);
-						}else if(inRenderList){ // Else if the terrain in outside of the view dist and is in the render list we remove it
-							terrainsToRender.remove(value);
+					if (value == null) { //If the grid doesn't exist, let's create it
+						if (!gridsInCreation.containsKey(chunkPosTemp) //&& !gridsToCreate.containsKey(chunkPosTemp)
+						) { // If the grid doesn't exist and it is not in creation, then we'll create it
+							Vector2i v = new Vector2i(chunkPosTemp);
+							gridsInCreation.put(v, executor.submit(new GridGeneratorCallable(v, terrainInfo)));
+							if(!stop){
+								if(i > 0){
+									stop = true;
+									currentLayer = i;
+								}
+							}
 						}
 					}
 				}
 			}
+			if(stop) break;
 		}
-
-		cleanTerrains(player);
-
-		Timing.stop(debugName,"Refreshing");
-
-		if(gridsToCreate.size() > 0) { //If we have grids to create
-			Timing.start(debugName,"Grid Generation");
-			generateGrids(gridsToCreate);
-			gridsToCreate.clear();
-			Timing.stop(debugName,"Grid Generation");
-		}
-
-		if(gridsInCreation.size() > 0)
-			checkForFutureGrids(); // We check for future at each frame
-		
-		if(terrainsInCreation.size()>0) {
-			checkForFutureTerrains();
-		}
-		
-		if(gridsInCreation.size() == 0 && terrainsToCreate.size()>0) {
-			generateTerrains();
-			terrainsToCreate.clear();
-		}
-
-
-		if(terrainsInCreation.size() == 0 && calculatedTerrains.size() > 0){
-			Timing.start(debugName,"Model Generation");
-			generateCalculatedTerrains();
-			Timing.stop(debugName,"Model Generation");
-		}
-
+		cleanTerrains();
+		return stop;
 	}
 
-	private void cleanTerrains(Player player){
-		List<Chunk> toRemove = new ArrayList<>();
-		chunks.forEach((k, v) -> {
-			if(v.getLastTickUpdate() < Time.getTick()){
-				v.update(Maths.sqrDistance(k,player.transform.chunkPos));
-				if(v.getSqr_distance() > Config.sqr_chunkUnloadDist)
-					toRemove.add(v);
-			}
-		});
+	//OPTIMIZE: deal with the tick stuff
+	/**
+	 * Loops through known chunks and catch those too far away and unload them.
+	 */
+	private void cleanTerrains(){
+		Iterator it = chunks.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Vector2i, Chunk> entry = (Map.Entry) it.next();
+			Chunk v = entry.getValue();
+			Vector2i k = entry.getKey();
+			if(v.getLastTickUpdate() < Time.getTick()){ //If the tick is equal to the current one, no need to check
+				v.update(Maths.sqrDistance(k, playerChunkPosTemp));
 
-		for(Chunk t : toRemove){
-			chunks.remove(t.getChunkPos());
-			terrainsToRender.remove(t.getChunkPos());
-		}
-	}
-
-	private boolean firstTime = true;
-
-	private void generateCalculatedTerrains() {
-		int i = 4;
-
-		Iterator it = calculatedTerrains.entrySet().iterator();
-	    while (it.hasNext() && i > 0) {
-	        Map.Entry<Vector2i,IndiceVerticeNormal> entry = (Map.Entry)it.next();
-	        Chunk t = chunks.get(entry.getKey());
-			IndiceVerticeNormal v = entry.getValue();
-			if(t == null)
-				System.err.println("TERRAIN IS NULL");
-			else
-				t.generateTerrain(v.vertices, v.indices,v.blocks, v.normals);
-	        it.remove(); // avoids a ConcurrentModificationException
-	        i--;
-	    }
-	    
-
-	}
-	
-	private void checkForFutureTerrains() {
-	
-		List<Vector2i> futuresToRemove = new ArrayList<Vector2i>();
-		
-		terrainsInCreation.forEach((k,v) -> {
-			
-			if(v.isDone()) {
-				try {
-					calculatedTerrains.put(k,v.get());
-					futuresToRemove.add(k);
-				}catch (InterruptedException e) {
-					e.printStackTrace();
-					System.err.println("BIG PROBLEM ON TERRAIN MANAGER");		   
-
-				} catch (ExecutionException e) {
-					e.printStackTrace();
+				if(v.getSqr_distance() > Config.sqr_chunkUnloadDist){
+					it.remove();
+					terrainsWaitingToCreate.remove(k);
 				}
 			}
-		});
-		
 
-		
-		for(Vector2i k:futuresToRemove){
-			terrainsInCreation.remove(k);
 		}
-
 	}
-	
-	private void checkForFutureGrids() {
 
-		List<Vector2i> futuresToRemove = new ArrayList<Vector2i>();
-		
-		gridsInCreation.forEach((k,v) -> {
+	/**
+	 * Returns true if the specified vector is out of range of the generation
+	 * @param v the vector to test in local coordinates
+	 * @return true if out of range, false otherwise
+	 */
+	private boolean outOfRange(Vector2i v){
+		return v.x > Config.chunkGenDist || v.x < -Config.chunkGenDist || v.y > Config.chunkGenDist || v.y < -Config.chunkGenDist;
+	}
+
+	/**
+	 * Checks the grids in generation and retrieves those who are finished.
+	 * @return returns true if there's still grids that are being calculated, false if the job is finished
+	 */
+	private boolean checkForFutureGrids() {
+		Iterator it = gridsInCreation.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Vector2i, Future<Chunk>> entry = (Map.Entry) it.next();
+			Future<Chunk> v = entry.getValue();
+			Vector2i k = entry.getKey();
 			if(v.isDone()) {
 				try {
 					Chunk t = v.get();
 					chunks.put(k,t);
 					terrainsWaitingToCreate.put(k,new TerrainGeneratorCallable(t));
-					futuresToRemove.add(k);
+					it.remove();
 				}catch (InterruptedException e) {
 					e.printStackTrace();
-					System.err.println("BIG PROBLEM ON TERRAIN MANAGER");		   
-
+					System.err.println("BIG PROBLEM ON TERRAIN MANAGER");
 				} catch (ExecutionException e) {
 					e.printStackTrace();
 				}
 			}
-		});
+		}
 
-		for(Vector2i k:futuresToRemove){
-			gridsInCreation.remove(k);
+		return gridsInCreation.isEmpty();
+	}
+
+	/**
+	 * Loops trough the generated grids and decide which models should be generated based on their distance from player
+	 */
+	private void assignGrids(){
+		Iterator it = terrainsWaitingToCreate.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Vector2i, Callable<IndicesVerticesNormals>> entry = (Map.Entry) it.next();
+			Vector2i k = entry.getKey();
+			chunkPosTemp.set(k.x - playerChunkPosTemp.x, k.y - playerChunkPosTemp.y);
+			if(outOfRange(chunkPosTemp)){
+				it.remove();
+				chunks.remove(k);
+				continue;
+			}
+			int layer = chunkOrder.get(chunkPosTemp).y;
+			if(layer < currentLayer){
+				int sqr_distance = Maths.sqrMagnitude(chunkPosTemp);
+				if (sqr_distance <= Config.sqr_chunkLoadDist) { //At this distance we generate the model, keeping a grid-only square border
+					terrainsToCreate.put(k, entry.getValue());
+					it.remove();
+				}
+			}
 		}
 	}
-	
-	private void generateTerrains() {
-		terrainsToCreate.forEach((k,v) -> {
-			terrainsInCreation.put(k,executor.submit(v));
-		});
+
+	/**
+	 * Starts the generation of the models.
+	 */
+	private void generateModels() {
+		Iterator it = terrainsToCreate.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<Vector2i, Callable<IndicesVerticesNormals>> entry = (Map.Entry)it.next();
+			terrainsInCreation.add(executor.submit(entry.getValue()));
+			it.remove();
+		}
 	}
 
-	private void generateGrids(Map<Vector2i,Callable<Chunk>> gridsToCreate) {
-		gridsToCreate.forEach((k, v) -> {
-			gridsInCreation.put(k,executor.submit(v));
-		});
+	/**
+	 * Checks the models in generation and retrieves those who are finished.
+	 * @return returns true if there's still models that are being calculated, false if the job is finished
+	 */
+	private boolean checkForFutureModels() {
+		for(int i = 0; i < terrainsInCreation.size(); i++){
+			Future<IndicesVerticesNormals> f = terrainsInCreation.get(i);
+			if(f.isDone()){
+				try{
+					IndicesVerticesNormals value = f.get();
+					int j = 0;
+					boolean added = false;
+					for(IndicesVerticesNormals ind : calculatedTerrains){ //We add values sorted
+						if(layerComparator.compare(ind.chunk.getChunkPos(), value.chunk.getChunkPos()) > 0){
+							calculatedTerrains.add(j,value);
+							added = true;
+							break;
+						}
+						j++;
+					}
+					if(!added){
+						if(calculatedTerrains.isEmpty())
+							calculatedTerrains.add(value);
+						else
+							calculatedTerrains.addLast(value);
+					}
+					terrainsInCreation.remove(i);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+					System.err.println("BIG PROBLEM ON TERRAIN MANAGER");
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		loadModels();
+		return terrainsInCreation.isEmpty();
 	}
 
+	/**
+	 * Loads generated models into the graphics card
+	 */
+	private boolean loadModels() {
+		if(!calculatedTerrains.isEmpty()){
+			IndicesVerticesNormals v = calculatedTerrains.getFirst();
+			v.chunk.generateTerrain(v.vertices, v.indices,v.blocks, v.normals);
+			calculatedTerrains.removeFirst();
+		}
+		return calculatedTerrains.isEmpty();
+	}
+
+	/**
+	 * Properly stop the manager.
+	 */
 	public void cleanUp() {
 		executor.shutdown(); // Disable new tasks from being submitted
 		   try {
@@ -276,8 +380,11 @@ public class TerrainManager {
 		     Thread.currentThread().interrupt();
 		   }
 	}
-	
-	public class TerrainGeneratorCallable implements Callable<IndiceVerticeNormal>{
+	//</editor-fold>
+
+	//<editor-fold desc="Callables">
+
+	public class TerrainGeneratorCallable implements Callable<IndicesVerticesNormals>{
 		
 		Chunk chunk;
 
@@ -287,18 +394,63 @@ public class TerrainManager {
 		}
 
 		@Override
-		public IndiceVerticeNormal call() throws Exception {
-			for(int i = 0; i < Utility.cores; i++){
-				if(!terrainGenerators[i].busy)
-					return terrainGenerators[i].generate(chunk);
+		public IndicesVerticesNormals call() {
+			Vector2i temp = new Vector2i(0);
+
+			int x = chunk.getChunkPos().x;
+			int z = chunk.getChunkPos().y;
+
+
+			Chunk back = chunks.get(temp.set(x,z-1));
+			Chunk front = chunks.get(temp.set(x,z+1));
+			Chunk right = chunks.get(temp.set(x+1,z));
+			Chunk left = chunks.get(temp.set(x-1,z));
+
+			byte[][][] backB = null;
+			byte[][][] frontB = null;
+			byte[][][] rightB = null;
+			byte[][][] leftB = null;
+
+			if(back != null)
+				backB = back.grid;
+			else{
+				System.out.print("null -z: ");Debug.printVector(temp.set(x,z-1));
+				System.out.println("current layer: " + currentLayer);
+				Debug.printVector(playerChunkPosTemp);
+				System.out.println("");
 			}
-			return terrainGenerators[Utility.cores].generate(chunk);
+			if(front != null)
+				frontB = front.grid;
+			else{
+				System.out.print("null z: ");Debug.printVector(temp.set(x,z+1));
+				System.out.println("current layer: " + currentLayer);
+				Debug.printVector(playerChunkPosTemp);
+				System.out.println("");
+			}
+			if(right != null)
+				rightB = right.grid;
+			else{
+				System.out.print("null x: ");Debug.printVector(temp.set(x+1,z));
+				System.out.println("current layer: " + currentLayer);
+				Debug.printVector(playerChunkPosTemp);
+				System.out.println("");
+			}
+			if(left != null)
+				leftB = left.grid;
+			else{
+				System.out.print("null -x: ");Debug.printVector(temp.set(x-1,z));
+				System.out.println("current layer: " + currentLayer);
+				Debug.printVector(playerChunkPosTemp);
+				System.out.println("");
+			}
+
+			return TerrainGenerator.generate(chunk, backB, frontB, rightB, leftB);
 		}
 	}
 	
 	public class GridGeneratorCallable implements Callable<Chunk>{
 		
-		Vector2i chunkPos;
+		public Vector2i chunkPos;
 		TerrainInfo tinfo;
 
 		public GridGeneratorCallable(Vector2i chunkPos, TerrainInfo tinfo) {
@@ -307,17 +459,13 @@ public class TerrainManager {
 		}
 
 		@Override
-		public Chunk call() throws Exception {
+		public Chunk call() {
 	        return GridGenerator.generate(chunkPos,tinfo);
 		}
 	}
-	
-	
-	//-----------------------  Get Information on Terrain ----------------------//
-	
-	public Map<Vector2i,Chunk> getTerrainsToRender(){
-		return terrainsToRender;
-	}
+	//</editor-fold>
+
+	//<editor-fold desc="Getters">
 
 	public static Chunk getChunk(Vector2i coords){
 		return chunks.get(coords);
@@ -363,4 +511,5 @@ public class TerrainManager {
 			return false;
 		return Block.blocks[blockid].isSolid();
 	}
+	//</editor-fold>
 }

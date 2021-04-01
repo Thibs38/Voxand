@@ -1,9 +1,9 @@
-package com.thibsworkshop.voxand.lighting;
+package com.thibsworkshop.voxand.rendering.lighting;
 
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector3f;
 
-//TODO rotation is not satifying
+//OPTIMIZE rotation is not satifying
 public class DirectionalLight extends Light {
 	
 	private Vector3f direction;

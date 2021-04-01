@@ -1,18 +1,14 @@
 package com.thibsworkshop.voxand.debugging;
 
 
-//TODO: add a method to destroy the wireframe, and more generally destroy every debug tool.
-
 import com.thibsworkshop.voxand.entities.GameObjectManager;
-import com.thibsworkshop.voxand.models.WireframeModel;
+import com.thibsworkshop.voxand.rendering.models.WireframeModel;
 import com.thibsworkshop.voxand.terrain.Chunk;
-import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.lwjgl.system.CallbackI;
 
 // A class to manage debugging tools
 public class Debug {

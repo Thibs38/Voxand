@@ -2,12 +2,10 @@ package com.thibsworkshop.voxand.terrain;
 
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.loaders.Loader;
-import com.thibsworkshop.voxand.models.RawModel;
-import com.thibsworkshop.voxand.models.WireframeModel;
+import com.thibsworkshop.voxand.rendering.models.RawModel;
+import com.thibsworkshop.voxand.rendering.models.WireframeModel;
 import com.thibsworkshop.voxand.toolbox.AABB;
 import com.thibsworkshop.voxand.toolbox.Color;
-import com.thibsworkshop.voxand.toolbox.Maths;
-import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
@@ -32,6 +30,7 @@ public class Chunk{
 	public static WireframeModel wireModel;
 
 	public boolean generated = false;
+	public boolean visible = false;
 	
 	private RawModel model;
 
@@ -145,7 +144,7 @@ public class Chunk{
 		if (this == o) return true;
 		if (!(o instanceof Chunk)) return false;
 		Chunk te = (Chunk) o;
-		return chunkPos == te.chunkPos;
+		return chunkPos.equals(te.chunkPos);
 	}
 
 	@Override

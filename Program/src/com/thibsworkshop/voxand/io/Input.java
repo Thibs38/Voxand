@@ -48,8 +48,8 @@ public class Input {
 	private static GLFWCursorPosCallback cursorPosCallback;
 	private static GLFWMouseButtonCallback mouseButtonCallback;
 
-	//TODO: current keyboard is american
-	//TODO: sometimes key is hold where it is not
+	//FIXME: sometimes key is hold where it is not
+	//FIXME: when first moving the mouse, the movement is really sharp
 	public Input(Window window) {
 		
 		this.window = window;

@@ -1,7 +1,6 @@
 package com.thibsworkshop.voxand.entities;
 
-import com.thibsworkshop.voxand.models.TexturedModel;
-import com.thibsworkshop.voxand.physics.Collider;
+import com.thibsworkshop.voxand.rendering.models.TexturedModel;
 
 public class TileEntity extends GameObject {
 

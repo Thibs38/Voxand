@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.thibsworkshop.voxand.models.RawModel;
+import com.thibsworkshop.voxand.rendering.models.RawModel;
 
 import org.joml.Vector2f;
 import org.joml.Vector3f;

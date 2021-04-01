@@ -71,7 +71,7 @@ public class Window {
 		if(FULLSCREEN) {
 		    monitor = glfwGetPrimaryMonitor();
 			PointerBuffer p = glfwGetMonitors();
-			monitor = p.get(1);
+			monitor = p.get(0);
 		    //Retrieve the desktop resolution
 		    GLFWVidMode vidMode = glfwGetVideoMode(monitor);
 		    windowWidth = vidMode.width();

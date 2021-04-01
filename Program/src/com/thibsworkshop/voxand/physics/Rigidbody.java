@@ -12,8 +12,7 @@ import org.joml.Vector3f;
 public class Rigidbody {
 
     public static float gravity = -9.81f;
-    public static float drag = 0.9f;
-    private Vector3f dragVector;
+    public float drag = 0.9f;
     public Vector3f velocity;
     private Vector3f movement; //Movement calculated from the velocity
     public float mass;
@@ -31,7 +30,6 @@ public class Rigidbody {
         this.entity = entity;
         velocity = new Vector3f(0);
         movement = new Vector3f(0);
-        dragVector = new Vector3f(0);
         collider = entity.getModel().collider;
     }
 

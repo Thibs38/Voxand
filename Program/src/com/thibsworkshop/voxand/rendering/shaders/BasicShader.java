@@ -1,10 +1,8 @@
-package com.thibsworkshop.voxand.shaders;
+package com.thibsworkshop.voxand.rendering.shaders;
 
-import java.util.List;
-
-import com.thibsworkshop.voxand.lighting.DirectionalLight;
-import com.thibsworkshop.voxand.lighting.Light;
-import com.thibsworkshop.voxand.lighting.PointLight;
+import com.thibsworkshop.voxand.rendering.lighting.DirectionalLight;
+import com.thibsworkshop.voxand.rendering.lighting.Light;
+import com.thibsworkshop.voxand.rendering.lighting.PointLight;
 import org.joml.Vector3f;
 import org.joml.Matrix4f;
 
@@ -17,7 +15,7 @@ public class BasicShader extends ShaderProgram{
 	private int location_viewMatrix;
 	private int[] location_lightPosition;
 	private int location_fogDensity;
-	private int location_fogGradient;
+	private int location_fogDistance;
 	
 	private int location_lightCount;
 	
@@ -43,7 +41,7 @@ public class BasicShader extends ShaderProgram{
 		location_viewMatrix = super.getUniformLocation("viewMatrix");
 	
 		location_fogDensity = super.getUniformLocation("fogDensity");
-		location_fogGradient = super.getUniformLocation("fogGradient");
+		location_fogDistance = super.getUniformLocation("fogDistance");
 		
 		//Both
 		location_lightCount = super.getUniformLocation("lightCount");
@@ -91,14 +89,11 @@ public class BasicShader extends ShaderProgram{
 		super.loadVector(location_directionalLightColor, sun.getIntensityColor());
 	}
 	
-	public void loadFogVariables(float density, float gradient, Vector3f color) {
+	public void loadFogVariables(float density, float distance, Vector3f color) {
 		super.loadVector(location_skyColor, color);
 		super.loadFloat(location_fogDensity, density);
-		super.loadFloat(location_fogGradient, gradient);
-
+		super.loadFloat(location_fogDistance, distance);
 	}
-	
-
 
 	@Override
 	protected void bindAttributes() {

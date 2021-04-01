@@ -38,14 +38,13 @@ uniform vec3 directionalLightColor;
 uniform int lightCount;
 
 uniform float fogDensity;
-uniform float fogGradient;
+uniform float fogDistance;
 
 void main(void){
 
 	vec4 worldPosition = vec4(position + chunkPosition,1.0);
-	vec4 positionRelativeToCam = viewMatrix * worldPosition;
-	
-	gl_Position = projectionMatrix * positionRelativeToCam;
+
+	gl_Position = projectionMatrix * viewMatrix * worldPosition;
 	
 	color_frag = blocks[block_id].color;
 	shineDamper_frag = blocks[block_id].shineDamper;
@@ -60,6 +59,6 @@ void main(void){
 	directionalLightReflected = reflect(-directionalLight,unitNormal);
 	
 	toCameraVector = (inverse(viewMatrix) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
-	
-	visibility = clamp(exp(-pow(length(positionRelativeToCam.xyz)*fogDensity,fogGradient)),0.0,1.0);
+
+	visibility = clamp(exp((fogDistance - length(toCameraVector.xz)-0.2*toCameraVector.y)*fogDensity),0.0,1.0);
 }

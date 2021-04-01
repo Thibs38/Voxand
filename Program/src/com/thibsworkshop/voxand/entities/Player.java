@@ -1,19 +1,15 @@
 package com.thibsworkshop.voxand.entities;
 
-import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Time;
-import com.thibsworkshop.voxand.models.TexturedModel;
-import com.thibsworkshop.voxand.physics.Collider;
-import com.thibsworkshop.voxand.physics.Rigidbody;
+import com.thibsworkshop.voxand.rendering.models.TexturedModel;
 import org.lwjgl.glfw.GLFW;
 import org.joml.Vector3f;
-import org.lwjgl.system.CallbackI;
 
 
 public class Player extends Entity {
 
-	private final float speed = 10;
+	private final float speed = 2;
 	private final float rotationSpeed = 20f;
 	private final float jumpSpeed = 20f;
 
@@ -21,9 +17,9 @@ public class Player extends Entity {
 
 	public static Player player;
 
-	enum Mode { Survival, Spectator};
+	public enum Mode { Survival, Spectator};
 
-	private Mode mode = Mode.Survival;
+	public Mode mode = Mode.Spectator;
 	
 	public Player(TexturedModel texturedModel, float mass, Camera camera) {
 		super(texturedModel, new Transform(), mass);
@@ -32,7 +28,8 @@ public class Player extends Entity {
 		camera.transform.setPosition(transform.getPosition());
 		camera.transform.translate(0,10,0);
 		render = false;
-		enabled = true;
+		enabled = false; //Player is disabled because it shouldn't be updated through the gameobject manager
+		rigidbody.drag = 4;
 	}
 
 	@Override
@@ -42,13 +39,11 @@ public class Player extends Entity {
 
 	Vector3f xVelocity = new Vector3f(0);
 	Vector3f zVelocity = new Vector3f(0);
-	public boolean move() {
-		float realSpeed = speed; //TODO: speed not calculated correctly
+	public void move() {
+		float realSpeed = speed;
 		float realRotationSpeedx = rotationSpeed * Input.getAcceleration().x * Time.getDeltaTime();
 		float realRotationSpeedy = rotationSpeed * Input.getAcceleration().y * Time.getDeltaTime();
-		float dx = 0;
 		float dy = 0;
-		float dz = 0;
 
 		boolean moved = false;
 		Vector3f camRot = camera.transform.getRotation();
@@ -70,11 +65,9 @@ public class Player extends Entity {
 		transform.setRotation(0, camRot.y, 0);
 		//camera.transform.setRotation(camRot);
 
-		Vector3f rot = transform.getRotation();
-
 
 		//Applying Inputs
-		switch (mode) { //TODO: can be optimized using matrices
+		switch (mode) { //OPTIMIZE: can be optimized using matrices
 			case Survival -> {
 				zVelocity.set(transform.forward());
 				zVelocity.mul(Input.getAxis(Input.AxisName.Vertical) * realSpeed);
@@ -107,52 +100,34 @@ public class Player extends Entity {
 				}
 			}
 			case Spectator -> {
-				if (Input.isKeyHold(GLFW.GLFW_KEY_Z)) {
-					dx += Math.sin(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x)) * realSpeed;
-					dz -= Math.cos(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x)) * realSpeed;
-					dy -= Math.sin(Math.toRadians(camRot.x)) * realSpeed;
-					moved = true;
-				}
-				if (Input.isKeyHold(GLFW.GLFW_KEY_S)) {
-					dx -= Math.sin(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x)) * realSpeed;
-					dz += Math.cos(Math.toRadians(camRot.y)) * Math.cos(Math.toRadians(camRot.x)) * realSpeed;
-					dy += Math.sin(Math.toRadians(camRot.x)) * realSpeed;
-					moved = true;
-				}
-				if (Input.isKeyHold(GLFW.GLFW_KEY_Q)) {
-					dx -= Math.cos(Math.toRadians(camRot.y)) * realSpeed;
-					dz -= Math.sin(Math.toRadians(camRot.y)) * realSpeed;
-					moved = true;
-				}
-				if (Input.isKeyHold(GLFW.GLFW_KEY_D)) {
-					dx += Math.cos(Math.toRadians(camRot.y)) * realSpeed;
-					dz += Math.sin(Math.toRadians(camRot.y)) * realSpeed;
-					moved = true;
-				}
-				if (Input.isKeyHold(GLFW.GLFW_KEY_SPACE)) {
-					dy += realSpeed;
-					moved = true;
-				}
-				if (Input.isKeyHold(GLFW.GLFW_KEY_LEFT_SHIFT)) {
-					dy -= realSpeed;
-					moved = true;
-				}
+				zVelocity.set(camera.transform.forward());
+				zVelocity.mul(Input.getAxis(Input.AxisName.Vertical)*realSpeed);
+
+				xVelocity.set(transform.right());
+				xVelocity.mul(Input.getAxis(Input.AxisName.Horizontal) * realSpeed);
+
+				if(Input.isKeyHold(GLFW.GLFW_KEY_SPACE))
+					dy += jumpSpeed/4f;
+				if(Input.isKeyHold(GLFW.GLFW_KEY_LEFT_SHIFT))
+					dy -= jumpSpeed/4f;
 			}
 		}
 		Vector3f currentVelocity = rigidbody.velocity;
-		currentVelocity.x = dx;
-		currentVelocity.z = dz;
 		currentVelocity.y += dy;
 		rigidbody.addVelocity(xVelocity);
 		rigidbody.addVelocity(zVelocity);
+		if(mode == Mode.Spectator){
+			float rDrag = Math.max(1- rigidbody.drag*Time.getDeltaTime(),0);
+			currentVelocity.mul(rDrag,1,rDrag);
+		}
 		xVelocity.set(0);
 		zVelocity.set(0);
 		super.update(); //We update the entity, which will trigger physics calculation and calculate the final pos
 		camera.transform.setPosition(transform.getPosition());//We apply the final translation to the camera
 		camera.transform.translate(0,1.5f,0);
+		camera.transform.update();
 		camera.updateMatrices();
 
-		return moved;
 	}
 
 	

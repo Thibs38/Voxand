@@ -1,11 +1,11 @@
-package com.thibsworkshop.voxand.shaders;
+package com.thibsworkshop.voxand.rendering.shaders;
 
 import org.joml.Matrix4f;
 
 public class StaticShader extends BasicShader{
 
-	private static final String VERTEX_FILE = "vertexShader";
-	private static final String FRAGMENT_FILE = "fragmentShader";
+	private static final String VERTEX_FILE = "objectVertexShader.vert";
+	private static final String FRAGMENT_FILE = "objectFragmentShader.frag";
 
 	private int location_shineDamper;
 	private int location_reflectivity;

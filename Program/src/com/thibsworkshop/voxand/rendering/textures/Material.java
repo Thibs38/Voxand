@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.textures;
+package com.thibsworkshop.voxand.rendering.textures;
 
 public class Material {
 

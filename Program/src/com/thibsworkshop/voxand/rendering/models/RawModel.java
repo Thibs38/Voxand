@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.models;
+package com.thibsworkshop.voxand.rendering.models;
 
 public class RawModel {
 

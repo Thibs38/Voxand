@@ -1,6 +1,4 @@
-package com.thibsworkshop.voxand.shaders;
-
-import java.util.List;
+package com.thibsworkshop.voxand.rendering.shaders;
 
 import com.thibsworkshop.voxand.terrain.Block;
 import org.joml.Vector3f;
@@ -9,8 +7,8 @@ import org.joml.Vector4f;
 
 public class TerrainShader extends BasicShader{
 	
-	private static final String VERTEX_FILE = "terrainVertexShader";
-	private static final String FRAGMENT_FILE = "terrainFragmentShader";
+	private static final String VERTEX_FILE = "terrainVertexShader.vert";
+	private static final String FRAGMENT_FILE = "terrainFragmentShader.frag";
 	
 	private int[] location_block_color;
 	private int[] location_block_reflectivity;

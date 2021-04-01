@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.shaders;
+package com.thibsworkshop.voxand.rendering.shaders;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

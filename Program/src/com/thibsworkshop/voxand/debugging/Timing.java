@@ -12,7 +12,7 @@ public class Timing {
 
     //IMPORTANT: One record at a time for each method of each class, otherwise timing wont be correct
 
-    //TODO: Maybe change the List of data to an array of fixed size, like 100, to avoid deleting the first element of the list
+    //OPTIMIZE: Maybe change the List of data to an array of fixed size, like 100, to avoid deleting the first element of the list
     private static Map<String, Map<String, List<Long>>> data = new HashMap<>(); //The data
     private static Map<String, Map<String, Boolean>> enabled = new HashMap<>(); //Is the method enabled for recording?
 

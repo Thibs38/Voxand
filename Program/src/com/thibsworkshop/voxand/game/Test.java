@@ -1,21 +1,19 @@
 package com.thibsworkshop.voxand.game;
 
-import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.*;
 import com.thibsworkshop.voxand.io.Time;
-import com.thibsworkshop.voxand.lighting.DirectionalLight;
-import com.thibsworkshop.voxand.lighting.PointLight;
+import com.thibsworkshop.voxand.rendering.lighting.DirectionalLight;
+import com.thibsworkshop.voxand.rendering.lighting.PointLight;
 import com.thibsworkshop.voxand.loaders.Loader;
-import com.thibsworkshop.voxand.models.TexturedModel;
+import com.thibsworkshop.voxand.rendering.models.TexturedModel;
 
 import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.physics.Collider;
 import com.thibsworkshop.voxand.physics.CollisionEngine;
-import com.thibsworkshop.voxand.physics.Rigidbody;
-import com.thibsworkshop.voxand.rendering.MasterRenderer;
+import com.thibsworkshop.voxand.rendering.renderers.MasterRenderer;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
-import com.thibsworkshop.voxand.textures.Material;
+import com.thibsworkshop.voxand.rendering.textures.Material;
 import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.AABB;
 import org.joml.Vector3f;
@@ -31,9 +29,6 @@ public class Test {
     private static GLFWErrorCallback errorCallback;
 
 
-    //TODO: Put rendering on another thread to allow multiple input polling per frame
-
-
     private void init() {
 
         if(!glfwInit()){
@@ -43,7 +38,7 @@ public class Test {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
         //window = new Window(1280,720,false);
-        window = new Window(1280,1024,true);
+        window = new Window(1920,1080,true);
 
         Time.init();
         Loader.init();
@@ -66,7 +61,7 @@ public class Test {
         Camera.main = camera;
 
         Player player = new Player(texturedModel,1,camera);
-        player.transform.setPosition(0,200,0);
+        player.transform.setPosition(16,175,16);
 
         Input input = new Input(window);
 
@@ -88,7 +83,7 @@ public class Test {
         //Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),1);
         //Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),1);
 
-        //gameObjectManager.processEntity(entity);
+        gameObjectManager.processEntity(entity);
         //gameObjectManager.processEntity(entity2);
         //gameObjectManager.processEntity(entity3);
         //gameObjectManager.processEntity(entity4);
@@ -98,11 +93,13 @@ public class Test {
 
         float wait = 3;
         float time = Time.getTime() + wait;
-
+        player.enableGravity(false);
         while ( !window.shouldWindowClose() ) {
             Time.update();
             input.updateInput();
-            if(Time.getTime() > time)
+            if(player.mode == Player.Mode.Survival && Time.getTime() > time)
+                player.enableGravity(true);
+
             player.move();
 
             //Game Logic
@@ -121,7 +118,7 @@ public class Test {
                 //Timing.print(TerrainManager.debugName,"Refreshing",5);
 
             gameObjectManager.update();
-            terrainManager.refreshChunks(player);
+            terrainManager.refreshChunks();
             renderer.render(camera);
             window.updateWindow();
         }

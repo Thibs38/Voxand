@@ -1,12 +1,12 @@
-package com.thibsworkshop.voxand.rendering;
+package com.thibsworkshop.voxand.rendering.renderers;
 
 
 import com.thibsworkshop.voxand.entities.*;
-import com.thibsworkshop.voxand.models.TexturedModel;
-import com.thibsworkshop.voxand.models.RawModel;
-import com.thibsworkshop.voxand.shaders.StaticShader;
-import com.thibsworkshop.voxand.textures.Material;
-import com.thibsworkshop.voxand.textures.Texture;
+import com.thibsworkshop.voxand.rendering.models.TexturedModel;
+import com.thibsworkshop.voxand.rendering.models.RawModel;
+import com.thibsworkshop.voxand.rendering.shaders.StaticShader;
+import com.thibsworkshop.voxand.rendering.textures.Material;
+import com.thibsworkshop.voxand.rendering.textures.Texture;
 import org.joml.FrustumIntersection;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -46,7 +46,7 @@ public class GameObjectRenderer extends Renderer {
 			prepareTexturedModel(texturedModel);
 			List<Entity> batch = gameObjectManager.getEntitiesToRender().get(texturedModel);
 			for(Entity entity:batch) {
-				if(entity.render){ //TODO: needs to be optimized, maybe cache the position in the entity and update when it moves
+				if(entity.render){ //OPTIMIZE: needs to be optimized, maybe cache the position in the entity and update when it moves
 					Vector3f worldMin = entity.transform.localToWorldPositionUnrotated(entity.getModel().collider.getAabb().min);
 					Vector3f worldMax = entity.transform.localToWorldPositionUnrotated(entity.getModel().collider.getAabb().max);
 					if(frustumIntersection.testAab(worldMin, worldMax)){

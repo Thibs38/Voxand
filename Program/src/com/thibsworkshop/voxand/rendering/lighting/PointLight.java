@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.lighting;
+package com.thibsworkshop.voxand.rendering.lighting;
 
 import org.joml.Vector3f;
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import com.thibsworkshop.voxand.textures.Texture;
+import com.thibsworkshop.voxand.rendering.textures.Texture;
 import de.matthiasmann.twl.utils.PNGDecoder;
 
 import org.lwjgl.opengl.GL11;

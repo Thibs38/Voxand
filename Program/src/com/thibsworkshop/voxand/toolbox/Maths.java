@@ -143,6 +143,15 @@ public class Maths {
 	}
 
 	/**
+	 * Calculates the squared magnitude (length) of the given vector.
+	 * @param v The vector
+	 * @return The squared magnitude
+	 */
+	public static int sqrMagnitude(Vector2i v){
+		return v.x * v.x + v.y * v.y;
+	}
+
+	/**
 	 * Returns the largest int less than a
 	 * @param a the number to floor
 	 * @return largest int less than a

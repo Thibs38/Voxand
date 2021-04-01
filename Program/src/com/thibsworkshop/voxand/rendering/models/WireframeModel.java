@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.models;
+package com.thibsworkshop.voxand.rendering.models;
 
 import com.thibsworkshop.voxand.loaders.Loader;
 import com.thibsworkshop.voxand.toolbox.AABB;

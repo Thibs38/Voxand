@@ -1,9 +1,7 @@
-package com.thibsworkshop.voxand.shaders;
+package com.thibsworkshop.voxand.rendering.shaders;
 
 import org.joml.Matrix4f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 public class LineShader extends ShaderProgram {
 
@@ -12,8 +10,8 @@ public class LineShader extends ShaderProgram {
     private int location_linePosition;
     private int location_lineScale;
 
-    private static final String VERTEX_FILE = "lineVertexShader";
-    private static final String FRAGMENT_FILE = "lineFragmentShader";
+    private static final String VERTEX_FILE = "lineVertexShader.vert";
+    private static final String FRAGMENT_FILE = "lineFragmentShader.frag";
 
 
     public LineShader() {

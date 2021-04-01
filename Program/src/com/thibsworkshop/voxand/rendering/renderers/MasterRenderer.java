@@ -1,20 +1,21 @@
-package com.thibsworkshop.voxand.rendering;
-
-import java.util.List;
+package com.thibsworkshop.voxand.rendering.renderers;
 
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Camera;
-import com.thibsworkshop.voxand.entities.Entity;
-import com.thibsworkshop.voxand.lighting.DirectionalLight;
-import com.thibsworkshop.voxand.lighting.PointLight;
-import com.thibsworkshop.voxand.models.RawModel;
-import com.thibsworkshop.voxand.shaders.LineShader;
-import com.thibsworkshop.voxand.shaders.StaticShader;
-import com.thibsworkshop.voxand.shaders.TerrainShader;
+import com.thibsworkshop.voxand.game.Config;
+import com.thibsworkshop.voxand.io.Input;
+import com.thibsworkshop.voxand.rendering.lighting.DirectionalLight;
+import com.thibsworkshop.voxand.rendering.lighting.PointLight;
+import com.thibsworkshop.voxand.rendering.shaders.LineShader;
+import com.thibsworkshop.voxand.rendering.shaders.StaticShader;
+import com.thibsworkshop.voxand.rendering.shaders.TerrainShader;
+import com.thibsworkshop.voxand.terrain.Chunk;
+import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.FrustumIntersection;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -41,9 +42,9 @@ public class MasterRenderer {
 
 	public static String debugName = "Rendering";
 
-	//TODO: Make fog variables handle class
-	//TODO: Make a function to calculate fog variables based on distance
-	
+	float currentLayer = 0;
+	float nextLayer = 0;
+
 	public MasterRenderer(DirectionalLight sun, PointLight[] lights) {
 
 		this.sun = sun;
@@ -62,12 +63,16 @@ public class MasterRenderer {
 	}
 	
 	public void render(Camera camera) {
+		nextLayer = TerrainManager.main.currentLayer;
+		currentLayer = Maths.lerp(currentLayer, nextLayer, 0.01f); //We linearly interpolate between current and next
+		float fogDistance = (currentLayer-4)* Chunk.F_CHUNK_SIZE;
+		//float fogDistance = Config.chunkViewDist * Chunk.F_CHUNK_SIZE * 2;
 		prepare();
 
 		Timing.start(debugName,"Entities");
 
 		staticShader.start();
-		staticShader.loadFogVariables(0.0035f, 5f, SKY_COLOR);
+		staticShader.loadFogVariables(0.05f, fogDistance, SKY_COLOR);//0.0035f
 		staticShader.loadLights(lights);
 		staticShader.loadViewMatrix(Camera.main.getViewMatrix());
 		staticShader.loadAmbientLight(sun);
@@ -86,7 +91,7 @@ public class MasterRenderer {
 		Timing.start(debugName,"Terrain");
 
 		terrainShader.start();
-		terrainShader.loadFogVariables(0.0035f, 5f, SKY_COLOR);
+		terrainShader.loadFogVariables(0.05f, fogDistance, SKY_COLOR);//0.0035f
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(Camera.main.getViewMatrix());
 		terrainShader.loadAmbientLight(sun);
@@ -95,7 +100,7 @@ public class MasterRenderer {
 
 		Timing.stop(debugName,"Terrain");
 
-		glClear(GL_DEPTH_BUFFER_BIT); //Clear the depth buffer, start rendering overlays
+		glClear(GL_DEPTH_BUFFER_BIT); //Clear the depth buffer, start com.thibsworkshop.voxand.rendering overlays
 
 		if(Debug.isDebugMode()){
 			lineShader.start();

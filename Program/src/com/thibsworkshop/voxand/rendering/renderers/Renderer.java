@@ -1,9 +1,7 @@
-package com.thibsworkshop.voxand.rendering;
+package com.thibsworkshop.voxand.rendering.renderers;
 
 import com.thibsworkshop.voxand.entities.Camera;
-import com.thibsworkshop.voxand.shaders.BasicShader;
-import com.thibsworkshop.voxand.shaders.ShaderProgram;
-import org.joml.Matrix4f;
+import com.thibsworkshop.voxand.rendering.shaders.ShaderProgram;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;

@@ -1,9 +1,7 @@
 package com.thibsworkshop.voxand.entities;
 
-import com.thibsworkshop.voxand.models.TexturedModel;
-import com.thibsworkshop.voxand.physics.Collider;
+import com.thibsworkshop.voxand.rendering.models.TexturedModel;
 import com.thibsworkshop.voxand.physics.Rigidbody;
-import com.thibsworkshop.voxand.terrain.TerrainManager;
 
 
 //An Entity is a moving object, with a collider and a TexuredModel.
@@ -14,8 +12,6 @@ import com.thibsworkshop.voxand.terrain.TerrainManager;
 public class Entity extends GameObject {
 
 	protected Rigidbody rigidbody;
-
-	public boolean grounded = false;
 
 	public boolean render = true;
 	public boolean enabled = true;
@@ -31,10 +27,12 @@ public class Entity extends GameObject {
 
 	@Override
 	public void update(){
-		if(enabled){
-			rigidbody.update(); //Physics simulation, will move the entity & resolve collisions
-			//transform.update(); //Update is done in rigidbody class
-		}
+		rigidbody.update(); //Physics simulation, will move the entity & resolve collisions
+		//transform.update(); //Update is done in rigidbody class
+	}
+
+	public void enableGravity(boolean enabled){
+		rigidbody.gravited = enabled;
 	}
 	
 

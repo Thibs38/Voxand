@@ -19,6 +19,8 @@ public class CollisionEngine {
 
     public static CollisionEngine engine;
 
+    //FIXME: No collisions when in high negative coordinates
+
     public CollisionEngine(){
         engine = this;
     }
@@ -162,27 +164,20 @@ public class CollisionEngine {
             }
 
             remainingTime = 1.0f - minTime;
-            //System.out.print("i: " + i + " Entry time: " + minTime + " normal: "); Debug.printVector(normal);
-
-
-            //System.out.print(i + " : " +remainingTime + " "); Debug.printVector(normal);
 
             if(remainingTime <= 0) break;
         }
         movement.set(0);
     }
 
-    private Vector3f real = new Vector3f(); //player position in chunk space
-    private Vector3f min = new Vector3f(); //minimum final collider position in chunk space
-    private Vector3f max = new Vector3f(); //maximum final collider position in chunk space
-    private Vector3f minI = new Vector3f(); //minimum initial collider position in chunk space
-    private Vector3f maxI = new Vector3f(); //maximum initial collider position in chunk space
-    private Vector3i minIint = new Vector3i(); //minimum initial collider position in chunk space floored
-    private Vector3i maxIint = new Vector3i(); //maximum initial collider position in chunk space floored
-    private Vector2i chunkPosR = new Vector2i(); //chunk position
-    private Vector3i collisionPos = new Vector3i(); //block we collided with
-
-    private boolean climb = false; //If true, we override the collision detection, push the player up and start again
+    private final Vector3f real = new Vector3f(); //player position in chunk space
+    private final Vector3f min = new Vector3f(); //minimum final collider position in chunk space
+    private final Vector3f max = new Vector3f(); //maximum final collider position in chunk space
+    private final Vector3f minI = new Vector3f(); //minimum initial collider position in chunk space
+    private final Vector3f maxI = new Vector3f(); //maximum initial collider position in chunk space
+    private final Vector3i minIint = new Vector3i(); //minimum initial collider position in chunk space floored
+    private final Vector3i maxIint = new Vector3i(); //maximum initial collider position in chunk space floored
+    private final Vector2i chunkPosR = new Vector2i(); //chunk position
 
     private float entityVSterrainLoop(Transform transform, Vector3f velocity, AABB aabb, Vector3i aura){
 
@@ -241,7 +236,6 @@ public class CollisionEngine {
                                     Math.min(minIint.x,x),minIint.y + 1, Math.min(minIint.z,z),
                                     Math.max(maxIint.x,x), minIint.y + 1 + aura.y, Math.max(maxIint.z,z),
                                     chunkPos.x,chunkPos.y)){
-                                climb = true;
                                 //TODO: The aura.y is not very good practice.
                                 transform.translate(0,1,0);
 
@@ -258,10 +252,10 @@ public class CollisionEngine {
         return minTime;
     }
 
-    private Vector3f invEntry = new Vector3f();
-    private Vector3f invExit = new Vector3f();
-    private Vector3f entry = new Vector3f();
-    private Vector3f exit = new Vector3f();
+    private final Vector3f invEntry = new Vector3f();
+    private final Vector3f invExit = new Vector3f();
+    private final Vector3f entry = new Vector3f();
+    private final Vector3f exit = new Vector3f();
 
     private float sweptAABB(Vector3f velocity, float x, float y, float z, float minTime){
         // find the distance between the objects on the near and far sides for both x, y and z
@@ -320,7 +314,7 @@ public class CollisionEngine {
 
         float entryTime = Math.max(Math.max(entry.x,entry.z),entry.y);
 
-        //if(entryTime >= minTime) return 1.0f;
+        if(entryTime >= minTime) return 1.0f;
         if(entryTime < 0) return 1.0f;
 
         float exitTime = Math.min(Math.min(exit.x,exit.z),exit.y);

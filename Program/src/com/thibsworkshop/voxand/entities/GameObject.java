@@ -1,7 +1,6 @@
 package com.thibsworkshop.voxand.entities;
 
-import com.thibsworkshop.voxand.models.TexturedModel;
-import com.thibsworkshop.voxand.terrain.Chunk;
+import com.thibsworkshop.voxand.rendering.models.TexturedModel;
 
 //Parent class of Entity and TileEntity
 public abstract class GameObject {

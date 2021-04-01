@@ -1,9 +1,8 @@
 package com.thibsworkshop.voxand.entities;
 
 import com.thibsworkshop.voxand.game.Config;
-import com.thibsworkshop.voxand.models.TexturedModel;
-import com.thibsworkshop.voxand.rendering.MasterRenderer;
-import com.thibsworkshop.voxand.terrain.TerrainManager;
+import com.thibsworkshop.voxand.rendering.models.TexturedModel;
+import com.thibsworkshop.voxand.rendering.renderers.MasterRenderer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,11 +13,12 @@ import java.util.Map;
 // manage adding and removing etc...
 public class GameObjectManager {
 
-    private static Map<TexturedModel,List<Entity>> entities = new HashMap<>();
-    private static Map<TexturedModel,List<TileEntity>> tileEntities = new HashMap<>();
+    //OPTIMIZE: statistics about how many entities there are on average
+    private static Map<TexturedModel,List<Entity>> entities = new HashMap<>(50);
+    private static Map<TexturedModel,List<TileEntity>> tileEntities = new HashMap<>(50);
 
-    private static Map<TexturedModel,List<Entity>> entitiesToRender = new HashMap<>();
-    private static Map<TexturedModel,List<TileEntity>> tileEntitiesToRender = new HashMap<>();
+    private static Map<TexturedModel,List<Entity>> entitiesToRender = new HashMap<>(50);
+    private static Map<TexturedModel,List<TileEntity>> tileEntitiesToRender = new HashMap<>(50);
 
     public GameObjectManager(){
         MasterRenderer.gameObjectRenderer.linkManager(this);
@@ -30,7 +30,7 @@ public class GameObjectManager {
             List<Entity> batch = entities.get(texturedModel);
             List<Entity> renderBatch = entitiesToRender.get(texturedModel);
             for (Entity entity : batch) {
-                entity.update();
+                if(entity.enabled) entity.update(); //Update the entity only if it is enabled
                 boolean render = renderBatch.contains(entity);
                 if (entity.transform.chunk != null && entity.transform.chunk.getSqr_distance() <= Config.sqr_entityViewDist) {
                     if (!render) {

@@ -1,22 +1,18 @@
-package com.thibsworkshop.voxand.rendering;
+package com.thibsworkshop.voxand.rendering.renderers;
 
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.*;
-import com.thibsworkshop.voxand.models.RawModel;
-import com.thibsworkshop.voxand.models.TexturedModel;
-import com.thibsworkshop.voxand.models.WireframeModel;
-import com.thibsworkshop.voxand.shaders.LineShader;
+import com.thibsworkshop.voxand.rendering.models.RawModel;
+import com.thibsworkshop.voxand.rendering.models.WireframeModel;
+import com.thibsworkshop.voxand.rendering.shaders.LineShader;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
+import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
-import org.joml.Vector2i;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class LineRenderer extends Renderer{
@@ -45,6 +41,7 @@ public class LineRenderer extends Renderer{
         if (Debug.isTileEntityAABB())
             renderTileEntitiesCollider();
 
+
         unbindModel();
     }
 
@@ -60,10 +57,13 @@ public class LineRenderer extends Renderer{
     }
 
     private void renderChunks(){
-        shader.loadColor(Chunk.wireModel.color);
         RawModel rawModel = Chunk.wireModel.getRawModel();
         prepareModel(rawModel);
-        for(Chunk chunk: terrainManager.getTerrainsToRender().values()){
+        for(Chunk chunk: TerrainManager.chunks.values()){
+            if(chunk.generated)
+                shader.loadColor(Chunk.wireModel.color);
+            else
+                shader.loadColor(Color.red);
             shader.loadTransformation(chunk.getPosition(),Chunk.CHUNK_SCALE);
             GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
         }

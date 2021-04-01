@@ -1,8 +1,7 @@
-package com.thibsworkshop.voxand.rendering;
+package com.thibsworkshop.voxand.rendering.renderers;
 
 import com.thibsworkshop.voxand.entities.Camera;
-import com.thibsworkshop.voxand.gui.Canvas;
-import com.thibsworkshop.voxand.shaders.ShaderProgram;
+import com.thibsworkshop.voxand.rendering.shaders.ShaderProgram;
 
 public class TextRenderer extends Renderer{
     public TextRenderer(ShaderProgram shader) {

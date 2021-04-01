@@ -1,12 +1,15 @@
-package com.thibsworkshop.voxand.rendering;
+package com.thibsworkshop.voxand.rendering.renderers;
 
 import com.thibsworkshop.voxand.entities.Camera;
-import com.thibsworkshop.voxand.models.RawModel;
-import com.thibsworkshop.voxand.shaders.TerrainShader;
+import com.thibsworkshop.voxand.entities.Player;
+import com.thibsworkshop.voxand.game.Config;
+import com.thibsworkshop.voxand.rendering.models.RawModel;
+import com.thibsworkshop.voxand.rendering.shaders.TerrainShader;
 import com.thibsworkshop.voxand.terrain.Block;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
-import com.thibsworkshop.voxand.textures.Material;
+import com.thibsworkshop.voxand.rendering.textures.Material;
+import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
@@ -43,14 +46,15 @@ public class TerrainRenderer extends Renderer {
 
 	@Override
 	public void render(Camera camera) {
-		for(Chunk chunk :terrainManager.getTerrainsToRender().values()) {
-			if(chunk != null) {
-				if(frustumIntersection.testAab(chunk.getPosition(), chunk.getPositionMax())) {
-					prepareTerrain(chunk);
-					loadModelPosition(chunk);
-					GL11.glDrawElements(GL11.GL_TRIANGLES, chunk.getModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
-					unbindModel();
-				}
+		for(Chunk chunk :TerrainManager.chunks.values()) {
+			if(chunk != null && chunk.generated &&
+				Maths.sqrDistance(chunk.getChunkPos(), Player.player.transform.chunkPos) <= Config.sqr_chunkViewDist &&
+				frustumIntersection.testAab(chunk.getPosition(), chunk.getPositionMax())) {
+
+				prepareTerrain(chunk);
+				loadModelPosition(chunk);
+				GL11.glDrawElements(GL11.GL_TRIANGLES, chunk.getModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
+				unbindModel();
 			}
 		}
 	}
