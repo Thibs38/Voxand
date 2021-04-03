@@ -17,17 +17,15 @@ import org.joml.Vector3f;
 
 public abstract class ShaderProgram {
 	
-	private int programID;
-	private int vertexShaderID;
-	private int fragmentShaderID;
+	private final int programID;
+	private final int vertexShaderID;
+	private final int fragmentShaderID;
 
-	private int attributeCount;
-
-	private static String[] shaderTypeName = new String[]{ "Vertex", "Fragment"};
+	private final int attributeCount;
 
 	private static final String path = "Program/res/shaders/";
 
-	private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
+	private static final FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
 	
 	public ShaderProgram(String vertexFile, String fragmentFile, int attributeCount) {
 		vertexShaderID = loadShader(vertexFile, GL20.GL_VERTEX_SHADER);
@@ -70,7 +68,8 @@ public abstract class ShaderProgram {
 	protected void bindAttribute(int attribute,String variableName) {
 		GL20.glBindAttribLocation(programID, attribute, variableName);
 	}
-	
+
+	//<editor-fold desc="Loaders">
 	protected void loadFloat(int location, float value) {
 		GL20.glUniform1f(location, value);
 	}
@@ -99,6 +98,7 @@ public abstract class ShaderProgram {
 		GL20.glUniformMatrix4fv(location, false, matrix.get(matrixBuffer));
 		matrixBuffer.clear();
 	}
+	//</editor-fold>
 
 	public int getAttributeCount(){ return attributeCount; }
 	

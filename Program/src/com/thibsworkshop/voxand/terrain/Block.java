@@ -6,14 +6,14 @@ public class Block {
 	
 	public static final int MAX_BLOCK = 256;
 	
-	private byte id;
+	private final byte id;
 	
-	private Vector3f color;
-	private float transparency;
-	private float shineDamper;
-	private float reflectivity;
+	private final Vector3f color;
+	private final float transparency;
+	private final float shineDamper;
+	private final float reflectivity;
 	
-	private boolean solid;
+	private final boolean solid;
 	
 	public static Block[] blocks;
 	

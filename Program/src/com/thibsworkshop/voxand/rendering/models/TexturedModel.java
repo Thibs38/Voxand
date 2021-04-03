@@ -8,9 +8,9 @@ import com.thibsworkshop.voxand.rendering.textures.Texture;
 
 public class TexturedModel {
 
-	private RawModel rawModel;
-	private Texture texture;
-	private Material material;
+	private final RawModel rawModel;
+	private final Texture texture;
+	private final Material material;
 	public Collider collider;
 
 	public TexturedModel(RawModel rawModel, Texture texture, Material material, Collider collider) {

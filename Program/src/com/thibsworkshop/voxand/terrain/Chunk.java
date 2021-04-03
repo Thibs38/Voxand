@@ -19,9 +19,9 @@ public class Chunk{
 
 	public static final Vector3f CHUNK_SCALE = new Vector3f(1);
 
-	private Vector2i chunkPos;
-	private Vector3f position;
-	private Vector3f positionMax;
+	private final Vector2i chunkPos;
+	private final Vector3f position;
+	private final Vector3f positionMax;
 
 	private int sqr_distance;
 	private long lastTickUpdate;
@@ -48,10 +48,7 @@ public class Chunk{
 
 	public void generateTerrain(float[] vertices, int[] indices, byte[] blocks, byte[] normals){
 		model = Loader.loadToVAOColor(vertices,indices,blocks, normals);
-		if(model == null) {
-			System.err.println("ERROR COULDN'T CREATE TERRAIN MODEL: " + "\nvertices: " + vertices.length + "\n indices: " + indices.length + "\n normals: "+normals);
-			return;
-		}
+
 		generated = true;
 	}
 

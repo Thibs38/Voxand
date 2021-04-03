@@ -3,8 +3,6 @@ package com.thibsworkshop.voxand.rendering.renderers;
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Camera;
-import com.thibsworkshop.voxand.game.Config;
-import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.rendering.lighting.DirectionalLight;
 import com.thibsworkshop.voxand.rendering.lighting.PointLight;
 import com.thibsworkshop.voxand.rendering.shaders.LineShader;
@@ -15,10 +13,8 @@ import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.FrustumIntersection;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
 public class MasterRenderer {
 
@@ -26,13 +22,13 @@ public class MasterRenderer {
 	
 	private static final Vector3f SKY_COLOR = new Vector3f(0.529f,0.808f,0.922f);
 
-	private StaticShader staticShader = new StaticShader();
+	private final StaticShader staticShader = new StaticShader();
 	public static GameObjectRenderer gameObjectRenderer;
 
-	private TerrainShader terrainShader = new TerrainShader();
+	private final TerrainShader terrainShader = new TerrainShader();
 	public static TerrainRenderer terrainRenderer;
 
-	private LineShader lineShader = new LineShader();
+	private final LineShader lineShader = new LineShader();
 	public static LineRenderer lineRenderer;
 
 	FrustumIntersection frustumIntersection;

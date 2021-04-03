@@ -1,25 +1,11 @@
 package com.thibsworkshop.voxand.toolbox;
 
-import com.thibsworkshop.voxand.entities.Player;
-import com.thibsworkshop.voxand.game.Config;
-import org.joml.Vector2i;
-import org.lwjgl.BufferUtils;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Utility {
 

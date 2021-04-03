@@ -13,11 +13,11 @@ public class Player extends Entity {
 	private final float rotationSpeed = 20f;
 	private final float jumpSpeed = 20f;
 
-	private Camera camera;
+	private final Camera camera;
 
 	public static Player player;
 
-	public enum Mode { Survival, Spectator};
+	public enum Mode { Survival, Spectator}
 
 	public Mode mode = Mode.Survival;
 	

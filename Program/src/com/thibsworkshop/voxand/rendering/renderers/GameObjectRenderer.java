@@ -21,10 +21,10 @@ import java.util.List;
 
 public class GameObjectRenderer extends Renderer {
 
-	private StaticShader shader;
+	private final StaticShader shader;
 
 	GameObjectManager gameObjectManager;
-	private FrustumIntersection frustumIntersection;
+	private final FrustumIntersection frustumIntersection;
 
 
 	public GameObjectRenderer(StaticShader shader){

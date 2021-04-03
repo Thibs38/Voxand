@@ -1,6 +1,5 @@
 package com.thibsworkshop.voxand.physics;
 
-import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.Entity;
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.toolbox.Maths;
@@ -14,13 +13,11 @@ public class Rigidbody {
     public static float gravity = -9.81f;
     public float horizontalDrag = 8f;
     public float verticalDrag = 0.5f;
-    public Vector3f velocity;
-    private Vector3f movement; //Movement calculated from the velocity
+    public final Vector3f velocity = new Vector3f(0);
+    private final Vector3f movement = new Vector3f(0); //Movement calculated from the velocity
     public float mass;
-    private Entity entity;
-    private Collider collider;
-
-    public static final float ZERO_VEL = 0.01f;
+    private final Entity entity;
+    private final Collider collider;
 
     public boolean grounded = false;
     public boolean gravited = true;
@@ -29,8 +26,6 @@ public class Rigidbody {
     public Rigidbody(float mass, Entity entity){
         this.mass = mass;
         this.entity = entity;
-        velocity = new Vector3f(0);
-        movement = new Vector3f(0);
         collider = entity.getModel().collider;
     }
 

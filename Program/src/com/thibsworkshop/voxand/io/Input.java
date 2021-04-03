@@ -21,13 +21,9 @@ public class Input {
 
 
 	public enum AxisName{ Horizontal, Vertical }
-	private static Map<Integer,KeyState> keys = new HashMap<Integer, KeyState>();
-	private Map<Integer,KeyState> nextState = new HashMap<Integer, KeyState>();
-	private static Map<AxisName,Axis> axes = new HashMap<>();
-
-	private float axesSpeed = 0.75f;
-	private float axesGravity = 0.75f;
-	private float dead = 0.001f;
+	private static final Map<Integer,KeyState> keys = new HashMap<>();
+	private final Map<Integer,KeyState> nextState = new HashMap<>();
+	private static final Map<AxisName,Axis> axes = new HashMap<>();
 	
 	private static Vector2d mousePosition;
 	private static Vector2d lastMousePosition;
@@ -42,7 +38,7 @@ public class Input {
 
 	private static boolean mouseMoved;
 
-	private Window window;
+	private final Window window;
 	
 	private static GLFWKeyCallback keyCallback;
 	private static GLFWCursorPosCallback cursorPosCallback;
@@ -87,8 +83,8 @@ public class Input {
 		keys.put(GLFW_MOUSE_BUTTON_RIGHT,KeyState.SLEEP);
 		keys.put(GLFW_MOUSE_BUTTON_MIDDLE,KeyState.SLEEP);
 
-		axes.put(AxisName.Horizontal,new Axis(AxisName.Horizontal,GLFW_KEY_D, GLFW_KEY_A));
-		axes.put(AxisName.Vertical,new Axis(AxisName.Vertical,GLFW_KEY_W, GLFW_KEY_S));
+		axes.put(AxisName.Horizontal, new Axis(AxisName.Horizontal, GLFW_KEY_D, GLFW_KEY_A));
+		axes.put(AxisName.Vertical, new Axis(AxisName.Vertical, GLFW_KEY_W, GLFW_KEY_S));
 
 		mousePosition = new Vector2d();
 		lastMousePosition = new Vector2d();
@@ -141,9 +137,7 @@ public class Input {
 		lastMousePosition.y = mousePosition.y;
 
 
-		nextState.forEach((k,v) -> {
-			keys.put(k,v);
-		}); //Update the key state
+		nextState.forEach(keys::put); //Update the key state
 
 		nextState.clear();
 
@@ -281,7 +275,7 @@ public class Input {
 
 	public static boolean hasMouseMoved(){ return mouseMoved; }
 
-	public class Axis{
+	public static class Axis{
 		public AxisName name;
 		public int positiveKey;
 		public int negativeKey;

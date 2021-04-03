@@ -4,10 +4,10 @@ import org.joml.Vector3f;
 
 public class AABB {
 
-    public Vector3f min;
-    public Vector3f max;
-    public Vector3f center;
-    public Vector3f size;
+    public final Vector3f min;
+    public final Vector3f max;
+    public final Vector3f center;
+    public final Vector3f size;
 
     private AABB (Vector3f min, Vector3f max, Vector3f center, Vector3f size){
         this.min = min;

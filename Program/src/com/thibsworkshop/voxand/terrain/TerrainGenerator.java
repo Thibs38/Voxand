@@ -1,9 +1,5 @@
 package com.thibsworkshop.voxand.terrain;
 
-import org.joml.Vector2i;
-
-import java.util.Arrays;
-
 public class TerrainGenerator {
 
 	public static IndicesVerticesNormals generate(Chunk chunk, byte[][][] back, byte[][][] front, byte[][][] right, byte[][][] left ) {

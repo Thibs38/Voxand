@@ -7,9 +7,9 @@ import com.thibsworkshop.voxand.rendering.textures.Texture;
 
 public class Model {
 
-	private RawModel rawModel;
-	private Texture texture;
-	private Material material;
+	private final RawModel rawModel;
+	private final Texture texture;
+	private final Material material;
 	
 	public Model(String rawModel, String texture, Material material) {
 		this.rawModel = OBJLoader.loadObjModel(rawModel);

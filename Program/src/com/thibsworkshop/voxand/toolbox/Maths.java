@@ -3,10 +3,8 @@ package com.thibsworkshop.voxand.toolbox;
 import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.entities.Transform;
 import org.joml.*;
-import org.lwjgl.system.CallbackI;
 
 import java.lang.Math;
-import java.util.Vector;
 
 public class Maths {
 
@@ -179,13 +177,13 @@ public class Maths {
 	}
 
 	/**
-	 * Calculates the sigmoid of speed a at time t
-	 * @param x time
+	 * Calculates the sigmoid of speed a at a given time t
+	 * @param t time
 	 * @param a stiffness
 	 * @return value from 0 to 1
 	 */
-	public static float sigmoid(float x, float a) {
-		return (float) (1f / (1 + Math.exp(-a * x)));
+	public static float sigmoid(float t, float a) {
+		return (float) (1f / (1 + Math.exp(-a * t)));
 	}
 
 }

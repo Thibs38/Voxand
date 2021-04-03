@@ -7,7 +7,6 @@ import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Player;
 import com.thibsworkshop.voxand.game.Config;
-import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.rendering.renderers.MasterRenderer;
 import com.thibsworkshop.voxand.terrain.TerrainGenerator.IndicesVerticesNormals;
@@ -15,7 +14,6 @@ import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import com.thibsworkshop.voxand.toolbox.Utility;
 
-import static org.lwjgl.glfw.GLFW.*;
 import org.joml.Vector2i;
 
 public class TerrainManager {
@@ -28,9 +26,9 @@ public class TerrainManager {
 
 	private final TreeMap<Vector2i,Callable<IndicesVerticesNormals>> terrainsToCreate = new TreeMap<>(layerComparator);
 
-	private final ArrayList<Future<IndicesVerticesNormals>> terrainsInCreation = new ArrayList<Future<IndicesVerticesNormals>>();
+	private final ArrayList<Future<IndicesVerticesNormals>> terrainsInCreation = new ArrayList<>();
 	
-	private final LinkedList<IndicesVerticesNormals> calculatedTerrains = new LinkedList<IndicesVerticesNormals>(); //Calculated terrains waited to be created
+	private final LinkedList<IndicesVerticesNormals> calculatedTerrains = new LinkedList<>(); //Calculated terrains waited to be created
 
 	private final TerrainInfo terrainInfo;
 

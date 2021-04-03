@@ -13,8 +13,8 @@ public class Timing {
     //IMPORTANT: One record at a time for each method of each class, otherwise timing wont be correct
 
     //OPTIMIZE: Maybe change the List of data to an array of fixed size, like 100, to avoid deleting the first element of the list
-    private static Map<String, Map<String, List<Long>>> data = new HashMap<>(); //The data
-    private static Map<String, Map<String, Boolean>> enabled = new HashMap<>(); //Is the method enabled for recording?
+    private static final Map<String, Map<String, List<Long>>> data = new HashMap<>(); //The data
+    private static final Map<String, Map<String, Boolean>> enabled = new HashMap<>(); //Is the method enabled for recording?
 
     //Add a class to measure, and a list of methods to measure
     public static void add(String name, String[] methods){
@@ -54,8 +54,7 @@ public class Timing {
     public static void enable(String name){
         Map<String, Boolean> map = enabled.get(name);
 
-        for(String method : map.keySet())
-            map.put(method,!map.get(method));
+        map.replaceAll((m, v) -> !map.get(m));
     }
 
     //Clear the data of the specified name and method

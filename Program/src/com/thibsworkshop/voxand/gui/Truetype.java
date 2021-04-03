@@ -1,18 +1,14 @@
 package com.thibsworkshop.voxand.gui;
 
 import com.thibsworkshop.voxand.toolbox.BufferTools;
-import com.thibsworkshop.voxand.toolbox.Utility;
 import org.lwjgl.stb.STBTTFontinfo;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.lwjgl.stb.STBTruetype;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 import static org.lwjgl.system.MemoryStack.*;
 

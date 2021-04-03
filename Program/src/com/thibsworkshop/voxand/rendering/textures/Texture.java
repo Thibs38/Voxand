@@ -1,7 +1,7 @@
 package com.thibsworkshop.voxand.rendering.textures;
 
 public class Texture {
-	private int textureID;
+	private final int textureID;
 
 	public Texture(int id) {
 		this.textureID = id;

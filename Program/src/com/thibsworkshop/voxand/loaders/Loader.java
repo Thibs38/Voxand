@@ -19,9 +19,9 @@ import org.lwjgl.opengl.GL30;
 
 public class Loader {
 	
-	private static List<Integer> vaos = new ArrayList<Integer>();
-	private static List<Integer> vbos = new ArrayList<Integer>();
-	private static List<Integer> textures = new ArrayList<Integer>();
+	private static final List<Integer> vaos = new ArrayList<>();
+	private static final List<Integer> vbos = new ArrayList<>();
+	private static final List<Integer> textures = new ArrayList<>();
 
 	/**
 	 * Initializes loaders

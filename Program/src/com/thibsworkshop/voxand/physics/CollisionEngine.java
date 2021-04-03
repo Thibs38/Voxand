@@ -1,11 +1,9 @@
 package com.thibsworkshop.voxand.physics;
 
-import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.Entity;
 import com.thibsworkshop.voxand.entities.Transform;
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.terrain.Chunk;
-import com.thibsworkshop.voxand.terrain.TerrainGenerator;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.AABB;
 import com.thibsworkshop.voxand.toolbox.Maths;
@@ -42,21 +40,11 @@ public class CollisionEngine {
         Vector2i chunkPos = transform.chunkPos; //By default the real chunk pos is the initial player one
         int y = (int) Math.floor(min.y);
 
-        boolean ok = checkSolid(
+        return checkSolid(
                 (int)Math.floor(min.x), y, (int) Math.floor(min.z),
                 (int)Math.floor(max.x), y, (int) Math.floor(max.z),
                 chunkPos.x,chunkPos.y
                 );
-        /*if(ok){
-            System.out.print("Pos: ");Debug.printVector(pos);
-            System.out.print("Real: ");Debug.printVector(real);
-            System.out.println("CollisionEngine.isGrounded: ok: x: " +
-                    (int)Math.floor(min.x) + " y: " + y + " z: " + (int) Math.floor(min.z) + " X: " +
-                    (int)Math.floor(max.x) + " Y: " + y + " Z: " + (int) Math.floor(max.z) +
-                    " chunkx: " + chunkPos.x + " chunkz: " + chunkPos.y + "\n------------------");
-        }*/
-
-        return ok;
     }
 
     private static final Vector3f AB = new Vector3f();
@@ -141,7 +129,7 @@ public class CollisionEngine {
 
 
     //<editor-fold desc="AABB vs TERRAIN">
-    private static Vector3f normal = new Vector3f(0);
+    private static final Vector3f normal = new Vector3f(0);
     public static void entityVSterrain(Transform transform, Vector3f movement, AABB aabb, Vector3i aura) {
 
         float minTime = 0;

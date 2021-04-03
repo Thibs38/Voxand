@@ -2,9 +2,9 @@ package com.thibsworkshop.voxand.rendering.models;
 
 public class RawModel {
 
-	private int vaoID;
-	private int iboID;
-	private int vertexCount;
+	private final int vaoID;
+	private final int iboID;
+	private final int vertexCount;
 	
 	public RawModel(int vaoID, int iboID, int vertexCount) {
 		this.vaoID = vaoID;

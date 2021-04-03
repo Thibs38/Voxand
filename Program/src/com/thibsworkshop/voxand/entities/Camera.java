@@ -1,6 +1,5 @@
 package com.thibsworkshop.voxand.entities;
 
-import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.FrustumIntersection;
@@ -15,9 +14,9 @@ public class Camera {
 
 	public Vector3f forward = new Vector3f();
 
-	private Matrix4f projectionMatrix = new Matrix4f();
-	private Matrix4f viewMatrix = new Matrix4f();
-	private Matrix4f projectionViewMatrix = new Matrix4f();
+	private final Matrix4f projectionMatrix;
+	private final Matrix4f viewMatrix = new Matrix4f();
+	private final Matrix4f projectionViewMatrix;
 
 	public FrustumIntersection frustumIntersection;
 

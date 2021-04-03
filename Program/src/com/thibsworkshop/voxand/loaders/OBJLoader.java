@@ -25,10 +25,10 @@ public class OBJLoader {
 		}
 		BufferedReader reader = new BufferedReader(fr);
 		String line;
-		List<Vector3f> rawvertices = new ArrayList<Vector3f>();
-		List<Vector2f> rawtextures = new ArrayList<Vector2f>();
-		List<Vector3f> rawnormals = new ArrayList<Vector3f>();
-		List<Integer> rawindices = new ArrayList<Integer>();
+		List<Vector3f> rawvertices = new ArrayList<>();
+		List<Vector2f> rawtextures = new ArrayList<>();
+		List<Vector3f> rawnormals = new ArrayList<>();
+		List<Integer> rawindices = new ArrayList<>();
 		
 		float[] verticesArray = null;
 		float[] normalsArray = null;

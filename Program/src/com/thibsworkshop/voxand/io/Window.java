@@ -2,7 +2,6 @@ package com.thibsworkshop.voxand.io;
 
 
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL;
@@ -16,7 +15,6 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
 
@@ -32,10 +30,10 @@ public class Window {
 
 	private Vector2f viewport;
 
-	private float ASPECT_RATIO;
+	private final float ASPECT_RATIO;
 
-	private int FPS_CAP = 120;
-	private boolean FULLSCREEN;
+	private final int FPS_CAP = 120;
+	private final boolean FULLSCREEN;
 	
 	private static GLFWFramebufferSizeCallback framebufferSizeCallback;
 	

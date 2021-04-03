@@ -1,13 +1,5 @@
 package com.thibsworkshop.voxand.gui;
 
-import com.thibsworkshop.voxand.toolbox.Utility;
-import org.lwjgl.system.MemoryUtil;
-
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class GUIText {
 
     String text;

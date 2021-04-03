@@ -4,7 +4,6 @@ import com.thibsworkshop.voxand.game.Config;
 import com.thibsworkshop.voxand.physics.CollisionEngine;
 import com.thibsworkshop.voxand.rendering.models.TexturedModel;
 import com.thibsworkshop.voxand.rendering.renderers.MasterRenderer;
-import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -149,14 +148,13 @@ public class GameObjectManager {
         for(TexturedModel texturedModel : tileEntities.keySet()){
             List<TileEntity> batch = tileEntities.get(texturedModel);
             List<TileEntity> renderBatch = tileEntitiesToRender.get(texturedModel);
-            for(int i = 0; i < batch.size(); i++){ //TODO: wrong
-                TileEntity tileEntity = batch.get(i);
+            for(TileEntity tileEntity : batch){ //TODO: wrong
                 tileEntity.update();
                 boolean render = renderBatch.contains(tileEntity);
                 if(tileEntity.transform.chunk.getSqr_distance() <= Config.sqr_tileEntityViewDist){
                     if(!render) renderBatch.add(tileEntity);
                 }else{
-                    if(render) renderBatch.remove(i);
+                    if(render) renderBatch.remove(tileEntity);
                 }
             }
         }

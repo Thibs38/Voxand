@@ -7,7 +7,7 @@ import org.joml.Vector3f;
 
 public class WireframeModel {
 
-    private RawModel rawModel;
+    private final RawModel rawModel;
 
     public Vector3f color;
 

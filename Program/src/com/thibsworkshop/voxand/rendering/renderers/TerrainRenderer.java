@@ -20,13 +20,11 @@ import org.lwjgl.opengl.GL30;
 
 public class TerrainRenderer extends Renderer {
 
-	private TerrainShader shader;
+	private final TerrainShader shader;
 	
 	private Material material;
 
-	private TerrainManager terrainManager;
-
-	private FrustumIntersection frustumIntersection;
+	private final FrustumIntersection frustumIntersection;
 
 	public TerrainRenderer(TerrainShader shader ) {
 		super(shader);
