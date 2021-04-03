@@ -95,7 +95,7 @@ public class Debug {
         if(debugMode){
             if(!Debug.entityAABB && entityAABB) {
                 printWarningDebugToolEnabled("Entity Collider Wireframe");
-                GameObjectManager.genEntityWireframe();
+                GameObjectManager.main.genEntityWireframe();
             }
             Debug.entityAABB = entityAABB;
         }
@@ -111,7 +111,7 @@ public class Debug {
         if(debugMode){
             if(!Debug.tileEntityAABB && tileEntityAABB) {
                 printWarningDebugToolEnabled("Tile Entity Collider Wireframe");
-                GameObjectManager.genTileEntityWireframe();
+                GameObjectManager.main.genTileEntityWireframe();
             }
             Debug.tileEntityAABB = tileEntityAABB;
         }
@@ -125,7 +125,7 @@ public class Debug {
         setEntityAABB(false);
         setChunkAABB(false);
         Chunk.destroyWireframe();
-        GameObjectManager.destroyWireframes();
+        GameObjectManager.main.destroyWireframes();
         axisModels = null;
     }
 

@@ -19,22 +19,16 @@ public class Player extends Entity {
 
 	public enum Mode { Survival, Spectator};
 
-	public Mode mode = Mode.Spectator;
+	public Mode mode = Mode.Survival;
 	
 	public Player(TexturedModel texturedModel, float mass, Camera camera) {
-		super(texturedModel, new Transform(), mass);
+		super(texturedModel, mass);
 		player = this;
 		this.camera = camera;
 		camera.transform.setPosition(transform.getPosition());
 		camera.transform.translate(0,10,0);
-		render = false;
-		enabled = false; //Player is disabled because it shouldn't be updated through the gameobject manager
-		rigidbody.drag = 4;
-	}
-
-	@Override
-	public void update() {
-		move();
+		doRendering = false;
+		doUpdate = true; //Player is disabled because it shouldn't be updated through the gameobject manager
 	}
 
 	Vector3f xVelocity = new Vector3f(0);
@@ -117,17 +111,18 @@ public class Player extends Entity {
 		rigidbody.addVelocity(xVelocity);
 		rigidbody.addVelocity(zVelocity);
 		if(mode == Mode.Spectator){
-			float rDrag = Math.max(1- rigidbody.drag*Time.getDeltaTime(),0);
-			currentVelocity.mul(rDrag,1,rDrag);
+			//float rDrag = Math.max(1- rigidbody.drag*Time.getDeltaTime(),0);
+			//currentVelocity.mul(rDrag,1,rDrag);
 		}
 		xVelocity.set(0);
 		zVelocity.set(0);
-		super.update(); //We update the entity, which will trigger physics calculation and calculate the final pos
+	}
+
+	public void cameraUpdate(){
 		camera.transform.setPosition(transform.getPosition());//We apply the final translation to the camera
 		camera.transform.translate(0,1.5f,0);
 		camera.transform.update();
 		camera.updateMatrices();
-
 	}
 
 	

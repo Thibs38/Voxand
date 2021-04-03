@@ -14,19 +14,24 @@ import java.util.Vector;
 
 public class Transform {
 
-    private Vector3f position; //TODO change for doubles (will break a lot of code)
-    private Vector3f rotation;
-    private Vector3f scale;
+    private final Vector3f position;
+    private final Vector3f rotation;
+    private final Vector3f scale;
 
-    private Vector3f forward;
-    private Vector3f right;
+    private final Vector3f forward;
+    private final Vector3f right;
 
-    public Vector2i chunkPos;
+    public final Vector2i chunkPos;
     public Chunk chunk;
-    private Matrix4f transformationMatrix;
+    private final Matrix4f transformationMatrix;
 
     private boolean changed = false; // Has any of position, rotation or scale changed since last update of the transformationMatrix?
     private boolean positionChanged = false; // Has position changed since last update?
+
+    /**
+     * Has chunk position changed?
+     */
+    private boolean chunkPosChanged = false;
 
     //<editor-fold desc="Constructors">
     public Transform(Vector3f position, Vector3f rotation, Vector3f scale){
@@ -61,27 +66,37 @@ public class Transform {
     /**
      * If a change occurred since last update, updates the transformation matrix.
      * If also the position changed, updates the entity's chunk position.
-     * @return true if the transform changed
      */
-    public boolean update(){
+    public void update(){
         if(changed){
             Maths.updateTransformationMatrix(this);
             changed = false;
             if(positionChanged) {
-                updateChunkPos();
+                chunkPosChanged = updateChunkPos();
                 positionChanged = false;
             }
-            return true;
         }
-        return false;
+        if(chunk == null){
+            chunk = TerrainManager.getChunk(chunkPos);
+        }
     }
 
+    public void lateUpdate(){
+        chunkPosChanged = false;
+    }
+
+    private final Vector2i newChunkPos = new Vector2i(0);
     /**
      * Updates the chunk position of the transform
      */
-    public void updateChunkPos(){
-        Chunk.positionToChunkPos(position, chunkPos);
-        chunk = TerrainManager.getChunk(chunkPos);
+    public boolean updateChunkPos(){
+        Chunk.positionToChunkPos(position, newChunkPos);
+        if(!newChunkPos.equals(chunkPos)){
+            chunkPos.set(newChunkPos);
+            chunk = TerrainManager.getChunk(chunkPos);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -211,6 +226,8 @@ public class Transform {
     public Vector3f getRotation(){ return rotation; }
 
     public Vector3f getScale(){ return scale;}
+
+    public boolean hasChunkPosChanged(){ return chunkPosChanged; }
     //</editor-fold>
 
 }

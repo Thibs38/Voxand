@@ -11,17 +11,33 @@ import com.thibsworkshop.voxand.physics.Rigidbody;
 //An entity's transform is updated every frame
 public class Entity extends GameObject {
 
-	protected Rigidbody rigidbody;
+	public Rigidbody rigidbody;
 
-	public boolean render = true;
-	public boolean enabled = true;
+	/**
+	 * Render the entity?
+	 */
+	public boolean doRendering = true;
+	/**
+	 * Do entity vs entity collisions?
+	 */
+	public boolean doEntityCollisions = true;
+	/**
+	 * Do update (collisions / movement)?
+	 */
+	public boolean doUpdate = true;
+	/**
+	 * Is entity enabled?
+	 */
+	private boolean enabled = true;
 
-	public Entity(TexturedModel texturedModel, Transform transform, float mass) {
-		super(transform, texturedModel);
+	public boolean entityCollisionsDone = false;
+
+	public Entity(TexturedModel texturedModel, float mass) {
+		super(texturedModel);
 		this.rigidbody = new Rigidbody(mass,this);
 	}
-	public Entity(TexturedModel texturedModel, Transform transform, Rigidbody rigidbody) {
-		super(transform, texturedModel);
+	public Entity(TexturedModel texturedModel, Rigidbody rigidbody) {
+		super(texturedModel);
 		this.rigidbody = rigidbody;
 	}
 
@@ -31,8 +47,33 @@ public class Entity extends GameObject {
 		//transform.update(); //Update is done in rigidbody class
 	}
 
+	@Override
+	public void lateUpdate(){
+		transform.lateUpdate();
+	}
+
 	public void enableGravity(boolean enabled){
 		rigidbody.gravited = enabled;
+	}
+
+	/**
+	 * Totally disables the entity (update / collisions / rendering)
+	 */
+	public void disableEntity(){
+		enabled = false;
+		doUpdate = false;
+		doRendering = false;
+		doEntityCollisions = false;
+	}
+
+	/**
+	 * Totally enables the entity (update / collisions / rendering)
+	 */
+	public void enableEntity(){
+		enabled = true;
+		doUpdate = true;
+		doRendering = true;
+		doEntityCollisions = true;
 	}
 	
 

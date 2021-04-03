@@ -1,7 +1,9 @@
 package com.thibsworkshop.voxand.physics;
 
 import com.thibsworkshop.voxand.debugging.Debug;
+import com.thibsworkshop.voxand.entities.Entity;
 import com.thibsworkshop.voxand.entities.Transform;
+import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainGenerator;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
@@ -13,24 +15,19 @@ import org.joml.Vector3i;
 
 public class CollisionEngine {
 
-    private Vector3f normal = new Vector3f(0);
 
-    private final float PUSH_COEFF = 1f;
+    private static final float PUSH_COEFF = 16f;
 
-    public static CollisionEngine engine;
 
     //FIXME: No collisions when in high negative coordinates
 
-    public CollisionEngine(){
-        engine = this;
-    }
 
     /**
      * Returns true if the entity is touching the ground, false otherwise
      * @param transform the transform of the entity
      * @return true if grounded, false otherwise
      */
-    public boolean isGrounded(Transform transform, AABB aabb){
+    public static boolean isGrounded(Transform transform, AABB aabb){
         Vector3f pos = transform.getPosition();
         real.set((float) Maths.floatMod(pos.x, Chunk.D_CHUNK_SIZE),
                 pos.y - 2 * Maths.EPSILON,
@@ -62,28 +59,30 @@ public class CollisionEngine {
         return ok;
     }
 
-    private Vector3f AB = new Vector3f();
-    public void entityVSentity(Transform entityA, Transform entityB, Rigidbody rigidA, Rigidbody rigidB){
+    private static final Vector3f AB = new Vector3f();
+    public static void entityVSentity(Entity entityA, Entity entityB){
+        Rigidbody rigidA = entityA.rigidbody;
+        Rigidbody rigidB = entityB.rigidbody;
+
         AABB aabbA = rigidA.getCollider().getAabb();
         AABB aabbB = rigidB.getCollider().getAabb();
-        Vector3f velA = rigidA.velocity;
-        Vector3f velB = rigidB.velocity;
-        Vector3f posA = entityA.getPosition();
+        Vector3f posA = entityA.transform.getPosition();
 
         minI.set(aabbA.min.x + posA.x, aabbA.min.y + posA.y, aabbA.min.z + posA.z);
         maxI.set(aabbA.max.x + posA.x, aabbA.max.y + posA.y, aabbA.max.z + posA.z);
-        Vector3f posB = entityB.getPosition();
+        Vector3f posB = entityB.transform.getPosition();
         min.set(aabbB.min.x + posB.x, aabbB.min.y + posB.y, aabbB.min.z + posB.z);
         max.set(aabbB.max.x + posB.x, aabbB.max.y + posB.y, aabbB.max.z + posB.z);
 
         if(aabbVSaabb(minI,maxI,min,max)){
             AB.set(min).sub(minI);
-            float invDist = PUSH_COEFF / Maths.sqrDistance(posA,posB);
+            float invDist = PUSH_COEFF / Math.max(Maths.sqrDistance(posA,posB),0.5f);
             float massCoeffA = rigidA.mass / rigidB.mass;
-            float forceA = invDist * massCoeffA;
-            float forceB = invDist / massCoeffA;
+            float forceA = (invDist * massCoeffA) * Time.getDeltaTime();
+            float forceB = (invDist / massCoeffA) * Time.getDeltaTime();
             rigidA.addVelocity(-AB.x * forceA, -AB.y * forceA, -AB.z * forceA);
             rigidB.addVelocity(AB.x * forceB, AB.y * forceB, AB.z * forceB);
+            System.out.println(rigidA.mass + " " + rigidB.mass);
         }
     }
 
@@ -95,14 +94,13 @@ public class CollisionEngine {
      * @param maxB max second AABB
      * @return true if the first AABB overlaps the second.
      */
-    public boolean aabbVSaabb(Vector3f minA, Vector3f maxA, Vector3f minB, Vector3f maxB){
+    public static boolean aabbVSaabb(Vector3f minA, Vector3f maxA, Vector3f minB, Vector3f maxB){
         return (minA.x <= maxB.x && maxA.x >= minB.x) &&
                 (minA.y <= maxB.y && maxA.y >= minB.y) &&
                 (minA.z <= maxB.z && maxA.z >= minB.z);
     }
 
-    private final Vector2i getChunkPos = new Vector2i(0);
-
+    private static final Vector2i getChunkPos = new Vector2i(0);
     /**
      * Check every block in the given boundaries and return false if none of them is solid
      * @param x min x
@@ -115,7 +113,7 @@ public class CollisionEngine {
      * @param chunkZ z chunk pos of the minimum bound
      * @return true if one of the blocks is solid, false otherwise
      */
-    public boolean checkSolid(int x, int y, int z, int X, int Y, int Z, int chunkX, int chunkZ) {
+    public static boolean checkSolid(int x, int y, int z, int X, int Y, int Z, int chunkX, int chunkZ) {
         for (int i = x; i <= X; i++) {
             int rx = Chunk.posCorrect(i);
             int rChunkX = Chunk.chunkPosCorrect(chunkX, i);
@@ -143,7 +141,8 @@ public class CollisionEngine {
 
 
     //<editor-fold desc="AABB vs TERRAIN">
-    public void entityVSterrain(Transform transform, Vector3f movement, AABB aabb, Vector3i aura) {
+    private static Vector3f normal = new Vector3f(0);
+    public static void entityVSterrain(Transform transform, Vector3f movement, AABB aabb, Vector3i aura) {
 
         float minTime = 0;
         float remainingTime = 1;
@@ -170,16 +169,16 @@ public class CollisionEngine {
         movement.set(0);
     }
 
-    private final Vector3f real = new Vector3f(); //player position in chunk space
-    private final Vector3f min = new Vector3f(); //minimum final collider position in chunk space
-    private final Vector3f max = new Vector3f(); //maximum final collider position in chunk space
-    private final Vector3f minI = new Vector3f(); //minimum initial collider position in chunk space
-    private final Vector3f maxI = new Vector3f(); //maximum initial collider position in chunk space
-    private final Vector3i minIint = new Vector3i(); //minimum initial collider position in chunk space floored
-    private final Vector3i maxIint = new Vector3i(); //maximum initial collider position in chunk space floored
-    private final Vector2i chunkPosR = new Vector2i(); //chunk position
+    private static final Vector3f real = new Vector3f(); //player position in chunk space
+    private static final Vector3f min = new Vector3f(); //minimum final collider position in chunk space
+    private static final Vector3f max = new Vector3f(); //maximum final collider position in chunk space
+    private static final Vector3f minI = new Vector3f(); //minimum initial collider position in chunk space
+    private static final Vector3f maxI = new Vector3f(); //maximum initial collider position in chunk space
+    private static final Vector3i minIint = new Vector3i(); //minimum initial collider position in chunk space floored
+    private static final Vector3i maxIint = new Vector3i(); //maximum initial collider position in chunk space floored
+    private static final Vector2i chunkPosR = new Vector2i(); //chunk position
 
-    private float entityVSterrainLoop(Transform transform, Vector3f velocity, AABB aabb, Vector3i aura){
+    private static float entityVSterrainLoop(Transform transform, Vector3f velocity, AABB aabb, Vector3i aura){
 
         Vector3f positionI = transform.getPosition(); //initial global position
 
@@ -252,12 +251,12 @@ public class CollisionEngine {
         return minTime;
     }
 
-    private final Vector3f invEntry = new Vector3f();
-    private final Vector3f invExit = new Vector3f();
-    private final Vector3f entry = new Vector3f();
-    private final Vector3f exit = new Vector3f();
+    private static final Vector3f invEntry = new Vector3f();
+    private static final Vector3f invExit = new Vector3f();
+    private static final Vector3f entry = new Vector3f();
+    private static final Vector3f exit = new Vector3f();
 
-    private float sweptAABB(Vector3f velocity, float x, float y, float z, float minTime){
+    private static float sweptAABB(Vector3f velocity, float x, float y, float z, float minTime){
         // find the distance between the objects on the near and far sides for both x, y and z
         // and find time of collision and time of leaving for each axis
         if (velocity.x > 0.0f) {

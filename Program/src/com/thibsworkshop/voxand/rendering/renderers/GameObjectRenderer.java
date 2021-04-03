@@ -45,16 +45,13 @@ public class GameObjectRenderer extends Renderer {
 		for(TexturedModel texturedModel : gameObjectManager.getEntitiesToRender().keySet()) {
 			prepareTexturedModel(texturedModel);
 			List<Entity> batch = gameObjectManager.getEntitiesToRender().get(texturedModel);
-			for(Entity entity:batch) {
-				if(entity.render){ //OPTIMIZE: needs to be optimized, maybe cache the position in the entity and update when it moves
-					Vector3f worldMin = entity.transform.localToWorldPositionUnrotated(entity.getModel().collider.getAabb().min);
-					Vector3f worldMax = entity.transform.localToWorldPositionUnrotated(entity.getModel().collider.getAabb().max);
-					if(frustumIntersection.testAab(worldMin, worldMax)){
-						loadTransformation(entity);
-						GL11.glDrawElements(GL11.GL_TRIANGLES, texturedModel.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
-					}
+			for(Entity entity:batch) { //OPTIMIZE: to much calculation bellow, maybe cache some stuff
+				Vector3f worldMin = entity.transform.localToWorldPositionUnrotated(entity.getModel().collider.getAabb().min);
+				Vector3f worldMax = entity.transform.localToWorldPositionUnrotated(entity.getModel().collider.getAabb().max);
+				if(frustumIntersection.testAab(worldMin, worldMax)){
+					loadTransformation(entity);
+					GL11.glDrawElements(GL11.GL_TRIANGLES, texturedModel.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
 				}
-
 			}
 			unbindModel();
 		}

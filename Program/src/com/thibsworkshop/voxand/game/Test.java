@@ -37,8 +37,8 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        //window = new Window(1280,720,false);
-        window = new Window(1920,1080,true);
+        window = new Window(1280,720,false);
+        //window = new Window(1920,1080,true);
 
         Time.init();
         Loader.init();
@@ -78,7 +78,8 @@ public class Test {
 
         GameObjectManager gameObjectManager = new GameObjectManager();
 
-        Entity entity = new Entity(texturedModel, new Transform(new Vector3f(0,200,5)),1);
+        Entity entity = new Entity(texturedModel,2);
+        entity.transform.setPosition(5,200,5);
         //Entity entity2 = new Entity(texturedModel,new Transform(new Vector3f(0,0,-5)),1);
         //Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),1);
         //Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),1);
@@ -101,7 +102,7 @@ public class Test {
                 player.enableGravity(true);
 
             player.move();
-
+            //System.out.println(entity.transform.chunk == null);
             //Game Logic
 
             //Debug.printVector(player.transform.forward());
@@ -119,6 +120,7 @@ public class Test {
 
             gameObjectManager.update();
             terrainManager.refreshChunks();
+            player.cameraUpdate();
             renderer.render(camera);
             window.updateWindow();
         }

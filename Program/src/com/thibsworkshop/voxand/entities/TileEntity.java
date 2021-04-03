@@ -5,8 +5,8 @@ import com.thibsworkshop.voxand.rendering.models.TexturedModel;
 public class TileEntity extends GameObject {
 
     boolean hasCollider;
-    public TileEntity(Transform transform, TexturedModel texturedModel) {
-        super(transform, texturedModel);
+    public TileEntity(TexturedModel texturedModel) {
+        super(texturedModel);
         hasCollider = texturedModel.collider != null;
     }
 
@@ -14,4 +14,7 @@ public class TileEntity extends GameObject {
     @Override
     public void update(){
     }
+
+    @Override
+    public void lateUpdate(){}
 }

@@ -16,8 +16,6 @@ public class Collider {
 
 	private WireframeModel wireModel;
 
-	private static final CollisionEngine collisionEngine = CollisionEngine.engine;
-
 	public Collider(AABB aabb) {
 		this.aabb = aabb;
 		this.aura = new Vector3i(
@@ -27,11 +25,11 @@ public class Collider {
 	}
 
 	public void detectCollision(Transform transform, Vector3f movement){
-		collisionEngine.entityVSterrain(transform, movement, aabb, aura);
+		CollisionEngine.entityVSterrain(transform, movement, aabb, aura);
 	}
 
 	public boolean isGrounded(Transform transform){
-		return collisionEngine.isGrounded(transform,aabb);
+		return CollisionEngine.isGrounded(transform,aabb);
 	}
 	public void createWireframe(){
 		if(wireModel == null)

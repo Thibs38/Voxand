@@ -8,12 +8,14 @@ public abstract class GameObject {
     public Transform transform;
     protected TexturedModel texturedModel;
 
-    public GameObject(Transform transform, TexturedModel texturedModel){
-        this.transform = transform;
+    public GameObject(TexturedModel texturedModel){
+        this.transform = new Transform();
         this.texturedModel = texturedModel;
     }
 
     public abstract void update();
+
+    public abstract void lateUpdate();
 
     public TexturedModel getModel() {
         return texturedModel;

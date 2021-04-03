@@ -23,9 +23,12 @@ public class LineRenderer extends Renderer{
 
     GameObjectManager gameObjectManager;
 
+    Player player;
+
     public LineRenderer(LineShader shader){
         super(shader);
         this.shader = shader;
+        this.player = Player.player;
     }
 
     public void linkTerrainManager(TerrainManager terrainManager){ this.terrainManager = terrainManager; }
@@ -80,6 +83,13 @@ public class LineRenderer extends Renderer{
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });
+
+        WireframeModel wireframe = Player.player.getModel().collider.getWireframeModel();
+        shader.loadColor(wireframe.color);
+        RawModel rawModel = wireframe.getRawModel();
+        prepareModel(rawModel);
+        shader.loadTransformation(Player.player.transform.getPosition(),player.transform.getScale());
+        GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
     }
 
     private void renderTileEntitiesCollider(){

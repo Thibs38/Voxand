@@ -12,7 +12,8 @@ import org.joml.Vector3f;
 public class Rigidbody {
 
     public static float gravity = -9.81f;
-    public float drag = 0.9f;
+    public float horizontalDrag = 8f;
+    public float verticalDrag = 0.5f;
     public Vector3f velocity;
     private Vector3f movement; //Movement calculated from the velocity
     public float mass;
@@ -37,8 +38,9 @@ public class Rigidbody {
 
         if(!velocity.equals(Maths.zero)){
             movement.set(velocity).mul(Time.getDeltaTime());
-            float rDrag = Math.max(1-drag*Time.getDeltaTime(),0);
-            velocity.mul(1,rDrag,1);
+            float rHDrag = Math.max(1-horizontalDrag*Time.getDeltaTime(),0);
+            float rVDrag = Math.max(1-verticalDrag*Time.getDeltaTime(),0);
+            velocity.mul(rHDrag,rVDrag,rHDrag);
             collider.detectCollision(entity.transform, movement);
             entity.transform.update();
             grounded = collider.isGrounded(entity.transform);
