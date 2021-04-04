@@ -37,8 +37,8 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        window = new Window(1280,720,false);
-        //window = new Window(1920,1080,true);
+        //window = new Window(1280,720,false);
+        window = new Window(1920,1080,true);
 
         Time.init();
         Loader.init();
@@ -53,14 +53,19 @@ public class Test {
 
         Material mat = new Material(10,1);
 
-        AABB aabb = AABB.createCenterSize(new Vector3f(0),0.9f,1.8f,0.9f);
-        Collider collider = new Collider(aabb);
-        TexturedModel texturedModel = new TexturedModel("chr_knight","chr_knight", mat,collider);
+        AABB playerAABB = AABB.createCenterSize(new Vector3f(0),0.9f,1.8f,0.9f);
+        Collider playerCollider = new Collider(playerAABB);
+
+        AABB chickAABB = AABB.createMinMax(new Vector3f(-0.3f,0f,-0.3f),new Vector3f(0.3f,0.9f,0.3f));
+        Collider chickCollider = new Collider(chickAABB);
+
+        TexturedModel texturedModel = new TexturedModel("chr_knight","chr_knight", mat,playerCollider);
+        TexturedModel chickModel = new TexturedModel("chick","chick", mat,chickCollider);
 
         Camera camera = new Camera();
         Camera.main = camera;
 
-        Player player = new Player(texturedModel,1,camera);
+        Player player = new Player(texturedModel,50,camera);
         player.transform.setPosition(16,175,16);
 
         Input input = new Input(window);
@@ -78,13 +83,13 @@ public class Test {
 
         GameObjectManager gameObjectManager = new GameObjectManager();
 
-        Entity entity = new Entity(texturedModel,2);
-        entity.transform.setPosition(5,200,5);
+        Entity chick = new Entity(chickModel,1);
+        chick.transform.setPosition(5,200,5);
         //Entity entity2 = new Entity(texturedModel,new Transform(new Vector3f(0,0,-5)),1);
         //Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),1);
         //Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),1);
 
-        gameObjectManager.processEntity(entity);
+        gameObjectManager.processEntity(chick);
         //gameObjectManager.processEntity(entity2);
         //gameObjectManager.processEntity(entity3);
         //gameObjectManager.processEntity(entity4);

@@ -24,6 +24,8 @@ public class TerrainRenderer extends Renderer {
 	
 	private Material material;
 
+	private TerrainManager terrainManager;
+
 	private final FrustumIntersection frustumIntersection;
 
 	public TerrainRenderer(TerrainShader shader ) {

@@ -48,7 +48,7 @@ public class CollisionEngine {
     }
 
     private static final Vector3f AB = new Vector3f();
-    public static void entityVSentity(Entity entityA, Entity entityB){
+    public static void entityVSentity(Entity entityA, Entity entityB){ //TODO: Implement least overlapping axis
         Rigidbody rigidA = entityA.rigidbody;
         Rigidbody rigidB = entityB.rigidbody;
 
@@ -65,11 +65,11 @@ public class CollisionEngine {
         if(aabbVSaabb(minI,maxI,min,max)){
             AB.set(min).sub(minI);
             float invDist = PUSH_COEFF / Math.max(Maths.sqrDistance(posA,posB),0.5f);
-            float massCoeffA = rigidA.mass / rigidB.mass;
-            float forceA = (invDist * massCoeffA) * Time.getDeltaTime();
-            float forceB = (invDist / massCoeffA) * Time.getDeltaTime();
-            rigidA.addVelocity(-AB.x * forceA, -AB.y * forceA, -AB.z * forceA);
-            rigidB.addVelocity(AB.x * forceB, AB.y * forceB, AB.z * forceB);
+            float massCoeffB = rigidA.mass / rigidB.mass;
+            float forceA = (invDist / massCoeffB) * Time.getDeltaTime();
+            float forceB = (invDist * massCoeffB) * Time.getDeltaTime();
+            rigidA.addVelocity(-AB.x * forceA, 0, -AB.z * forceA);
+            rigidB.addVelocity(AB.x * forceB, 0, AB.z * forceB);
             System.out.println(rigidA.mass + " " + rigidB.mass);
         }
     }
