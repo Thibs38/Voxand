@@ -1,0 +1,44 @@
+[
+  {
+    "id": 0,
+    "name": "plains",
+    "luafile": "plains.lua",
+    "temperature": {
+      "min": 15,
+      "max": 35
+    },
+    "humidity":{
+      "min": 30,
+      "max": 70
+    },
+    "entities":["chick"]
+  },
+  {
+    "id": 1,
+    "name": "forest",
+    "luafile": "forest.lua",
+    "temperature": {
+      "min": 15,
+      "max": 30
+    },
+    "humidity":{
+      "min": 40,
+      "max": 70
+    },
+    "entities":["chick"]
+  },
+  {
+    "id": 2,
+    "name": "mountains",
+    "luafile": "mountains.lua",
+    "temperature": {
+      "min": 5,
+      "max": 25
+    },
+    "humidity":{
+      "min": 20,
+      "max": 50
+    },
+    "entities: ": []
+  }
+]

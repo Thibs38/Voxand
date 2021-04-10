@@ -7,7 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import org.joml.Vector3f;
 
 
-public class Player extends Entity {
+public class Player extends GameEntity {
 
 	private final float speed = 2;
 	private final float rotationSpeed = 20f;

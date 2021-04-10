@@ -19,13 +19,13 @@ public class GameObjectManager {
     //OPTIMIZE: a lot of entries will be in entitiesInChunk, it needs to remove unloaded chunks
     //TODO: BE CAREFUL WHEN UNLOADING ENTITIES, THERE ARE TWO MAPS REFERRING TO THEM
 
-    private final Map<TexturedModel,List<Entity>> entities = new HashMap<>(50);
+    private final Map<TexturedModel,List<GameEntity>> entities = new HashMap<>(50);
     private final Map<TexturedModel,List<TileEntity>> tileEntities = new HashMap<>(50);
 
-    private final Map<Vector2i,List<Entity>> entitiesInChunk = new HashMap<>();
+    private final Map<Vector2i,List<GameEntity>> entitiesInChunk = new HashMap<>();
 
 
-    private final Map<TexturedModel,List<Entity>> entitiesToRender = new HashMap<>(50);
+    private final Map<TexturedModel,List<GameEntity>> entitiesToRender = new HashMap<>(50);
     private final Map<TexturedModel,List<TileEntity>> tileEntitiesToRender = new HashMap<>(50);
 
     public static GameObjectManager main;
@@ -47,60 +47,60 @@ public class GameObjectManager {
 
     private final Vector2i temp = new Vector2i(0);
     private void collisionUpdate(){
-        for (Map.Entry<Vector2i, List<Entity>> entry : entitiesInChunk.entrySet()) {
-            List<Entity> batch = entry.getValue();
+        for (Map.Entry<Vector2i, List<GameEntity>> entry : entitiesInChunk.entrySet()) {
+            List<GameEntity> batch = entry.getValue();
             for (int i = 0; i < batch.size(); i++) {
-                Entity entityA = batch.get(i);
+                GameEntity gameEntityA = batch.get(i);
 
-                if (entityA.entityCollisionsDone)
+                if (gameEntityA.entityCollisionsDone)
                     continue;
 
                 for (int j = i + 1; j < batch.size(); j++) { //Collisions in the current chunk
-                    Entity entityB = batch.get(j);
-                    if (entityB.doEntityCollisions && !entityB.entityCollisionsDone) {
-                        CollisionEngine.entityVSentity(entityA, entityB);
+                    GameEntity gameEntityB = batch.get(j);
+                    if (gameEntityB.doEntityCollisions && !gameEntityB.entityCollisionsDone) {
+                        CollisionEngine.entityVSentity(gameEntityA, gameEntityB);
                     }
                 }
-                temp.set(entityA.transform.chunkPos);
+                temp.set(gameEntityA.transform.chunkPos);
 
                 temp.sub(1, 0); //Collisions left
-                loopCollisions(entityA);
+                loopCollisions(gameEntityA);
 
                 temp.add(0, 1); //Collisions top left
-                loopCollisions(entityA);
+                loopCollisions(gameEntityA);
 
                 temp.add(1, 0); //Collisions top
-                loopCollisions(entityA);
+                loopCollisions(gameEntityA);
 
                 temp.add(1, 0); //Collisions top right
-                loopCollisions(entityA);
+                loopCollisions(gameEntityA);
 
                 temp.sub(0, 1); //Collisions right
-                loopCollisions(entityA);
+                loopCollisions(gameEntityA);
 
                 temp.sub(0, 1); //Collisions bottom right
-                loopCollisions(entityA);
+                loopCollisions(gameEntityA);
 
                 temp.sub(1, 0); //Collisions bottom
-                loopCollisions(entityA);
+                loopCollisions(gameEntityA);
 
                 temp.sub(1, 0); //Collisions bottom left
-                loopCollisions(entityA);
+                loopCollisions(gameEntityA);
 
-                entityA.entityCollisionsDone = true;
+                gameEntityA.entityCollisionsDone = true;
             }
         }
     }
 
-    private void loopCollisions(Entity entityA){
-        List<Entity> batchTemp = entitiesInChunk.get(temp);
+    private void loopCollisions(GameEntity gameEntityA){
+        List<GameEntity> batchTemp = entitiesInChunk.get(temp);
         if (batchTemp != null) {
-            for (Entity entityB : batchTemp) {
-                if (entityB.doEntityCollisions && !entityB.entityCollisionsDone) {
-                    if(entityA == entityB){
+            for (GameEntity gameEntityB : batchTemp) {
+                if (gameEntityB.doEntityCollisions && !gameEntityB.entityCollisionsDone) {
+                    if(gameEntityA == gameEntityB){
                         System.err.println("BIG PROBLEM: ENTITY IS COLLIDING WITH ITSELF (multiple reference to this entity");
                     }
-                    CollisionEngine.entityVSentity(entityA, entityB);
+                    CollisionEngine.entityVSentity(gameEntityA, gameEntityB);
                 }
             }
         }
@@ -108,37 +108,37 @@ public class GameObjectManager {
 
     private void updateEntities(){
         for(TexturedModel texturedModel : entities.keySet()){
-            List<Entity> batch = entities.get(texturedModel);
-            List<Entity> renderBatch = entitiesToRender.get(texturedModel);
-            for (Entity entity : batch) {
-                entity.entityCollisionsDone = false;
-                if(entity.doUpdate){
-                    temp.set(entity.transform.chunkPos);       //Setting the previous chunkPos before the update
-                    entity.update();                           //Update the entity only if it is enabled
-                    if(entity.transform.hasChunkPosChanged()){ //If the chunk position changed, move the entity from list
-                        System.out.println("CHUNK CHANGED " + entity.rigidbody.mass);
-                        Vector2i chunkPos = entity.transform.chunkPos;
-                        List<Entity> e = entitiesInChunk.get(temp);     //List where the entity was
+            List<GameEntity> batch = entities.get(texturedModel);
+            List<GameEntity> renderBatch = entitiesToRender.get(texturedModel);
+            for (GameEntity gameEntity : batch) {
+                gameEntity.entityCollisionsDone = false;
+                if(gameEntity.doUpdate){
+                    temp.set(gameEntity.transform.chunkPos);       //Setting the previous chunkPos before the update
+                    gameEntity.update();                           //Update the entity only if it is enabled
+                    if(gameEntity.transform.hasChunkPosChanged()){ //If the chunk position changed, move the entity from list
+                        System.out.println("CHUNK CHANGED " + gameEntity.rigidbody.mass);
+                        Vector2i chunkPos = gameEntity.transform.chunkPos;
+                        List<GameEntity> e = entitiesInChunk.get(temp);     //List where the entity was
                         if(e != null)                                   //If the list is not null
-                            e.remove(entity);                           //Remove its previous reference from it
+                            e.remove(gameEntity);                           //Remove its previous reference from it
                         e = entitiesInChunk.get(chunkPos);              //Get the new list
                         if(e == null) {                                 //Create it if it doesn't exist yet
                             entitiesInChunk.put(new Vector2i(chunkPos), new ArrayList<>());
                             e = entitiesInChunk.get(chunkPos);
                         }
-                        e.add(entity); //New reference
+                        e.add(gameEntity); //New reference
                     }
-                    entity.lateUpdate(); //TODO: Probably move this later in code
+                    gameEntity.lateUpdate(); //TODO: Probably move this later in code
                 }
 
-                boolean alreadyInBatch = renderBatch.contains(entity);
-                if (entity.doRendering && entity.transform.chunk != null && entity.transform.chunk.getSqr_distance() <= Config.sqr_entityViewDist) {
+                boolean alreadyInBatch = renderBatch.contains(gameEntity);
+                if (gameEntity.doRendering && gameEntity.transform.chunk != null && gameEntity.transform.chunk.getSqr_distance() <= Config.sqr_entityViewDist) {
                     if (!alreadyInBatch) {
-                        renderBatch.add(entity);
+                        renderBatch.add(gameEntity);
                         System.out.println("ADDING ENTITY TO RENDER LIST");
                     }
                 } else {
-                    if (alreadyInBatch) renderBatch.remove(entity);
+                    if (alreadyInBatch) renderBatch.remove(gameEntity);
                 }
             }
         }
@@ -160,26 +160,26 @@ public class GameObjectManager {
         }
     }
 
-    public void processEntity(Entity entity) {
-        TexturedModel entityTexturedModel = entity.getModel();
-        List<Entity> batch = entities.get(entityTexturedModel);
+    public void processEntity(GameEntity gameEntity) {
+        TexturedModel entityTexturedModel = gameEntity.getModel();
+        List<GameEntity> batch = entities.get(entityTexturedModel);
         if(batch == null) {
-            List<Entity> newBatch = new ArrayList<>(10);
-            List<Entity> newRenderBatch = new ArrayList<>(10);
-            newBatch.add(entity);
+            List<GameEntity> newBatch = new ArrayList<>(10);
+            List<GameEntity> newRenderBatch = new ArrayList<>(10);
+            newBatch.add(gameEntity);
             entities.put(entityTexturedModel,newBatch);
             entitiesToRender.put(entityTexturedModel,newRenderBatch);
         }else {
-            batch.add(entity);
+            batch.add(gameEntity);
         }
 
-        Vector2i chunkPos = entity.transform.chunkPos;
+        Vector2i chunkPos = gameEntity.transform.chunkPos;
         batch = entitiesInChunk.get(chunkPos);
         if(batch == null) {
             entitiesInChunk.put(chunkPos, new ArrayList<>());
             batch = entitiesInChunk.get(chunkPos);
         }
-        batch.add(entity); //New reference
+        batch.add(gameEntity); //New reference
     }
 
     public void processTileEntity(TileEntity tileEntity) {
@@ -196,9 +196,9 @@ public class GameObjectManager {
         }
     }
 
-    public void removeEntity(Entity entity){
-        entities.get(entity.texturedModel).remove(entity);
-        entitiesToRender.get(entity.texturedModel).remove(entity);
+    public void removeEntity(GameEntity gameEntity){
+        entities.get(gameEntity.texturedModel).remove(gameEntity);
+        entitiesToRender.get(gameEntity.texturedModel).remove(gameEntity);
     }
 
     public void removeEntity(TileEntity tileEntity){
@@ -233,6 +233,6 @@ public class GameObjectManager {
 
     public Map<TexturedModel,List<TileEntity>> getTileEntitiesToRender(){ return tileEntitiesToRender; }
 
-    public Map<TexturedModel,List<Entity>> getEntitiesToRender(){ return entitiesToRender; }
+    public Map<TexturedModel,List<GameEntity>> getEntitiesToRender(){ return entitiesToRender; }
 
 }

@@ -3,7 +3,7 @@ package com.thibsworkshop.voxand.loaders;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import com.thibsworkshop.voxand.terrain.Block;
+import com.thibsworkshop.voxand.data.Block;
 import com.thibsworkshop.voxand.toolbox.Utility;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,6 +43,7 @@ public class JsonLoader {
 		return blocks;
 
 	}
-	
+
+
 	
 }

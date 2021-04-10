@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.terrain;
 import java.util.*;
 import java.util.concurrent.*;
 
+import com.thibsworkshop.voxand.data.Block;
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Player;
@@ -135,11 +136,12 @@ public class TerrainManager {
 			case LOOP -> {
 				//System.out.println("LOOP");
 				Timing.start(debugName,"Refreshing");
-				if(loopChunk())
+				if(loopChunk()){
 					state = State.WAIT_GRIDS;
+					refreshChunks();
+				}
 				Timing.stop(debugName,"Refreshing");
 
-				refreshChunks();
 			}
 			case WAIT_GRIDS -> {
 				//System.out.println("WAIT GRIDS");
@@ -186,13 +188,11 @@ public class TerrainManager {
 				for (int z = -i; z <= i; z++) {
 					int rx = x + playerChunkPosTemp.x;
 					int rz = z + playerChunkPosTemp.y;
-
 					chunkPosTemp.set(rx, rz);
 					Chunk value = chunks.get(chunkPosTemp);
 
 					if (value == null) { //If the grid doesn't exist, let's create it
-						if (!gridsInCreation.containsKey(chunkPosTemp) //&& !gridsToCreate.containsKey(chunkPosTemp)
-						) { // If the grid doesn't exist and it is not in creation, then we'll create it
+						if (!gridsInCreation.containsKey(chunkPosTemp)) { // If the grid doesn't exist and it is not in creation, then we'll create it
 							Vector2i v = new Vector2i(chunkPosTemp);
 							gridsInCreation.put(v, executor.submit(new GridGeneratorCallable(v, terrainInfo)));
 							if(!stop){

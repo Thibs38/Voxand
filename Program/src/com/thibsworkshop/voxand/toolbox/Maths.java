@@ -129,6 +129,18 @@ public class Maths {
 	}
 
 	/**
+	 * Calculates the squared distance between a and b on the xz plane
+	 * @param a first point
+	 * @param b second point
+	 * @return squared distance between a and b
+	 */
+	public static float sqrDistance_xz(Vector3f a, Vector3f b) {
+		float x = a.x - b.x;
+		float z = a.z - b.z;
+		return x * x + z * z;
+	}
+
+	/**
 	 * Calculates the squared distance between a and b
 	 * @param a first point
 	 * @param b second point
@@ -148,6 +160,14 @@ public class Maths {
 	public static int sqrMagnitude(Vector2i v){
 		return v.x * v.x + v.y * v.y;
 	}
+
+	/**
+	 * Calculates the squared magnitude (length) of the given vector.
+	 * @param x x of the vector
+	 * @param y y of the vector
+	 * @return The squared magnitude
+	 */
+	public static int sqrMagnitude(int x, int y){ return x*x + y*y; }
 
 	/**
 	 * Returns the largest int less than a

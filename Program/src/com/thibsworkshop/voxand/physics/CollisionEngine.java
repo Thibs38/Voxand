@@ -1,6 +1,6 @@
 package com.thibsworkshop.voxand.physics;
 
-import com.thibsworkshop.voxand.entities.Entity;
+import com.thibsworkshop.voxand.entities.GameEntity;
 import com.thibsworkshop.voxand.entities.Transform;
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.terrain.Chunk;
@@ -14,7 +14,7 @@ import org.joml.Vector3i;
 public class CollisionEngine {
 
 
-    private static final float PUSH_COEFF = 16f;
+    private static final float PUSH_COEFF = 0.5f;
 
 
     //FIXME: No collisions when in high negative coordinates
@@ -47,27 +47,36 @@ public class CollisionEngine {
                 );
     }
 
-    private static final Vector3f AB = new Vector3f();
-    public static void entityVSentity(Entity entityA, Entity entityB){ //TODO: Implement least overlapping axis
-        Rigidbody rigidA = entityA.rigidbody;
-        Rigidbody rigidB = entityB.rigidbody;
+    private static final Vector3f minAmaxB = new Vector3f(0);
+    private static final Vector3f maxAminB = new Vector3f(0);
+    private static final Vector3f AB = new Vector3f(0);
+    public static void entityVSentity(GameEntity gameEntityA, GameEntity gameEntityB){ //TODO: Implement least overlapping axis
+        Rigidbody rigidA = gameEntityA.rigidbody;
+        Rigidbody rigidB = gameEntityB.rigidbody;
 
         AABB aabbA = rigidA.getCollider().getAabb();
         AABB aabbB = rigidB.getCollider().getAabb();
-        Vector3f posA = entityA.transform.getPosition();
+        Vector3f posA = gameEntityA.transform.getPosition();
 
         minI.set(aabbA.min.x + posA.x, aabbA.min.y + posA.y, aabbA.min.z + posA.z);
         maxI.set(aabbA.max.x + posA.x, aabbA.max.y + posA.y, aabbA.max.z + posA.z);
-        Vector3f posB = entityB.transform.getPosition();
+        Vector3f posB = gameEntityB.transform.getPosition();
         min.set(aabbB.min.x + posB.x, aabbB.min.y + posB.y, aabbB.min.z + posB.z);
         max.set(aabbB.max.x + posB.x, aabbB.max.y + posB.y, aabbB.max.z + posB.z);
 
+        minAmaxB.set(max).sub(minI);
+        maxAminB.set(min).sub(maxI);
+
         if(aabbVSaabb(minI,maxI,min,max)){
-            AB.set(min).sub(minI);
-            float invDist = PUSH_COEFF / Math.max(Maths.sqrDistance(posA,posB),0.5f);
-            float massCoeffB = rigidA.mass / rigidB.mass;
-            float forceA = (invDist / massCoeffB) * Time.getDeltaTime();
-            float forceB = (invDist * massCoeffB) * Time.getDeltaTime();
+            //OPTIMIZE: Maybe don't normalize distance (avoiding on sqrt) and divide force by A²+B²
+            float sqrDist = Maths.sqrDistance_xz(posA,posB);
+            float dist = (float)Math.sqrt(sqrDist);
+            AB.set(posB.x - posA.x, 0, posB.z - posA.z).div(dist);
+
+            float force = PUSH_COEFF / Math.max(sqrDist,0.2f);
+            float forceA = force * (rigidB.mass / rigidA.mass) * Time.getDeltaTime();
+            float forceB = force * (rigidA.mass / rigidB.mass) * Time.getDeltaTime();
+
             rigidA.addVelocity(-AB.x * forceA, 0, -AB.z * forceA);
             rigidB.addVelocity(AB.x * forceB, 0, AB.z * forceB);
             System.out.println(rigidA.mass + " " + rigidB.mass);
@@ -86,6 +95,11 @@ public class CollisionEngine {
         return (minA.x <= maxB.x && maxA.x >= minB.x) &&
                 (minA.y <= maxB.y && maxA.y >= minB.y) &&
                 (minA.z <= maxB.z && maxA.z >= minB.z);
+    }
+
+    public static boolean aabbVSaabb(Vector3f minAmaxB, Vector3f maxAminB){
+        return (0 <= minAmaxB.x && 0 <= minAmaxB.y && 0 <= minAmaxB.z) &&
+                (maxAminB.x <= 0 && maxAminB.y <= 0 && maxAminB.z <= 0);
     }
 
     private static final Vector2i getChunkPos = new Vector2i(0);
@@ -209,7 +223,8 @@ public class CollisionEngine {
             for (int z = minZ; z <= maxZ; z++) {
                 int rz = Chunk.posCorrect(z);
                 chunkPosR.y = Chunk.chunkPosCorrect(chunkPos.y,z);
-                boolean zOK = (xOKlength && (z == minIint.z-1 || z == maxIint.z+1)) || (xOK && z >= minIint.z && z <= maxIint.z);
+                boolean zOK = (xOKlength && (z == minIint.z-1 || z == maxIint.z+1)) ||
+                        (xOK && z >= minIint.z && z <= maxIint.z);
 
                 for (int y = minY; y <= maxY; y++) {
 

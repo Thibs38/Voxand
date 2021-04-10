@@ -1,5 +1,7 @@
 package com.thibsworkshop.voxand.terrain;
 
+import com.thibsworkshop.voxand.data.Block;
+
 public class TerrainGenerator {
 
 	public static IndicesVerticesNormals generate(Chunk chunk, byte[][][] back, byte[][][] front, byte[][][] right, byte[][][] left ) {

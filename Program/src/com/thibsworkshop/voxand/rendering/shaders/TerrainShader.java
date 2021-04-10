@@ -1,6 +1,6 @@
 package com.thibsworkshop.voxand.rendering.shaders;
 
-import com.thibsworkshop.voxand.terrain.Block;
+import com.thibsworkshop.voxand.data.Block;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 

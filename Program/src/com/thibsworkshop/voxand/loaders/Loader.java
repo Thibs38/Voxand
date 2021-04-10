@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.thibsworkshop.voxand.rendering.models.RawModel;
-import com.thibsworkshop.voxand.terrain.Block;
+import com.thibsworkshop.voxand.data.Block;
 import com.thibsworkshop.voxand.rendering.textures.Texture;
 import com.thibsworkshop.voxand.toolbox.BufferTools;
 import org.lwjgl.opengl.GL11;

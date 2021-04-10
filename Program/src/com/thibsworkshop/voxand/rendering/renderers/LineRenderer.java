@@ -78,8 +78,8 @@ public class LineRenderer extends Renderer{
             shader.loadColor(wireframe.color);
             RawModel rawModel = wireframe.getRawModel();
             prepareModel(rawModel);
-            for(Entity entity : v) {
-                shader.loadTransformation(entity.transform.getPosition(),entity.transform.getScale());
+            for(GameEntity gameEntity : v) {
+                shader.loadTransformation(gameEntity.transform.getPosition(), gameEntity.transform.getScale());
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });

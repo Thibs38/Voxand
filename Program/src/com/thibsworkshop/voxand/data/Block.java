@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.terrain;
+package com.thibsworkshop.voxand.data;
 
 import org.joml.Vector3f;
 

@@ -5,7 +5,7 @@ import com.thibsworkshop.voxand.entities.Player;
 import com.thibsworkshop.voxand.game.Config;
 import com.thibsworkshop.voxand.rendering.models.RawModel;
 import com.thibsworkshop.voxand.rendering.shaders.TerrainShader;
-import com.thibsworkshop.voxand.terrain.Block;
+import com.thibsworkshop.voxand.data.Block;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.rendering.textures.Material;

@@ -78,33 +78,44 @@ public class Test {
 
         MasterRenderer renderer = new MasterRenderer(sun,lights);
 
-        TerrainInfo terrainInfo = new TerrainInfo(0.01f,10,4,1,1);
+        TerrainInfo terrainInfo = new TerrainInfo(0.01f,1,4,1,1);
         TerrainManager terrainManager = new TerrainManager(terrainInfo);
 
         GameObjectManager gameObjectManager = new GameObjectManager();
 
-        Entity chick = new Entity(chickModel,1);
+        GameEntity chick = new GameEntity(chickModel,1);
         chick.transform.setPosition(5,200,5);
-        //Entity entity2 = new Entity(texturedModel,new Transform(new Vector3f(0,0,-5)),1);
-        //Entity entity3 = new Entity(texturedModel,new Transform(new Vector3f(-5,0,0)),1);
-        //Entity entity4 = new Entity(texturedModel,new Transform(new Vector3f(5,0,0)),1);
+        GameEntity chick1 = new GameEntity(chickModel,1);
+        chick1.transform.setPosition(6,205,5);
+        GameEntity chick2 = new GameEntity(chickModel,1);
+        chick2.transform.setPosition(7,210,5);
+        GameEntity chick3 = new GameEntity(chickModel,1);
+        chick3.transform.setPosition(8,215,5);
+        GameEntity chick4 = new GameEntity(chickModel,1);
+        chick4.transform.setPosition(9,220,5);
 
-        gameObjectManager.processEntity(chick);
-        //gameObjectManager.processEntity(entity2);
-        //gameObjectManager.processEntity(entity3);
-        //gameObjectManager.processEntity(entity4);
-            gameObjectManager.processEntity(player);
+
+
+        gameObjectManager.processEntity(player);
         //Timing.enable(TerrainManager.debugName);
         //Timing.enable(MasterRenderer.debugName);
 
-        float wait = 3;
+        float wait = 0.5f;
         float time = Time.getTime() + wait;
         player.enableGravity(false);
-        while ( !window.shouldWindowClose() ) {
+        while ( !window.shouldWindowClose()) {
             Time.update();
             input.updateInput();
             if(player.mode == Player.Mode.Survival && Time.getTime() > time)
                 player.enableGravity(true);
+
+            if(Input.isKeyDown(GLFW_KEY_ENTER)){
+                gameObjectManager.processEntity(chick);
+                gameObjectManager.processEntity(chick1);
+                gameObjectManager.processEntity(chick2);
+                gameObjectManager.processEntity(chick3);
+                gameObjectManager.processEntity(chick4);
+            }
 
             player.move();
             //System.out.println(entity.transform.chunk == null);

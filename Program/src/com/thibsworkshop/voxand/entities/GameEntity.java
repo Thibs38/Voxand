@@ -9,7 +9,7 @@ import com.thibsworkshop.voxand.physics.Rigidbody;
 //For example a piece of grass on the map is not an entity, it as a TexturedModel, a position etc, but not a Collider
 
 //An entity's transform is updated every frame
-public class Entity extends GameObject {
+public class GameEntity extends GameObject {
 
 	public Rigidbody rigidbody;
 
@@ -32,11 +32,11 @@ public class Entity extends GameObject {
 
 	public boolean entityCollisionsDone = false;
 
-	public Entity(TexturedModel texturedModel, float mass) {
+	public GameEntity(TexturedModel texturedModel, float mass) {
 		super(texturedModel);
 		this.rigidbody = new Rigidbody(mass,this);
 	}
-	public Entity(TexturedModel texturedModel, Rigidbody rigidbody) {
+	public GameEntity(TexturedModel texturedModel, Rigidbody rigidbody) {
 		super(texturedModel);
 		this.rigidbody = rigidbody;
 	}
