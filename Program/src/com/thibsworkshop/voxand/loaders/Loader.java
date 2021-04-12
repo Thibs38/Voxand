@@ -6,6 +6,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thibsworkshop.voxand.data.Biome;
 import com.thibsworkshop.voxand.rendering.models.RawModel;
 import com.thibsworkshop.voxand.data.Block;
 import com.thibsworkshop.voxand.rendering.textures.Texture;
@@ -27,7 +28,8 @@ public class Loader {
 	 * Initializes loaders
 	 */
 	public static void init() {
-		Block.blocks = JsonLoader.loadBlocks("Program/res/data/blocks");
+		JsonLoader.init();
+		//LuaLoader.init();
 	}
 	
 	public static RawModel loadToVAO(float[] positions, int[] indices, float[] textureCoords, float[] normals) {

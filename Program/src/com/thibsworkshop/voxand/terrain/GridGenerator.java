@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.terrain;
 
+import com.thibsworkshop.voxand.entities.Player;
 import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.SimplexNoise;
 import org.joml.Vector2i;
@@ -11,8 +12,8 @@ public class GridGenerator {
 
 	public static final int HEIGHT_OFFSET = 128;
 
-	public static Chunk generate(Vector2i chunkPos, TerrainInfo info) {
-		Chunk chunk = new Chunk(chunkPos);
+	public static Chunk generate(Vector2i chunkPos, Vector2i playerChunkPos, TerrainInfo info) {
+		Chunk chunk = new Chunk(chunkPos,playerChunkPos);
 		
 		int realx = chunkPos.x * Chunk.CHUNK_SIZE;
 		int realz = chunkPos.y * Chunk.CHUNK_SIZE;
@@ -20,26 +21,22 @@ public class GridGenerator {
 		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
 			for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
 				
-				float simplex = HEIGHT_OFFSET;
+				double simplex = HEIGHT_OFFSET;
 				float amplitude = 1;
 				float frequency = 1;
 				float fx = x + realx;
 				float fz = z + realz;
 				
-				float simplex1 = (CalculateSimplex(fx,fz,info.scale*frequency)+0.7f)/1.4f;
-				float offx = (float) SimplexNoise.noise(fx*0.0125f + seed, fz*0.0125f+ seed)*50*simplex1;
-				float offz = (float) SimplexNoise.noise(fz*0.0125f+ seed, fx*0.0125f+ seed)*50*simplex1;
+				double simplex1 = (simplex(fx,fz,info.scale*frequency)+0.7f)/1.4f;
+				double offx = SimplexNoise.noise(fx*0.0125f + seed, fz*0.0125f+ seed)*50*simplex1;
+				double offz = SimplexNoise.noise(fz*0.0125f+ seed, fx*0.0125f+ seed)*50*simplex1;
 				
-				simplex += (CalculateSimplex(
-						fx + offx,
-						fz + offz,
-						info.scale*frequency)
-						)*info.heightScale*amplitude;
+				simplex += simplex(fx, fz,info.scale*frequency) * info.heightScale * amplitude;
 				
 				for(float i = 2; i < info.octaves;i++) {
 					frequency *= info.lacunarity;
 					amplitude *= info.persistance;
-					simplex += (CalculateSimplex(fx,fz,info.scale*frequency))*info.heightScale*amplitude;
+					simplex += simplex(fx,fz,info.scale*frequency)*info.heightScale*amplitude;
 				}
 				
 				for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
@@ -79,7 +76,12 @@ public class GridGenerator {
 		return chunk;
 	}
 	
-	private static float CalculateSimplex(float x, float z,float scale) {
-		return (float)SimplexNoise.noise(x * scale + seed,z * scale + seed);
+	public static double simplex(double x, double z, double scale) {
+		return SimplexNoise.noise(x * scale + seed,z * scale + seed);
 	}
+
+	public static double simplex(double x, double y, double z, double scale) {
+		return SimplexNoise.noise(x * scale + seed,y * scale + seed, z * scale + seed);
+	}
+
 }

@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.rendering.renderers;
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.debugging.Timing;
 import com.thibsworkshop.voxand.entities.Camera;
+import com.thibsworkshop.voxand.game.Config;
 import com.thibsworkshop.voxand.rendering.lighting.DirectionalLight;
 import com.thibsworkshop.voxand.rendering.lighting.PointLight;
 import com.thibsworkshop.voxand.rendering.shaders.LineShader;
@@ -30,8 +31,6 @@ public class MasterRenderer {
 
 	private final LineShader lineShader = new LineShader();
 	public static LineRenderer lineRenderer;
-
-	FrustumIntersection frustumIntersection;
 
 	DirectionalLight sun;
 	PointLight[] lights;

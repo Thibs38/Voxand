@@ -79,8 +79,18 @@ public class Maths {
 	 * @param y != 0
 	 * @return x mod y
 	 */
-	public static double floatMod(double x, double y){
+	public static double doubleMod(double x, double y){
 		return (x - Math.floor(x/y) * y);
+	}
+
+	/**
+	 * x mod y behaving the same way as Math.floorMod but with floats
+	 * @param x float
+	 * @param y != 0
+	 * @return x mod y
+	 */
+	public static float floatMod(float x, float y){
+		return (float)(x - Math.floor(x/y) * y);
 	}
 
 	/**

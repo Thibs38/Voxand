@@ -1,12 +1,23 @@
 package com.thibsworkshop.voxand.lua;
 
+import com.thibsworkshop.voxand.data.IBiome;
+import com.thibsworkshop.voxand.loaders.LuaLoader;
+import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyShell;
 import org.luaj.vm2.*;
 import org.luaj.vm2.lib.jse.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 
 public class LuaTest {
 
-    public static final String path = "Program/res/lua/";
+    public static final String path = "Program/res/data/terrain_generation/";
 
     public void test(){
         /*Globals globals = JsePlatform.standardGlobals();
@@ -19,14 +30,34 @@ public class LuaTest {
         LuaValue chunk = globals.load("obj.test()");
         chunk.call();*/
 
-        Globals globals = JsePlatform.standardGlobals();
+        /*Globals globals = JsePlatform.standardGlobals();
 
         // Load a class into globals, 'field' cannot be accessed
         LuaValue cls = CoerceJavaToLua.coerce(MyClass.class);
         globals.set("cls", cls);
-        LuaValue chunk = globals.loadfile(path + "example.lua");
+        LuaValue chunk = globals.loadfile(path + "plains.lua");
+        LuaLoader.init();
+        LuaLoader.loadBiomes();
+        chunk.call();*/
 
-        chunk.call();
+        GroovyShell shell = new GroovyShell();
+        try {
+            final Object e = shell.evaluate(new File(path + "test.groovy"));
+            IBiome biome = (IBiome) Proxy.newProxyInstance(e.getClass().getClassLoader(),
+                    new Class[]{IBiome.class},
+                    new InvocationHandler() {
+                        @Override
+                        public Object invoke(Object proxy, Method method, Object[] args)
+                                throws Throwable {
+                            Method m = e.getClass().getMethod(method.getName());
+                            return m.invoke(e, args);
+                        }});
+            System.out.println(biome.generate_xz(1, 2));
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+
+
     }
 
 

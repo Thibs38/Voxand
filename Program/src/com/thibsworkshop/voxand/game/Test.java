@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.game;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.*;
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.rendering.lighting.DirectionalLight;
@@ -66,7 +67,7 @@ public class Test {
         Camera.main = camera;
 
         Player player = new Player(texturedModel,50,camera);
-        player.transform.setPosition(16,175,16);
+        player.transform.setPosition(10000,175,10000);
 
         Input input = new Input(window);
 
@@ -78,23 +79,23 @@ public class Test {
 
         MasterRenderer renderer = new MasterRenderer(sun,lights);
 
-        TerrainInfo terrainInfo = new TerrainInfo(0.01f,1,4,1,1);
+        TerrainInfo terrainInfo = new TerrainInfo(0.01f,10,4,1,1);
         TerrainManager terrainManager = new TerrainManager(terrainInfo);
 
         GameObjectManager gameObjectManager = new GameObjectManager();
 
-        GameEntity chick = new GameEntity(chickModel,1);
-        chick.transform.setPosition(5,200,5);
-        GameEntity chick1 = new GameEntity(chickModel,1);
+       GameEntity chick = new GameEntity(chickModel,1);
+        chick.transform.setPosition(10005,200,10005);
+        /*GameEntity chick1 = new GameEntity(chickModel,1);
         chick1.transform.setPosition(6,205,5);
         GameEntity chick2 = new GameEntity(chickModel,1);
         chick2.transform.setPosition(7,210,5);
         GameEntity chick3 = new GameEntity(chickModel,1);
         chick3.transform.setPosition(8,215,5);
         GameEntity chick4 = new GameEntity(chickModel,1);
-        chick4.transform.setPosition(9,220,5);
+        chick4.transform.setPosition(9,220,5);*/
 
-
+        gameObjectManager.processEntity(chick);
 
         gameObjectManager.processEntity(player);
         //Timing.enable(TerrainManager.debugName);
@@ -110,15 +111,11 @@ public class Test {
                 player.enableGravity(true);
 
             if(Input.isKeyDown(GLFW_KEY_ENTER)){
-                gameObjectManager.processEntity(chick);
-                gameObjectManager.processEntity(chick1);
-                gameObjectManager.processEntity(chick2);
-                gameObjectManager.processEntity(chick3);
-                gameObjectManager.processEntity(chick4);
+                Debug.printVector(player.transform.chunkPos);
             }
 
             player.move();
-            //System.out.println(entity.transform.chunk == null);
+            //Debug.printVector(player.transform.getPosition());
             //Game Logic
 
             //Debug.printVector(player.transform.forward());
@@ -129,6 +126,7 @@ public class Test {
             if(Input.isKeyHold(GLFW_KEY_DOWN))
                 sun.rotate(new Vector3f(-0.025f,0,0));
 
+            //System.out.println(camera.getViewMatrix());
 
             //if(Input.isKeyDown(GLFW_KEY_ENTER))
                 //Timing.print(MasterRenderer.debugName,"Terrain",5);
@@ -136,7 +134,7 @@ public class Test {
 
             gameObjectManager.update();
             terrainManager.refreshChunks();
-            player.cameraUpdate();
+            camera.update(player.transform);
             renderer.render(camera);
             window.updateWindow();
         }

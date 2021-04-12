@@ -132,6 +132,11 @@ public class TerrainManager {
 	 * Refreshes the state of the manager.
 	 */
 	public void refreshChunks() {
+
+		chunks.forEach((k,v) ->{
+			v.update(Maths.sqrDistance(k, playerChunkPos), playerChunkPos);
+		});
+
 		switch (state) {
 			case LOOP -> {
 				//System.out.println("LOOP");
@@ -222,7 +227,7 @@ public class TerrainManager {
 			Chunk v = entry.getValue();
 			Vector2i k = entry.getKey();
 			if(v.getLastTickUpdate() < Time.getTick()){ //If the tick is equal to the current one, no need to check
-				v.update(Maths.sqrDistance(k, playerChunkPosTemp));
+				v.update(Maths.sqrDistance(k, playerChunkPosTemp), playerChunkPosTemp);
 
 				if(v.getSqr_distance() > Config.sqr_chunkUnloadDist){
 					it.remove();
@@ -458,7 +463,7 @@ public class TerrainManager {
 
 		@Override
 		public Chunk call() {
-	        return GridGenerator.generate(chunkPos,tinfo);
+	        return GridGenerator.generate(chunkPos, playerChunkPosTemp, tinfo);
 		}
 	}
 	//</editor-fold>

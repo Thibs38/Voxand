@@ -41,6 +41,12 @@ public class Camera {
 		frustumIntersection = new FrustumIntersection(projectionViewMatrix);
 	}
 
+	public void update(Transform attachedTransform){
+		transform.setPosition(attachedTransform.getPosition());//We apply the final translation to the camera
+		transform.translate(0,1.5f,0);
+		transform.update();
+		updateMatrices();
+	}
 	public void updateMatrices(){
 		Maths.updateViewMatrix(this);
 		projectionMatrix.mul(viewMatrix,projectionViewMatrix);

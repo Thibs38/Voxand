@@ -9,6 +9,7 @@ import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -79,7 +80,7 @@ public class LineRenderer extends Renderer{
             RawModel rawModel = wireframe.getRawModel();
             prepareModel(rawModel);
             for(GameEntity gameEntity : v) {
-                shader.loadTransformation(gameEntity.transform.getPosition(), gameEntity.transform.getScale());
+                loadTransformation(gameEntity);
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });
@@ -103,6 +104,13 @@ public class LineRenderer extends Renderer{
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });
+    }
+
+    private final Vector3f tempPos = new Vector3f();
+    private void loadTransformation(GameObject object){
+        tempPos.set(object.transform.getPosition());
+        Chunk.shiftPositionFromPlayer(tempPos, object.transform.chunkPos, player.transform.chunkPos);
+        shader.loadTransformation(tempPos, object.transform.getScale());
     }
 
     private void prepareModel(RawModel rawModel) {

@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.rendering.renderers;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.entities.Player;
 import com.thibsworkshop.voxand.game.Config;
@@ -12,6 +13,7 @@ import com.thibsworkshop.voxand.rendering.textures.Material;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -48,7 +50,7 @@ public class TerrainRenderer extends Renderer {
 	public void render(Camera camera) {
 		for(Chunk chunk :TerrainManager.chunks.values()) {
 			if(chunk != null && chunk.generated &&
-				Maths.sqrDistance(chunk.getChunkPos(), Player.player.transform.chunkPos) <= Config.sqr_chunkViewDist &&
+				chunk.getSqr_distance() <= Config.sqr_chunkViewDist &&
 				frustumIntersection.testAab(chunk.getPosition(), chunk.getPositionMax())) {
 
 				prepareTerrain(chunk);

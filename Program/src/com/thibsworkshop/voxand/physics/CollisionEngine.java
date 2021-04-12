@@ -27,9 +27,9 @@ public class CollisionEngine {
      */
     public static boolean isGrounded(Transform transform, AABB aabb){
         Vector3f pos = transform.getPosition();
-        real.set((float) Maths.floatMod(pos.x, Chunk.D_CHUNK_SIZE),
+        real.set((float) Maths.doubleMod(pos.x, Chunk.D_CHUNK_SIZE),
                 pos.y - 2 * Maths.EPSILON,
-                (float)Maths.floatMod(pos.z, Chunk.D_CHUNK_SIZE));
+                (float)Maths.doubleMod(pos.z, Chunk.D_CHUNK_SIZE));
 
         //Debug.printVector(pos); Debug.printVector(real);
         //Debug.printVector(transform.chunkPos);
@@ -71,7 +71,7 @@ public class CollisionEngine {
             //OPTIMIZE: Maybe don't normalize distance (avoiding on sqrt) and divide force by A²+B²
             float sqrDist = Maths.sqrDistance_xz(posA,posB);
             float dist = (float)Math.sqrt(sqrDist);
-            AB.set(posB.x - posA.x, 0, posB.z - posA.z).div(dist);
+            AB.set(posB.x - posA.x, 0, posB.z - posA.z).div(Math.max(dist,0.0001f));
 
             float force = PUSH_COEFF / Math.max(sqrDist,0.2f);
             float forceA = force * (rigidB.mass / rigidA.mass) * Time.getDeltaTime();
@@ -117,11 +117,11 @@ public class CollisionEngine {
      */
     public static boolean checkSolid(int x, int y, int z, int X, int Y, int Z, int chunkX, int chunkZ) {
         for (int i = x; i <= X; i++) {
-            int rx = Chunk.posCorrect(i);
-            int rChunkX = Chunk.chunkPosCorrect(chunkX, i);
+            int rx = Chunk.correctPosition(i);
+            int rChunkX = Chunk.correctChunkPosition(chunkX, i);
             for (int k = z; k <= Z; k++) {
-                int rz = Chunk.posCorrect(k);
-                int rChunkZ = Chunk.chunkPosCorrect(chunkZ, k);
+                int rz = Chunk.correctPosition(k);
+                int rChunkZ = Chunk.correctChunkPosition(chunkZ, k);
                 for (int j = y; j <= Y; j++) {
                     getChunkPos.set(rChunkX, rChunkZ);
                     if ( j >= 0 && j < Chunk.CHUNK_HEIGHT && TerrainManager.isBlockSolid(rx, j, rz, getChunkPos)){
@@ -146,11 +146,11 @@ public class CollisionEngine {
     private static final Vector3f normal = new Vector3f(0);
     public static void entityVSterrain(Transform transform, Vector3f movement, AABB aabb, Vector3i aura) {
 
-        float minTime = 0;
+        float minTime;
         float remainingTime = 1;
 
         for(int i = 0; i < 3; i++){
-
+            //Debug.printVector(movement);
             movement.set(
                     movement.x * (1 - Math.abs(normal.x)) * remainingTime,
                     movement.y * (1 - Math.abs(normal.y)) * remainingTime ,
@@ -159,7 +159,11 @@ public class CollisionEngine {
 
             minTime = entityVSterrainLoop(transform,movement, aabb, aura);
 
+            //System.out.println("Before: ("+movement.x+", " + movement.z+ ") " + "(" +normal.x+ ", " + normal.z+ ") " + remainingTime);
+
             transform.translate(movement.x * minTime,movement.y * minTime, movement.z * minTime);
+
+
             if(minTime < 1.0f){
                 transform.translate(normal.x * Maths.EPSILON, normal.y * Maths.EPSILON, normal.z * Maths.EPSILON);
             }
@@ -182,16 +186,13 @@ public class CollisionEngine {
 
     private static float entityVSterrainLoop(Transform transform, Vector3f velocity, AABB aabb, Vector3i aura){
 
-        Vector3f positionI = transform.getPosition(); //initial global position
 
 		/* Here we are in chunk space, meanings that the initial center position is somewhere on the local grid
 		   the minimum can be on another chunk than the maximum.
 		   We first translate the player, then check collisions, and if there is one we apply the correction and
 		   continue calculating.
 		 */
-        real.set((float)Maths.floatMod(positionI.x,Chunk.D_CHUNK_SIZE),
-                positionI.y,
-                (float)Maths.floatMod(positionI.z, Chunk.D_CHUNK_SIZE));
+        real.set(transform.getPosition());
 
         minI.set(aabb.min.x + real.x, aabb.min.y + real.y, aabb.min.z + real.z);
         maxI.set(aabb.max.x + real.x, aabb.max.y + real .y, aabb.max.z + real.z);
@@ -215,14 +216,14 @@ public class CollisionEngine {
         Vector2i chunkPos = transform.chunkPos; //By default the real chunk pos is the initial player one
 
         for (int x = minX; x <= maxX; x ++) {
-            int rx = Chunk.posCorrect(x);
-            chunkPosR.x = Chunk.chunkPosCorrect(chunkPos.x,x);
+            int rx = Chunk.correctPosition(x);
+            chunkPosR.x = Chunk.correctChunkPosition(chunkPos.x,x);
             boolean xOKlength = x >= minIint.x && x <= maxIint.x;
             boolean xOK = x == minIint.x -1 || x == maxIint.x + 1;
 
             for (int z = minZ; z <= maxZ; z++) {
-                int rz = Chunk.posCorrect(z);
-                chunkPosR.y = Chunk.chunkPosCorrect(chunkPos.y,z);
+                int rz = Chunk.correctPosition(z);
+                chunkPosR.y = Chunk.correctChunkPosition(chunkPos.y,z);
                 boolean zOK = (xOKlength && (z == minIint.z-1 || z == maxIint.z+1)) ||
                         (xOK && z >= minIint.z && z <= maxIint.z);
 

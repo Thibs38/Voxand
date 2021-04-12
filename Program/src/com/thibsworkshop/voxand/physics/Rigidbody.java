@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.physics;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.GameEntity;
 import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Time;
@@ -35,12 +36,13 @@ public class Rigidbody {
 
         if(!velocity.equals(Maths.zero)){
             movement.set(velocity).mul(Time.getDeltaTime());
+
             float rHDrag = Math.max(1-horizontalDrag*Time.getDeltaTime(),0);
             float rVDrag = Math.max(1-verticalDrag*Time.getDeltaTime(),0);
             velocity.mul(rHDrag,rVDrag,rHDrag);
 
-
             collider.detectCollision(gameEntity.transform, movement);
+
             gameEntity.transform.update();
             grounded = collider.isGrounded(gameEntity.transform);
 
@@ -55,10 +57,17 @@ public class Rigidbody {
 
     public void setVelocity(float x, float y, float z){
         velocity.set(x,y,z);
+
     }
 
-    public void addVelocity(float dx, float dy, float dz) { velocity.add(dx,dy,dz); }
-    public void addVelocity(Vector3f v) { velocity.add(v); }
+    public void addVelocity(float dx, float dy, float dz) {
+        velocity.add(dx,dy,dz);
+
+    }
+    public void addVelocity(Vector3f v) {
+        velocity.add(v);
+
+    }
 
     public Collider getCollider(){ return collider; }
 

@@ -20,8 +20,14 @@ public class Transform {
     public Chunk chunk;
     private final Matrix4f transformationMatrix;
 
-    private boolean changed = false; // Has any of position, rotation or scale changed since last update of the transformationMatrix?
-    private boolean positionChanged = false; // Has position changed since last update?
+    /**
+     * Has any of position, rotation or scale changed since last update?
+     */
+    private boolean changed = false;
+    /**
+     * Has position changed since last update?
+     */
+    private boolean positionChanged = false;
 
     /**
      * Has chunk position changed?
@@ -58,42 +64,51 @@ public class Transform {
 
     //</editor-fold>
 
+    //<editor-fold desc="Update">
     /**
      * If a change occurred since last update, updates the transformation matrix.
      * If also the position changed, updates the entity's chunk position.
      */
     public void update(){
+
         if(changed){
-            Maths.updateTransformationMatrix(this);
-            changed = false;
             if(positionChanged) {
-                chunkPosChanged = updateChunkPos();
+                chunkPosChanged = updatePosition();
                 positionChanged = false;
             }
+            Maths.updateTransformationMatrix(this);
+            changed = false;
+
         }
         if(chunk == null){
             chunk = TerrainManager.getChunk(chunkPos);
         }
     }
 
+    /**
+     * Last function called in the update process of the entity
+     */
     public void lateUpdate(){
         chunkPosChanged = false;
     }
 
-    private final Vector2i newChunkPos = new Vector2i(0);
     /**
-     * Updates the chunk position of the transform
+     * Updates the position of the transform
      */
-    public boolean updateChunkPos(){
-        Chunk.positionToChunkPos(position, newChunkPos);
-        if(!newChunkPos.equals(chunkPos)){
-            chunkPos.set(newChunkPos);
+    private boolean updatePosition(){
+
+        if(position.x < 0 || position.x >= Chunk.F_CHUNK_SIZE ||
+                position.y < 0 || position.y >= Chunk.F_CHUNK_SIZE) {
+            Chunk.correctChunkPosition(chunkPos,position);
             chunk = TerrainManager.getChunk(chunkPos);
+            Chunk.correctPosition(position);
             return true;
         }
         return false;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Methods">
     /**
      * Transforms the given position from local to global space, without taking rotations into account.
      * @param localPosition the position to transform
@@ -101,6 +116,14 @@ public class Transform {
      */
     public Vector3f localToWorldPositionUnrotated(Vector3f localPosition){
         return new Vector3f(localPosition).mul(scale).add(position);
+    }
+
+    /**
+     * Transforms the given position from local to global space, without taking rotations into account.
+     * @param localPosition the position to transform
+     */
+    public void localToWorldPositionUnrotated(Vector3f localPosition, Vector3f dest){
+        dest.set(localPosition).mul(scale).add(position);
     }
 
     /**
@@ -120,6 +143,7 @@ public class Transform {
         transformationMatrix.positiveX(right);
         return right;
     }
+    //</editor-fold>
 
     //<editor-fold desc="Setters">
     /**

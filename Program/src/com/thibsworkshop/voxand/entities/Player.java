@@ -118,12 +118,5 @@ public class Player extends GameEntity {
 		zVelocity.set(0);
 	}
 
-	public void cameraUpdate(){
-		camera.transform.setPosition(transform.getPosition());//We apply the final translation to the camera
-		camera.transform.translate(0,1.5f,0);
-		camera.transform.update();
-		camera.updateMatrices();
-	}
-
 	
 }
