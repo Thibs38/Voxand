@@ -40,9 +40,10 @@ public class Rigidbody {
             float rHDrag = Math.max(1-horizontalDrag*Time.getDeltaTime(),0);
             float rVDrag = Math.max(1-verticalDrag*Time.getDeltaTime(),0);
             velocity.mul(rHDrag,rVDrag,rHDrag);
-
-            collider.detectCollision(gameEntity.transform, movement);
-
+            if(gameEntity.doTerrainCollisions)
+                collider.detectCollision(gameEntity.transform, movement);
+            else
+                gameEntity.transform.translate(movement);
             gameEntity.transform.update();
             grounded = collider.isGrounded(gameEntity.transform);
 

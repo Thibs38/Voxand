@@ -33,8 +33,16 @@
 	},
 	{ 
 		"id": 4,
-		"name": "deep stone",
-		"color": [ 0.3,0.3,0.3,1],
+		"name": "wood",
+		"color": [ 0.9,0.4,0.4,1],
+		"solid":true,
+		"shineDamper":1,
+		"reflectivity":0
+	},
+	{
+		"id": 5,
+		"name": "leaves",
+		"color": [ 0.0684,0.4804,0.0684,1],
 		"solid":true,
 		"shineDamper":1,
 		"reflectivity":0

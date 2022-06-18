@@ -21,6 +21,8 @@ public class GameEntity extends GameObject {
 	 * Do entity vs entity collisions?
 	 */
 	public boolean doEntityCollisions = true;
+
+	public boolean doTerrainCollisions = true;
 	/**
 	 * Do update (collisions / movement)?
 	 */
@@ -64,6 +66,7 @@ public class GameEntity extends GameObject {
 		doUpdate = false;
 		doRendering = false;
 		doEntityCollisions = false;
+		doTerrainCollisions = false;
 	}
 
 	/**
@@ -74,6 +77,7 @@ public class GameEntity extends GameObject {
 		doUpdate = true;
 		doRendering = true;
 		doEntityCollisions = true;
+		doTerrainCollisions = true;
 	}
 	
 

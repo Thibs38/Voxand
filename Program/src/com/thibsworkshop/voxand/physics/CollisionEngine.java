@@ -79,7 +79,7 @@ public class CollisionEngine {
 
             rigidA.addVelocity(-AB.x * forceA, 0, -AB.z * forceA);
             rigidB.addVelocity(AB.x * forceB, 0, AB.z * forceB);
-            System.out.println(rigidA.mass + " " + rigidB.mass);
+            //System.out.println(rigidA.mass + " " + rigidB.mass);
         }
     }
 

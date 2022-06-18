@@ -19,7 +19,7 @@ public class Player extends GameEntity {
 
 	public enum Mode { Survival, Spectator}
 
-	public Mode mode = Mode.Survival;
+	public Mode mode = Mode.Spectator;
 	
 	public Player(TexturedModel texturedModel, float mass, Camera camera) {
 		super(texturedModel, mass);
@@ -29,6 +29,10 @@ public class Player extends GameEntity {
 		camera.transform.translate(0,10,0);
 		doRendering = false;
 		doUpdate = true; //Player is disabled because it shouldn't be updated through the gameobject manager
+		if(mode == Mode.Spectator) {
+			doTerrainCollisions = false;
+			rigidbody.verticalDrag = rigidbody.horizontalDrag;
+		}
 	}
 
 	Vector3f xVelocity = new Vector3f(0);

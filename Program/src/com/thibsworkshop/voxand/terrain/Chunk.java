@@ -34,6 +34,8 @@ public class Chunk{
 
 	public boolean generated = false;
 
+	public boolean dirty = false;
+
 	private RawModel model;
 
 	public byte[][][] grid;

@@ -1,4 +1,4 @@
-package data.terrain_generation
+/*package data.terrain_generation
 
 import com.thibsworkshop.voxand.terrain.GridGenerator
 import com.thibsworkshop.voxand.terrain.TerrainGenerator
@@ -15,4 +15,4 @@ float generate_xz(long x, long z) {
         amp *= 1f;
     }
     return s;
-}
+}*/

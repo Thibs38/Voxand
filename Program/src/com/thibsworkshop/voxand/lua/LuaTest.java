@@ -52,7 +52,7 @@ public class LuaTest {
                             Method m = e.getClass().getMethod(method.getName());
                             return m.invoke(e, args);
                         }});
-            System.out.println(biome.generate_xz(1, 2));
+            //System.out.println(biome.generate_xz(1, 2));
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

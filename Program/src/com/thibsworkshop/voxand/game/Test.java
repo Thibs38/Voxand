@@ -2,6 +2,7 @@ package com.thibsworkshop.voxand.game;
 
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.*;
+import com.thibsworkshop.voxand.io.Binary;
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.rendering.lighting.DirectionalLight;
 import com.thibsworkshop.voxand.rendering.lighting.PointLight;
@@ -38,8 +39,8 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        //window = new Window(1280,720,false);
-        window = new Window(1920,1080,true);
+        window = new Window(1280,720,false);
+        //window = new Window(1920,1080,true);
 
         Time.init();
         Loader.init();
@@ -67,7 +68,7 @@ public class Test {
         Camera.main = camera;
 
         Player player = new Player(texturedModel,50,camera);
-        player.transform.setPosition(10000,175,10000);
+        player.transform.setPosition(0,175,0);
 
         Input input = new Input(window);
 
@@ -85,7 +86,7 @@ public class Test {
         GameObjectManager gameObjectManager = new GameObjectManager();
 
        GameEntity chick = new GameEntity(chickModel,1);
-        chick.transform.setPosition(10005,200,10005);
+        chick.transform.setPosition(0,200,0);
         /*GameEntity chick1 = new GameEntity(chickModel,1);
         chick1.transform.setPosition(6,205,5);
         GameEntity chick2 = new GameEntity(chickModel,1);
@@ -103,12 +104,17 @@ public class Test {
 
         float wait = 0.5f;
         float time = Time.getTime() + wait;
+        boolean done = false;
         player.enableGravity(false);
         while ( !window.shouldWindowClose()) {
             Time.update();
             input.updateInput();
-            if(player.mode == Player.Mode.Survival && Time.getTime() > time)
-                player.enableGravity(true);
+            if(!done && Time.getTime() > time) {
+                if(player.mode == Player.Mode.Survival)
+                    player.enableGravity(true);
+                Binary.readVoxFile("Program/res/data/vox/island.vox");
+                done = true;
+            }
 
             if(Input.isKeyDown(GLFW_KEY_ENTER)){
                 Debug.printVector(player.transform.chunkPos);

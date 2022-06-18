@@ -17,6 +17,9 @@ import com.thibsworkshop.voxand.toolbox.Utility;
 
 import org.joml.Vector2i;
 
+
+//OPTIMIZE
+// Use a block palette for each chunk to limit the number of bits needed to store
 public class TerrainManager {
 
 	public static final HashMap<Vector2i, Chunk> chunks = new HashMap<>();
@@ -125,7 +128,8 @@ public class TerrainManager {
 	private final Vector2i chunkPosTemp = new Vector2i(0);
 	public int currentLayer = 0;
 
-	//OPTIMIZE: divide the chunks into sub chunks of 32*32 and render them separately
+	//OPTIMIZE
+	// divide the chunks into sub chunks of 32*32 and render them separately
 	// load several empty chunks on the same frame to avoid freezes
 
 	/**
@@ -226,12 +230,18 @@ public class TerrainManager {
 			Map.Entry<Vector2i, Chunk> entry = (Map.Entry) it.next();
 			Chunk v = entry.getValue();
 			Vector2i k = entry.getKey();
-			if(v.getLastTickUpdate() < Time.getTick()){ //If the tick is equal to the current one, no need to check
-				v.update(Maths.sqrDistance(k, playerChunkPosTemp), playerChunkPosTemp);
 
-				if(v.getSqr_distance() > Config.sqr_chunkUnloadDist){
-					it.remove();
-					terrainsWaitingToCreate.remove(k);
+
+			if(v.getLastTickUpdate() < Time.getTick()) { //If the tick is equal to the current one, no need to check
+				v.update(Maths.sqrDistance(k, playerChunkPosTemp), playerChunkPosTemp);
+			}
+			if(v.getSqr_distance() > Config.sqr_chunkUnloadDist){
+				it.remove();
+				terrainsWaitingToCreate.remove(k);
+			} else {
+				if (v.dirty) {
+					terrainsToCreate.put(k, new TerrainGeneratorCallable(v));
+					v.dirty = false;
 				}
 			}
 

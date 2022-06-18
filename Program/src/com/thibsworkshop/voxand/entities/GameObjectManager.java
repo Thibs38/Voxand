@@ -117,8 +117,8 @@ public class GameObjectManager {
                     temp.set(gameEntity.transform.chunkPos);       //Setting the previous chunkPos before the update
                     gameEntity.update();                           //Update the entity only if it is enabled
                     if(gameEntity.transform.hasChunkPosChanged()){ //If the chunk position changed, move the entity from list
-                        System.out.print("CHUNK CHANGED ");
-                        Debug.printVector(gameEntity.transform.chunkPos);
+                        //System.out.print("CHUNK CHANGED ");
+                        //Debug.printVector(gameEntity.transform.chunkPos);
                         Vector2i chunkPos = gameEntity.transform.chunkPos;
                         List<GameEntity> e = entitiesInChunk.get(temp);     //List where the entity was
                         if(e != null)                                   //If the list is not null
