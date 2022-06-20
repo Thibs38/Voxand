@@ -89,8 +89,8 @@ public class OBJLoader {
 		normalsArray = new float[rawindices.size()]; // * 3 / 3
 		int normI = 0;
 		
-		for(int i = 0; i < rawindices.size();i+=0) {
-			
+		for(int i = 0; i < rawindices.size();) {
+
 			Vector3f coord = rawvertices.get(rawindices.get(i++)-1);
 			Vector2f tex = rawtextures.get(rawindices.get(i++)-1);
 			Vector3f norm = rawnormals.get(rawindices.get(i++)-1);

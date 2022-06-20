@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.terrain;
 
+import com.thibsworkshop.voxand.data.Biome;
 import com.thibsworkshop.voxand.entities.Player;
 import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
 import com.thibsworkshop.voxand.toolbox.SimplexNoise;
@@ -14,30 +15,25 @@ public class GridGenerator {
 
 	public static Chunk generate(Vector2i chunkPos, Vector2i playerChunkPos, TerrainInfo info) {
 		Chunk chunk = new Chunk(chunkPos,playerChunkPos);
-		
-		int realx = chunkPos.x * Chunk.CHUNK_SIZE;
-		int realz = chunkPos.y * Chunk.CHUNK_SIZE;
+		long realx = (long) chunkPos.x * Chunk.CHUNK_SIZE;
+		long realz = (long) chunkPos.y * Chunk.CHUNK_SIZE;
 
 		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
 			for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
-				
-				double simplex = HEIGHT_OFFSET;
-				float amplitude = 1;
-				float frequency = 1;
-				float fx = x + realx;
-				float fz = z + realz;
-				
-				double simplex1 = (simplex(fx,fz,info.scale*frequency)+0.7f)/1.4f;
-				double offx = SimplexNoise.noise(fx*0.0125f + seed, fz*0.0125f+ seed)*50*simplex1;
-				double offz = SimplexNoise.noise(fz*0.0125f+ seed, fx*0.0125f+ seed)*50*simplex1;
-				
-				simplex += simplex(fx, fz,info.scale*frequency) * info.heightScale * amplitude;
-				
-				for(float i = 2; i < info.octaves;i++) {
-					frequency *= info.lacunarity;
-					amplitude *= info.persistance;
-					simplex += simplex(fx,fz,info.scale*frequency)*info.heightScale*amplitude;
+
+				double xd = realx + x;
+				double zd = realz + z;
+				float freq = 1f;
+				float amp = info.heightScale;
+				float s = 128f;
+				double xoff = simplex(zd,xd,0.1f);
+				double zoff = simplex(xd,zd,0.1f);
+				for(int i = 0; i < 4; i++){
+					s += simplex(xd + xoff, zd + zoff, info.scale * freq) * 1f * amp;
+					freq *=0.8f;
+					amp *= 0.9f;
 				}
+				float simplex = s; //Biome.biomes[0].generate_xz(x,z);
 				
 				for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
 					/*float simplex3d = (float)SimplexNoise.noise(

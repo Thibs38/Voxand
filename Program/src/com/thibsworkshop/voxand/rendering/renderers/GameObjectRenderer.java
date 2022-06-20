@@ -24,43 +24,52 @@ import java.util.List;
 
 public class GameObjectRenderer extends Renderer {
 
-	private final StaticShader shader;
+	private final StaticShader staticShader;
 
 	GameObjectManager gameObjectManager;
-	private final FrustumIntersection frustumIntersection;
 
 	private final Vector2i playerChunkPos;
 
-	public GameObjectRenderer(StaticShader shader){
-		super(shader);
-		this.shader = shader;
+	private final MasterRenderer masterR;
+	private final ProjectionCamera projectionCamera;
+
+	private final Vector3f worldMin = new Vector3f();
+	private final Vector3f worldMax = new Vector3f();
+
+	public GameObjectRenderer(StaticShader staticShader, ProjectionCamera projectionCamera, MasterRenderer masterRenderer){
+		super(staticShader);
+		this.masterR = masterRenderer;
+		this.projectionCamera = projectionCamera;
+		this.staticShader = staticShader;
 		playerChunkPos = Player.player.transform.chunkPos;
 		updateProjectionMatrix(Camera.main.getProjectionMatrix());
 
-		frustumIntersection = Camera.main.frustumIntersection;
 	}
 
 	public void linkManager(GameObjectManager gameObjectManager){
 		this.gameObjectManager = gameObjectManager;
 	}
 
-	private final Vector3f worldMin = new Vector3f();
-	private final Vector3f worldMax = new Vector3f();
-
 	@Override
-	public void render(Camera camera) {
+	public void render() {
+
+		staticShader.start();
+		staticShader.loadFogVariables(0.05f, masterR.getFogDistance(), MasterRenderer.SKY_COLOR);//0.0035f
+		staticShader.loadLights(masterR.getLights());
+		staticShader.loadViewMatrix(Camera.main.getViewMatrix());
+		staticShader.loadAmbientLight(masterR.getSun());
 
 		for(TexturedModel texturedModel : gameObjectManager.getEntitiesToRender().keySet()) {
 			prepareTexturedModel(texturedModel);
 			List<GameEntity> batch = gameObjectManager.getEntitiesToRender().get(texturedModel);
-			for(GameEntity gameEntity :batch) { //OPTIMIZE: to much calculation bellow, maybe cache some stuff
+			for(GameEntity gameEntity :batch) { //OPTIMIZE: too much calculation bellow, maybe cache some stuff
 
 				gameEntity.transform.localToWorldPositionUnrotated(gameEntity.getModel().collider.getAabb().min, worldMin);
 				Chunk.shiftPositionFromPlayer(worldMin, gameEntity.transform.chunkPos, playerChunkPos);
 				gameEntity.transform.localToWorldPositionUnrotated(gameEntity.getModel().collider.getAabb().max, worldMax);
 				Chunk.shiftPositionFromPlayer(worldMax, gameEntity.transform.chunkPos, playerChunkPos);
 
-				if(frustumIntersection.testAab(worldMin, worldMax)){
+				if(projectionCamera.frustumIntersection.testAab(worldMin, worldMax)){
 					loadTransformation(gameEntity);
 					GL11.glDrawElements(GL11.GL_TRIANGLES, texturedModel.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
 				}
@@ -78,13 +87,15 @@ public class GameObjectRenderer extends Renderer {
 				tileEntity.transform.localToWorldPositionUnrotated(tileEntity.getModel().collider.getAabb().max, worldMax);
 				Chunk.shiftPositionFromPlayer(worldMax, tileEntity.transform.chunkPos, playerChunkPos);
 
-				if(frustumIntersection.testAab(worldMin, worldMax)){
+				if(projectionCamera.frustumIntersection.testAab(worldMin, worldMax)){
 					loadTransformation(tileEntity);
 					GL11.glDrawElements(GL11.GL_TRIANGLES, texturedModel.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
 				}
 			}
 			unbindModel();
 		}
+
+		staticShader.stop();
 	}
 
 	
@@ -100,7 +111,7 @@ public class GameObjectRenderer extends Renderer {
 
 		Texture texture = texturedModel.getTexture();
 		Material material = texturedModel.getMaterial();
-		shader.loadShineVariables(material.getShineDamper(), material.getReflectivity());
+		staticShader.loadShineVariables(material.getShineDamper(), material.getReflectivity());
 		
 		GL13.glActiveTexture(GL13.GL_TEXTURE0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getID());
@@ -112,12 +123,12 @@ public class GameObjectRenderer extends Renderer {
 		float x = Chunk.shiftChunkPosFromPlayer(object.transform.chunkPos.x, playerChunkPos.x);
 		float z = Chunk.shiftChunkPosFromPlayer(object.transform.chunkPos.y, playerChunkPos.y);
 		tempMatrix.translate(x,0,z);
-		shader.loadTransformationMatrix(tempMatrix);
+		staticShader.loadTransformationMatrix(tempMatrix);
 	}
 
 	public void updateProjectionMatrix(Matrix4f projection) {
-		shader.start();
-		shader.loadProjectionMatrix(projection);
-		shader.stop();
+		staticShader.start();
+		staticShader.loadProjectionMatrix(projection);
+		staticShader.stop();
 	}
 }

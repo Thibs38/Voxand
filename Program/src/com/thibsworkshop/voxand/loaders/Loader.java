@@ -28,8 +28,9 @@ public class Loader {
 	 * Initializes loaders
 	 */
 	public static void init() {
-		JsonLoader.init();
-		//LuaLoader.init();
+		Block.blocks = JsonLoader.loadBlocks();
+		//String[] biomeScripts = JsonLoader.loadBiomes();
+		//Biome.biomes = GroovyLoader.loadBiomes(biomeScripts);
 	}
 	
 	public static RawModel loadToVAO(float[] positions, int[] indices, float[] textureCoords, float[] normals) {

@@ -8,56 +8,46 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 
-public class Camera {
+public abstract class Camera {
 
 	public Transform transform;
 
 	public Vector3f forward = new Vector3f();
 
-	private final Matrix4f projectionMatrix;
-	private final Matrix4f viewMatrix = new Matrix4f();
-	private final Matrix4f projectionViewMatrix;
+	protected final Matrix4f projectionMatrix;
+	protected final Matrix4f viewMatrix = new Matrix4f();
+	protected final Matrix4f projectionViewMatrix;
 
-	public FrustumIntersection frustumIntersection;
+	public final float NEAR_PLANE = 0.01f;
+	public final float FAR_PLANE = 1000;
 
-	private final float FOV = (float)Math.toRadians(70);
-	private final float NEAR_PLANE = 0.01f;
-	private final float FAR_PLANE = 1000;
-	private final float ASPECT_RATIO;
+	enum ProjectionType{
+		PERSPECTIVE,
+		ORTHOGRAPHIC
+	}
+
+	public ProjectionType projectionType;
 
 	public static Camera main;
 
-	public Vector2i currentChunk = new Vector2i(0,0);
 
 	public Camera() {
-		transform = new Transform();
-
-		ASPECT_RATIO = Window.mainWindow.getAspectRatio();
-		projectionMatrix = new Matrix4f().setPerspective(FOV,ASPECT_RATIO,NEAR_PLANE,FAR_PLANE);
-		Maths.updateViewMatrix(this);
-		projectionViewMatrix = new Matrix4f();
-		projectionMatrix.mul(viewMatrix,projectionViewMatrix);
-
-		frustumIntersection = new FrustumIntersection(projectionViewMatrix);
+		this.transform = new Transform();
+		this.projectionMatrix = new Matrix4f();
+		this.projectionViewMatrix = new Matrix4f();
 	}
 
-	public void update(Transform attachedTransform){
-		transform.setPosition(attachedTransform.getPosition());//We apply the final translation to the camera
-		transform.translate(0,1.5f,0);
-		transform.update();
-		updateMatrices();
-	}
-	public void updateMatrices(){
-		Maths.updateViewMatrix(this);
-		projectionMatrix.mul(viewMatrix,projectionViewMatrix);
-		frustumIntersection.set(projectionViewMatrix);
-		viewMatrix.positiveZ(forward).negate();
-	}
 
+	public abstract void updateViewMatrix();
+
+	public abstract void updateProjectionMatrix();
+
+	//<editor-fold desc="Getters">
 	public Matrix4f getProjectionMatrix(){ return projectionMatrix; }
 
 	public Matrix4f getViewMatrix(){ return viewMatrix; }
 
 	public Matrix4f getProjectionViewMatrix(){ return projectionViewMatrix; }
 
+	//</editor-fold>
 }

@@ -3,6 +3,7 @@ package com.thibsworkshop.voxand.rendering.renderers;
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.Camera;
 import com.thibsworkshop.voxand.entities.Player;
+import com.thibsworkshop.voxand.entities.ProjectionCamera;
 import com.thibsworkshop.voxand.game.Config;
 import com.thibsworkshop.voxand.rendering.models.RawModel;
 import com.thibsworkshop.voxand.rendering.shaders.TerrainShader;
@@ -22,36 +23,39 @@ import org.lwjgl.opengl.GL30;
 
 public class TerrainRenderer extends Renderer {
 
-	private final TerrainShader shader;
-	
-	private Material material;
 
-	private TerrainManager terrainManager;
 
-	private final FrustumIntersection frustumIntersection;
+	private final TerrainShader terrainShader;
+	public static TerrainRenderer terrainRenderer;
 
-	public TerrainRenderer(TerrainShader shader ) {
-		super(shader);
-		this.shader = shader;
-		shader.start();
-		shader.loadProjectionMatrix(Camera.main.getProjectionMatrix());
-		shader.loadBlocks(Block.blocks);
-		shader.stop();
-		material = new Material(100,0.01f);
+	private final ProjectionCamera projectionCamera;
 
-		frustumIntersection = Camera.main.frustumIntersection;
+	private final MasterRenderer masterR;
+
+	public TerrainRenderer(TerrainShader terrainShader, ProjectionCamera projectionCamera, MasterRenderer masterRenderer) {
+		super(terrainShader);
+		this.terrainShader = terrainShader;
+		this.projectionCamera = projectionCamera;
+		this.masterR = masterRenderer;
+		terrainShader.start();
+		terrainShader.loadProjectionMatrix(projectionCamera.getProjectionMatrix());
+		terrainShader.loadBlocks(Block.blocks);
+		terrainShader.stop();
 	}
 
-	public void linkManager(TerrainManager terrainManager){
-		this.terrainManager = terrainManager;
-	}
 
 	@Override
-	public void render(Camera camera) {
+	public void render() {
+		terrainShader.start();
+		terrainShader.loadFogVariables(0.05f, masterR.getFogDistance(), MasterRenderer.SKY_COLOR);//0.0035f
+		terrainShader.loadLights(masterR.getLights());
+		terrainShader.loadViewMatrix(Camera.main.getViewMatrix());
+		terrainShader.loadAmbientLight(masterR.getSun());
+
 		for(Chunk chunk :TerrainManager.chunks.values()) {
 			if(chunk != null && chunk.generated &&
 				chunk.getSqr_distance() <= Config.sqr_chunkViewDist &&
-				frustumIntersection.testAab(chunk.getPosition(), chunk.getPositionMax())) {
+				projectionCamera.frustumIntersection.testAab(chunk.getPosition(), chunk.getPositionMax())) {
 
 				prepareTerrain(chunk);
 				loadModelPosition(chunk);
@@ -59,6 +63,8 @@ public class TerrainRenderer extends Renderer {
 				unbindModel();
 			}
 		}
+
+		terrainShader.stop();
 	}
 	
 	private void prepareTerrain(Chunk chunk) {
@@ -75,13 +81,15 @@ public class TerrainRenderer extends Renderer {
 	
 	private void loadModelPosition(Chunk chunk) {
 		
-		shader.loadPosition(chunk.getPosition());
+		terrainShader.loadPosition(chunk.getPosition());
 	}
 
+	//TODO
+	// When resizing window, or changing fov must update projection matrix here
 	public void updateProjectionMatrix(Matrix4f projection) {
-		shader.start();
-		shader.loadProjectionMatrix(projection);
-		shader.stop();
+		terrainShader.start();
+		terrainShader.loadProjectionMatrix(projection);
+		terrainShader.stop();
 	}
 
 }

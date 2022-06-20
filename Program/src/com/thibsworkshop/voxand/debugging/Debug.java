@@ -9,6 +9,7 @@ import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import org.lwjgl.system.CallbackI;
 
 // A class to manage debugging tools
 public class Debug {
@@ -21,7 +22,7 @@ public class Debug {
 
     private static WireframeModel[] axisModels;
 
-    public static Vector3f axesPosition;
+    public static Vector3f axesPosition = new Vector3f();
 
     public static boolean isDebugMode(){
         return debugMode;
@@ -37,8 +38,7 @@ public class Debug {
                 axisModels[1] = new WireframeModel(Maths.zero,Maths.up, Color.green);
                 axisModels[2] = new WireframeModel(Maths.zero,Maths.forward, Color.blue);
             }
-            if(axesPosition == null)
-                axesPosition = new Vector3f();
+
         }else{
             timing = false;
             chunkAABB = false;

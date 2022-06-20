@@ -2,6 +2,7 @@ package com.thibsworkshop.voxand.rendering.renderers;
 
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.*;
+import com.thibsworkshop.voxand.rendering.gui.HUD;
 import com.thibsworkshop.voxand.rendering.models.RawModel;
 import com.thibsworkshop.voxand.rendering.models.WireframeModel;
 import com.thibsworkshop.voxand.rendering.shaders.LineShader;
@@ -15,49 +16,74 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+
 
 public class LineRenderer extends Renderer{
 
-    LineShader shader;
-
-    TerrainManager terrainManager;
+    private final LineShader lineShader;
+    private final ProjectionCamera projectionCamera;
+    private final OrthographicCamera orthographicCamera;
 
     GameObjectManager gameObjectManager;
 
-    Player player;
 
-    public LineRenderer(LineShader shader){
-        super(shader);
-        this.shader = shader;
-        this.player = Player.player;
+
+    public LineRenderer(LineShader lineShader, ProjectionCamera projectionCamera, OrthographicCamera orthographicCamera){
+        super(lineShader);
+        this.lineShader = lineShader;
+        this.projectionCamera = projectionCamera;
+        this.orthographicCamera = orthographicCamera;
     }
-
-    public void linkTerrainManager(TerrainManager terrainManager){ this.terrainManager = terrainManager; }
 
     public void linkGameObjectManager(GameObjectManager gameObjectManager){ this.gameObjectManager = gameObjectManager; }
 
+    // WARNING: Clearing depth buffer here
     @Override
-    public void render(Camera camera) {
-        if(Debug.isChunkAABB())
-            renderChunks();
-        if (Debug.isEntityAABB())
-            renderEntitiesCollider();
-        if (Debug.isTileEntityAABB())
-            renderTileEntitiesCollider();
+    public void render() {
+        lineShader.start();
+        lineShader.loadRenderingVariables(projectionCamera.getProjectionViewMatrix());
 
+        if(Debug.isDebugMode()){
+
+            if(Debug.isChunkAABB())
+                renderChunks();
+            if (Debug.isEntityAABB())
+                renderEntitiesCollider();
+            if (Debug.isTileEntityAABB())
+                renderTileEntitiesCollider();
+        }
+
+        glClear(GL_DEPTH_BUFFER_BIT); //Clear the depth buffer
+
+        if(Debug.isDebugMode()){
+            renderXYZ();
+        }
+        lineShader.loadRenderingVariables(orthographicCamera.getProjectionViewMatrix());
+        renderHUD();
 
         unbindModel();
+        lineShader.stop();
     }
 
-    public void renderXYZ(Camera camera){
-        camera.forward.add(camera.transform.getPosition(),Debug.axesPosition);
-        shader.loadTransformation(Debug.axesPosition,Maths.quarter);
+    public void renderXYZ(){
+        projectionCamera.forward.add(projectionCamera.transform.getPosition(),Debug.axesPosition);
+        lineShader.loadTransformation(Debug.axesPosition,Maths.quarter);
         for(WireframeModel model: Debug.getAxisModels()){
-            shader.loadColor(model.color);
+            lineShader.loadColor(model.color);
             prepareModel(model.getRawModel());
             GL11.glDrawElements(GL11.GL_LINES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
         }
-        unbindModel();
+    }
+
+    public void renderHUD(){
+        lineShader.loadTransformation(Maths.one,Maths.one);
+        for(WireframeModel model: HUD.getCrosshair()){
+            lineShader.loadColor(model.color);
+            prepareModel(model.getRawModel());
+            GL11.glDrawElements(GL11.GL_LINES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
+        }
     }
 
     private void renderChunks(){
@@ -65,10 +91,10 @@ public class LineRenderer extends Renderer{
         prepareModel(rawModel);
         for(Chunk chunk: TerrainManager.chunks.values()){
             if(chunk.generated)
-                shader.loadColor(Chunk.wireModel.color);
+                lineShader.loadColor(Chunk.wireModel.color);
             else
-                shader.loadColor(Color.red);
-            shader.loadTransformation(chunk.getPosition(),Chunk.CHUNK_SCALE);
+                lineShader.loadColor(Color.red);
+            lineShader.loadTransformation(chunk.getPosition(),Chunk.CHUNK_SCALE);
             GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
         }
     }
@@ -76,7 +102,7 @@ public class LineRenderer extends Renderer{
     private void renderEntitiesCollider(){
         gameObjectManager.getEntitiesToRender().forEach((k,v) -> {
             WireframeModel wireframe = k.collider.getWireframeModel();
-            shader.loadColor(wireframe.color);
+            lineShader.loadColor(wireframe.color);
             RawModel rawModel = wireframe.getRawModel();
             prepareModel(rawModel);
             for(GameEntity gameEntity : v) {
@@ -86,21 +112,21 @@ public class LineRenderer extends Renderer{
         });
 
         WireframeModel wireframe = Player.player.getModel().collider.getWireframeModel();
-        shader.loadColor(wireframe.color);
+        lineShader.loadColor(wireframe.color);
         RawModel rawModel = wireframe.getRawModel();
         prepareModel(rawModel);
-        shader.loadTransformation(Player.player.transform.getPosition(),player.transform.getScale());
+        lineShader.loadTransformation(Player.player.transform.getPosition(),Player.player.transform.getScale());
         GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
     }
 
     private void renderTileEntitiesCollider(){
         gameObjectManager.getTileEntitiesToRender().forEach((k,v) -> {
             WireframeModel wireframe = k.collider.getWireframeModel();
-            shader.loadColor(wireframe.color);
+            lineShader.loadColor(wireframe.color);
             RawModel rawModel = wireframe.getRawModel();
             prepareModel(rawModel);
             for(TileEntity entity : v) {
-                shader.loadTransformation(entity.transform.getPosition(),entity.transform.getScale());
+                lineShader.loadTransformation(entity.transform.getPosition(),entity.transform.getScale());
                 GL11.glDrawElements(GL11.GL_LINES, rawModel.getVertexCount(),GL11.GL_UNSIGNED_INT,0);
             }
         });
@@ -109,8 +135,8 @@ public class LineRenderer extends Renderer{
     private final Vector3f tempPos = new Vector3f();
     private void loadTransformation(GameObject object){
         tempPos.set(object.transform.getPosition());
-        Chunk.shiftPositionFromPlayer(tempPos, object.transform.chunkPos, player.transform.chunkPos);
-        shader.loadTransformation(tempPos, object.transform.getScale());
+        Chunk.shiftPositionFromPlayer(tempPos, object.transform.chunkPos, Player.player.transform.chunkPos);
+        lineShader.loadTransformation(tempPos, object.transform.getScale());
     }
 
     private void prepareModel(RawModel rawModel) {

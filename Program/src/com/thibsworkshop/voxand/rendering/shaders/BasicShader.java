@@ -7,7 +7,6 @@ import org.joml.Vector3f;
 import org.joml.Matrix4f;
 
 
-
 public class BasicShader extends ShaderProgram{
 
 	
@@ -74,7 +73,7 @@ public class BasicShader extends ShaderProgram{
 		for(int i = 0; i < lights.length;i++) {
 			if(lights[i] != null){
 				super.loadVector(location_lightPosition[i], lights[i].getPosition());
-				super.loadVector(location_lightColour[i], lights[i].getColour());
+				super.loadVector(location_lightColour[i], lights[i].colour);
 				super.loadVector(location_attenuation[i], lights[i].getAttenuationFactor());
 				n++;
 			}
@@ -83,7 +82,7 @@ public class BasicShader extends ShaderProgram{
 		super.loadInteger(location_lightCount, n);
 	}
 	
-	public void loadAmbientLight(DirectionalLight sun) {
+	public void loadAmbientLight(final DirectionalLight sun) {
 		super.loadFloat(location_ambientLight, sun.getAmbientLight());
 		super.loadVector(location_directionalLight, sun.getDirection());
 		super.loadVector(location_directionalLightColor, sun.getIntensityColor());

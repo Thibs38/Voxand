@@ -32,8 +32,6 @@ public class GameObjectManager {
     public static GameObjectManager main;
 
     public GameObjectManager(){
-        MasterRenderer.gameObjectRenderer.linkManager(this);
-        MasterRenderer.lineRenderer.linkGameObjectManager(this);
         main = this;
     }
 

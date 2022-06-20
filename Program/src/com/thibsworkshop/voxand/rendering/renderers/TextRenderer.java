@@ -9,7 +9,7 @@ public class TextRenderer extends Renderer{
     }
 
     @Override
-    public void render(Camera camera) {
+    public void render() {
 
     }
 

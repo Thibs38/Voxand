@@ -1,5 +1,6 @@
 #version 400 core
-
+//OPTIMIZE Premultiply projection and view matrix
+//OPTIMIZE Preupload position as vec4
 const int MAX_LIGHTS = 16;
 
 in vec3 position;

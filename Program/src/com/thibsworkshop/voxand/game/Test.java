@@ -4,6 +4,7 @@ import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.*;
 import com.thibsworkshop.voxand.io.Binary;
 import com.thibsworkshop.voxand.io.Time;
+import com.thibsworkshop.voxand.rendering.gui.HUD;
 import com.thibsworkshop.voxand.rendering.lighting.DirectionalLight;
 import com.thibsworkshop.voxand.rendering.lighting.PointLight;
 import com.thibsworkshop.voxand.loaders.Loader;
@@ -13,7 +14,10 @@ import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.physics.Collider;
 import com.thibsworkshop.voxand.physics.CollisionEngine;
-import com.thibsworkshop.voxand.rendering.renderers.MasterRenderer;
+import com.thibsworkshop.voxand.rendering.renderers.*;
+import com.thibsworkshop.voxand.rendering.shaders.LineShader;
+import com.thibsworkshop.voxand.rendering.shaders.StaticShader;
+import com.thibsworkshop.voxand.rendering.shaders.TerrainShader;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.rendering.textures.Material;
 import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
@@ -44,14 +48,13 @@ public class Test {
 
         Time.init();
         Loader.init();
+        HUD.init();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
     }
 
     private void loop() {
-
-        CollisionEngine collisionEngine = new CollisionEngine();
 
         Material mat = new Material(10,1);
 
@@ -64,8 +67,10 @@ public class Test {
         TexturedModel texturedModel = new TexturedModel("chr_knight","chr_knight", mat,playerCollider);
         TexturedModel chickModel = new TexturedModel("chick","chick", mat,chickCollider);
 
-        Camera camera = new Camera();
+        ProjectionCamera camera = new ProjectionCamera(70);
         Camera.main = camera;
+
+        OrthographicCamera orthoCamera = new OrthographicCamera(1);
 
         Player player = new Player(texturedModel,50,camera);
         player.transform.setPosition(0,175,0);
@@ -78,12 +83,23 @@ public class Test {
 
         PointLight[] lights = new PointLight[MasterRenderer.MAX_LIGHT];
 
-        MasterRenderer renderer = new MasterRenderer(sun,lights);
+
 
         TerrainInfo terrainInfo = new TerrainInfo(0.01f,10,4,1,1);
         TerrainManager terrainManager = new TerrainManager(terrainInfo);
 
         GameObjectManager gameObjectManager = new GameObjectManager();
+
+        MasterRenderer renderer = new MasterRenderer(sun,lights);
+        TerrainShader terrainShader = new TerrainShader();
+        StaticShader staticShader = new StaticShader();
+        LineShader lineShader = new LineShader();
+        TerrainRenderer terrainRenderer = new TerrainRenderer(terrainShader,camera,renderer);
+        GameObjectRenderer gameObjectRenderer = new GameObjectRenderer(staticShader,camera,renderer);
+        gameObjectRenderer.linkManager(gameObjectManager);
+        LineRenderer lineRenderer = new LineRenderer(lineShader,camera,orthoCamera);
+        lineRenderer.linkGameObjectManager(gameObjectManager);
+        Renderer[] renderers = {terrainRenderer,gameObjectRenderer,lineRenderer};
 
        GameEntity chick = new GameEntity(chickModel,1);
         chick.transform.setPosition(0,200,0);
@@ -141,11 +157,12 @@ public class Test {
             gameObjectManager.update();
             terrainManager.refreshChunks();
             camera.update(player.transform);
-            renderer.render(camera);
+            renderer.render(renderers);
             window.updateWindow();
         }
 
-        renderer.cleanUp();
+        for(Renderer r : renderers)
+            r.cleanUp();
         terrainManager.cleanUp();
     }
 

@@ -1,11 +1,15 @@
 package com.thibsworkshop.voxand.toolbox;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 public class Utility {
 
@@ -21,6 +25,27 @@ public class Utility {
 		  byte[] encoded = Files.readAllBytes(Paths.get(path));
 		  return new String(encoded, encoding);
 	}
+
+	public static <T> String getClassName(Class<T> c){
+		String[] split = c.getName().split(".\\..");
+		return split[split.length-1];
+	}
+
+	public static int getFileCount(String path){
+		File file = new File(path);
+		String[] list = file.list();
+		if(list == null)
+			return -1;
+		return list.length;
+	}
+
+	/**
+	 * Read the file specified with path with the US_ASCII encoding and returns the content in a string
+	 * @param path the path of the file
+	 * @return the content of the file
+	 * @throws IOException can't read the specified file
+	 */
+	public static String readFile(String path) throws IOException { return readFile(path, StandardCharsets.US_ASCII); }
 
 	private static final String OSstring = System.getProperty("os.name").toLowerCase();
 	public static final OS os = getOS();

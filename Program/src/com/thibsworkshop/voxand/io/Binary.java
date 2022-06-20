@@ -25,9 +25,9 @@ public class Binary {
                 GridPoint3 world_Offset = model_instance.worldOffset;
                 VoxModelBlueprint model = model_instance.model;
                 for (Voxel voxel : model.getVoxels()) {
-                    int x = world_Offset.x + voxel.getPosition().x;
-                    int y = world_Offset.y + voxel.getPosition().y+ 200;
-                    int z = world_Offset.z + voxel.getPosition().z;
+                    int x = voxel.getPosition().x;
+                    int y = voxel.getPosition().y;
+                    int z = voxel.getPosition().z +200;
                     if(x < 0 || y < 0 || z < 0){
                         //System.out.println("Voxel out of bounds: " + x + " " + y + " " + z + "block: " + voxel.getColourIndex());
                         continue;
@@ -48,7 +48,7 @@ public class Binary {
                             block = 5;
                             break;
                     }
-                    TerrainManager.getChunk(new Vector2i(0,0)).grid[x][y][z] = block;
+                    TerrainManager.getChunk(new Vector2i(0,0)).grid[x][z][y] = block;
                     // Do stuff with the data
                 }
             }

@@ -9,8 +9,11 @@ import java.lang.Math;
 public class Maths {
 
 	public static final Vector3f right = new Vector3f(1, 0, 0);
+	public static final Vector3f left = new Vector3f(-1,0,0);
 	public static final Vector3f up = new Vector3f(0, 1, 0);
+	public static final Vector3f down = new Vector3f(0,-1,0);
 	public static final Vector3f forward = new Vector3f(0, 0, 1);
+	public static final Vector3f backward = new Vector3f(0,0,-1);
 	public static final Vector3f zero = new Vector3f(0);
 	public static final Vector3f one = new Vector3f(1);
 	public static final Vector3f half = new Vector3f(0.5f);
@@ -34,24 +37,6 @@ public class Maths {
 		matrix.rotate((float) Math.toRadians(rotation.z), forward);
 
 		matrix.scale(transform.getScale());
-	}
-
-	/**
-	 * Updates the view matrices of the given camera
-	 * @param camera the camera to update
-	 */
-	public static void updateViewMatrix(Camera camera) {
-		Matrix4f viewMatrix = camera.getViewMatrix();
-		viewMatrix.identity();
-		Vector3f rotation = camera.transform.getRotation();
-
-		viewMatrix.rotate((float) Math.toRadians(rotation.x), right);
-		viewMatrix.rotate((float) Math.toRadians(rotation.y), up);
-		viewMatrix.rotate((float) Math.toRadians(rotation.z), forward);
-
-		Vector3f cameraPos = camera.transform.getPosition();
-		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
-		viewMatrix.translate(negativeCameraPos);
 	}
 
 	/**

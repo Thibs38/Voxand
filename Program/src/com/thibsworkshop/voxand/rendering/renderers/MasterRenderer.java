@@ -21,19 +21,16 @@ public class MasterRenderer {
 
 	public static final int MAX_LIGHT = 16;
 	
-	private static final Vector3f SKY_COLOR = new Vector3f(0.529f,0.808f,0.922f);
+	public static final Vector3f SKY_COLOR = new Vector3f(0.529f,0.808f,0.922f);
 
-	private final StaticShader staticShader = new StaticShader();
-	public static GameObjectRenderer gameObjectRenderer;
+	private float fogDistance;
 
-	private final TerrainShader terrainShader = new TerrainShader();
-	public static TerrainRenderer terrainRenderer;
+	private final DirectionalLight sun;
+	private final PointLight[] lights;
 
-	private final LineShader lineShader = new LineShader();
-	public static LineRenderer lineRenderer;
 
-	DirectionalLight sun;
-	PointLight[] lights;
+
+
 
 	public static String debugName = "Rendering";
 
@@ -46,62 +43,30 @@ public class MasterRenderer {
 		this.lights = lights;
 		glClearColor(SKY_COLOR.x, SKY_COLOR.y, SKY_COLOR.z,1);
 
-		gameObjectRenderer = new GameObjectRenderer(staticShader);
-		terrainRenderer = new TerrainRenderer(terrainShader);
-		lineRenderer = new LineRenderer(lineShader);
-
 
 		Timing.add(debugName, new String[]{
 			"Entities",
 			"Terrain"
 		});
 	}
+
+	//OPTIMIZE
+	// flag the different variables like fog, sun and upload them only if they changed
+
+	//FIXME
+	// Add timing again
 	
-	public void render(Camera camera) {
+	public void render(Renderer[] renderers) {
 		nextLayer = TerrainManager.main.currentLayer;
 		currentLayer = Maths.lerp(currentLayer, nextLayer, 0.01f); //We linearly interpolate between current and next
-		float fogDistance = (currentLayer-4)* Chunk.F_CHUNK_SIZE;
+		fogDistance = (currentLayer-4)* Chunk.F_CHUNK_SIZE;
 		//float fogDistance = Config.chunkViewDist * Chunk.F_CHUNK_SIZE * 2;
 		prepare();
 
-		Timing.start(debugName,"Entities");
-
-		staticShader.start();
-		staticShader.loadFogVariables(0.05f, fogDistance, SKY_COLOR);//0.0035f
-		staticShader.loadLights(lights);
-		staticShader.loadViewMatrix(Camera.main.getViewMatrix());
-		staticShader.loadAmbientLight(sun);
-		gameObjectRenderer.render(camera);
-		staticShader.stop();
-
-		Timing.stop(debugName,"Entities");
-
-		if(Debug.isDebugMode()){
-			lineShader.start();
-			lineShader.loadRenderingVariables(camera.getProjectionViewMatrix());
-			lineRenderer.render(camera);
-			lineShader.stop();
+		for(Renderer renderer : renderers){
+			renderer.render();
 		}
 
-		Timing.start(debugName,"Terrain");
-
-		terrainShader.start();
-		terrainShader.loadFogVariables(0.05f, fogDistance, SKY_COLOR);//0.0035f
-		terrainShader.loadLights(lights);
-		terrainShader.loadViewMatrix(Camera.main.getViewMatrix());
-		terrainShader.loadAmbientLight(sun);
-		terrainRenderer.render(camera);
-		terrainShader.stop();
-
-		Timing.stop(debugName,"Terrain");
-
-		glClear(GL_DEPTH_BUFFER_BIT); //Clear the depth buffer, start com.thibsworkshop.voxand.rendering overlays
-
-		if(Debug.isDebugMode()){
-			lineShader.start();
-			lineRenderer.renderXYZ(camera);
-			lineShader.stop();
-		}
 
 	}
 
@@ -109,9 +74,18 @@ public class MasterRenderer {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 	}
 	
-	public void cleanUp() {
-		staticShader.cleanUp();
-		terrainShader.cleanUp();
+
+
+	public float getFogDistance() {
+		return fogDistance;
+	}
+
+	public DirectionalLight getSun() {
+		return sun;
+	}
+
+	public PointLight[] getLights() {
+		return lights;
 	}
 
 }

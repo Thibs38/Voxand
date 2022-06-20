@@ -98,7 +98,7 @@ public class Transform {
     private boolean updatePosition(){
 
         if(position.x < 0 || position.x >= Chunk.F_CHUNK_SIZE ||
-                position.y < 0 || position.y >= Chunk.F_CHUNK_SIZE) {
+                position.z < 0 || position.z >= Chunk.F_CHUNK_SIZE) {
             Chunk.correctChunkPosition(chunkPos,position);
             chunk = TerrainManager.getChunk(chunkPos);
             Chunk.correctPosition(position);

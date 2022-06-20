@@ -109,8 +109,6 @@ public class TerrainManager {
 
 	public TerrainManager(TerrainInfo terrainInfo) {
 		this.terrainInfo = terrainInfo;
-		MasterRenderer.terrainRenderer.linkManager(this);
-		MasterRenderer.lineRenderer.linkTerrainManager(this);
 		//executor = new ThreadPoolExecutor(Config.chunkGenDist*2,Config.chunkGenDist*4*(Config.chunkGenDist+1)+1,5,TimeUnit.SECONDS,new SynchronousQueue<Runnable>());
 		executor = Executors.newFixedThreadPool(Utility.cores);
 		Timing.add(debugName,new String[]{
@@ -216,18 +214,17 @@ public class TerrainManager {
 			}
 			if(stop) break;
 		}
-		cleanTerrains();
+		checkChunks();
 		return stop;
 	}
 
-	//OPTIMIZE: deal with the tick stuff
 	/**
-	 * Loops through known chunks and catch those too far away and unload them.
+	 * Loops through known chunks and catch those too far away and unload them, reload the dirty ones
 	 */
-	private void cleanTerrains(){
-		Iterator it = chunks.entrySet().iterator();
+	private void checkChunks(){
+		Iterator<Map.Entry<Vector2i, Chunk>> it = chunks.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry<Vector2i, Chunk> entry = (Map.Entry) it.next();
+			Map.Entry<Vector2i, Chunk> entry = it.next();
 			Chunk v = entry.getValue();
 			Vector2i k = entry.getKey();
 
