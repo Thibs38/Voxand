@@ -1,8 +1,7 @@
-package com.thibsworkshop.voxand.physics;
+package com.thibsworkshop.voxand.physics.collisions;
 
 import com.thibsworkshop.voxand.entities.Transform;
 import com.thibsworkshop.voxand.rendering.models.WireframeModel;
-import com.thibsworkshop.voxand.toolbox.AABB;
 import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector3f;

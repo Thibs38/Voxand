@@ -8,7 +8,6 @@ import com.thibsworkshop.voxand.rendering.shaders.StaticShader;
 import com.thibsworkshop.voxand.rendering.textures.Material;
 import com.thibsworkshop.voxand.rendering.textures.Texture;
 import com.thibsworkshop.voxand.terrain.Chunk;
-import org.joml.FrustumIntersection;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
@@ -17,7 +16,6 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL15;
 import org.joml.Matrix4f;
-import org.lwjgl.system.CallbackI;
 
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class GameObjectRenderer extends Renderer {
 
 	GameObjectManager gameObjectManager;
 
-	private final Vector2i playerChunkPos;
+	private final Vector2i cameraChunkPos;
 
 	private final MasterRenderer masterR;
 	private final ProjectionCamera projectionCamera;
@@ -41,7 +39,7 @@ public class GameObjectRenderer extends Renderer {
 		this.masterR = masterRenderer;
 		this.projectionCamera = projectionCamera;
 		this.staticShader = staticShader;
-		playerChunkPos = Player.player.transform.chunkPos;
+		cameraChunkPos = Player.player.camera.transform.chunkPos;
 		updateProjectionMatrix(Camera.main.getProjectionMatrix());
 
 	}
@@ -64,10 +62,11 @@ public class GameObjectRenderer extends Renderer {
 			List<GameEntity> batch = gameObjectManager.getEntitiesToRender().get(texturedModel);
 			for(GameEntity gameEntity :batch) { //OPTIMIZE: too much calculation bellow, maybe cache some stuff
 
+				//Frustum culling:
 				gameEntity.transform.localToWorldPositionUnrotated(gameEntity.getModel().collider.getAabb().min, worldMin);
-				Chunk.shiftPositionFromPlayer(worldMin, gameEntity.transform.chunkPos, playerChunkPos);
+				Chunk.shiftPositionFromCamera(worldMin, gameEntity.transform.chunkPos, cameraChunkPos);
 				gameEntity.transform.localToWorldPositionUnrotated(gameEntity.getModel().collider.getAabb().max, worldMax);
-				Chunk.shiftPositionFromPlayer(worldMax, gameEntity.transform.chunkPos, playerChunkPos);
+				Chunk.shiftPositionFromCamera(worldMax, gameEntity.transform.chunkPos, cameraChunkPos);
 
 				if(projectionCamera.frustumIntersection.testAab(worldMin, worldMax)){
 					loadTransformation(gameEntity);
@@ -83,9 +82,9 @@ public class GameObjectRenderer extends Renderer {
 			for(TileEntity tileEntity:batch) {
 
 				tileEntity.transform.localToWorldPositionUnrotated(tileEntity.getModel().collider.getAabb().min, worldMin);
-				Chunk.shiftPositionFromPlayer(worldMin, tileEntity.transform.chunkPos, playerChunkPos);
+				Chunk.shiftPositionFromCamera(worldMin, tileEntity.transform.chunkPos, cameraChunkPos);
 				tileEntity.transform.localToWorldPositionUnrotated(tileEntity.getModel().collider.getAabb().max, worldMax);
-				Chunk.shiftPositionFromPlayer(worldMax, tileEntity.transform.chunkPos, playerChunkPos);
+				Chunk.shiftPositionFromCamera(worldMax, tileEntity.transform.chunkPos, cameraChunkPos);
 
 				if(projectionCamera.frustumIntersection.testAab(worldMin, worldMax)){
 					loadTransformation(tileEntity);
@@ -120,8 +119,8 @@ public class GameObjectRenderer extends Renderer {
 	private final Matrix4f tempMatrix = new Matrix4f();
 	private void loadTransformation(GameObject object) {
 		tempMatrix.set(object.transform.getTransformationMatrix());
-		float x = Chunk.shiftChunkPosFromPlayer(object.transform.chunkPos.x, playerChunkPos.x);
-		float z = Chunk.shiftChunkPosFromPlayer(object.transform.chunkPos.y, playerChunkPos.y);
+		float x = Chunk.shiftChunkPosFromCamera(object.transform.chunkPos.x, cameraChunkPos.x);
+		float z = Chunk.shiftChunkPosFromCamera(object.transform.chunkPos.y, cameraChunkPos.y);
 		tempMatrix.translate(x,0,z);
 		staticShader.loadTransformationMatrix(tempMatrix);
 	}

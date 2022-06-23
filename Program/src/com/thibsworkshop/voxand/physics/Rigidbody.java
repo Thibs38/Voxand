@@ -1,12 +1,10 @@
 package com.thibsworkshop.voxand.physics;
 
-import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.GameEntity;
-import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Time;
+import com.thibsworkshop.voxand.physics.collisions.Collider;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 /**
  *
@@ -45,11 +43,12 @@ public class Rigidbody {
             else
                 gameEntity.transform.translate(movement);
             gameEntity.transform.update();
-            grounded = collider.isGrounded(gameEntity.transform);
+            if(gameEntity.doTerrainCollisions)
+                grounded = collider.isGrounded(gameEntity.transform);
 
         }
 
-        if(grounded)
+        if(grounded && gameEntity.doTerrainCollisions)
             velocity.y = 0;
         else if(gravited){
                 velocity.add(0,gravity * Time.getDeltaTime()*2,0);

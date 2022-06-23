@@ -1,7 +1,7 @@
 package com.thibsworkshop.voxand.rendering.models;
 
 import com.thibsworkshop.voxand.loaders.Loader;
-import com.thibsworkshop.voxand.toolbox.AABB;
+import com.thibsworkshop.voxand.physics.collisions.AABB;
 import com.thibsworkshop.voxand.toolbox.Line;
 import org.joml.Vector3f;
 

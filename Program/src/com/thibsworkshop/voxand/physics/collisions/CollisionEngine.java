@@ -1,11 +1,11 @@
-package com.thibsworkshop.voxand.physics;
+package com.thibsworkshop.voxand.physics.collisions;
 
 import com.thibsworkshop.voxand.entities.GameEntity;
 import com.thibsworkshop.voxand.entities.Transform;
 import com.thibsworkshop.voxand.io.Time;
+import com.thibsworkshop.voxand.physics.Rigidbody;
 import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
-import com.thibsworkshop.voxand.toolbox.AABB;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -47,6 +47,7 @@ public class CollisionEngine {
                 );
     }
 
+    //<editor-fold desc="AABBvsAABB">
     private static final Vector3f minAmaxB = new Vector3f(0);
     private static final Vector3f maxAminB = new Vector3f(0);
     private static final Vector3f AB = new Vector3f(0);
@@ -140,7 +141,7 @@ public class CollisionEngine {
         }
         return false;
     }
-
+    //</editor-fold>
 
     //<editor-fold desc="AABB vs TERRAIN">
     private static final Vector3f normal = new Vector3f(0);
@@ -363,4 +364,67 @@ public class CollisionEngine {
         return entryTime;
     }
     //</editor-fold>
+
+
+    private static final Vector3i step = new Vector3i();
+    private static final Vector3f stepPos = new Vector3f();
+    private static final Vector3i blockPos = new Vector3i();
+    private static final Vector2i blockChunkPos = new Vector2i();
+    private static final Vector3f actualPosition = new Vector3f();
+    public static RayHit rayVSterrain(Ray ray){
+
+        step.x = ray.direction.x >= 0 ? 1 : -1;
+        step.y = ray.direction.y >= 0 ? 1 : -1;
+        step.z = ray.direction.z >= 0 ? 1 : -1;
+
+        stepPos.set(ray.direction);
+
+
+        blockPos.x = Maths.floor(ray.position.x);
+        blockPos.y = Maths.floor(ray.position.x);
+        blockPos.z = Maths.floor(ray.position.x);
+        blockChunkPos.set(ray.chunkPosition);
+
+        float sqrLength = 0;
+
+        if(TerrainManager.isBlockSolid(blockPos.x,blockPos.y, blockPos.z, ray.chunkPosition))
+
+        while(sqrLength < ray.getSqrLength()){
+            if(Math.abs(stepPos.x) > Math.abs(stepPos.z)){
+                if(Math.abs(stepPos.x) > Math.abs(stepPos.y)){
+                    stepPos.x += step.x;
+                    blockChunkPos.x = Chunk.correctChunkPosition(blockChunkPos.x,blockPos.x + step.x);
+                    blockPos.x = Chunk.correctPosition(blockPos.x + step.x);
+                } else {
+                    stepPos.y += step.y;
+                    blockPos.y = Chunk.correctPosition(blockPos.y + step.y);
+                }
+            } else {
+                if(Math.abs(stepPos.z) > Math.abs(stepPos.y)){
+                    stepPos.z += step.z;
+                    blockChunkPos.y = Chunk.correctChunkPosition(blockChunkPos.y,blockPos.y + step.y);
+                    blockPos.z = Chunk.correctPosition(blockPos.z + step.z);
+                } else {
+                    stepPos.y += step.y;
+                    blockPos.y = Chunk.correctPosition(blockPos.y + step.y);
+                }
+            }
+
+            // Signed distance field of a cube:
+            //TODO Verify the equation
+            actualPosition.x = Maths.max(Math.abs(ray.position.x-stepPos.x + 0.5f)-0.5f,0f);
+            actualPosition.y = Maths.max(Math.abs(ray.position.y-stepPos.y + 0.5f)-0.5f,0f);
+            actualPosition.z = Maths.max(Math.abs(ray.position.z-stepPos.z + 0.5f)-0.5f,0f);
+            sqrLength = actualPosition.lengthSquared();
+
+            if(blockPos.y < 0 || blockPos.y > Chunk.CHUNK_HEIGHT)
+                return new RayHit(false,null,null,(float)Math.sqrt(sqrLength));
+
+            if(TerrainManager.isBlockSolid(blockPos.x,blockPos.y,blockPos.z,blockChunkPos))
+                return new RayHit(true,new Vector3i(blockPos), new Vector2i(blockChunkPos), (float)Math.sqrt(sqrLength));
+
+        }
+
+        return new RayHit(false,null,null,(float)Math.sqrt(sqrLength));
+    }
 }

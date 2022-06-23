@@ -16,6 +16,7 @@ import com.thibsworkshop.voxand.toolbox.Maths;
 import com.thibsworkshop.voxand.toolbox.Utility;
 
 import org.joml.Vector2i;
+import org.joml.Vector3i;
 
 
 //OPTIMIZE
@@ -40,7 +41,9 @@ public class TerrainManager {
 
 	public static String debugName = "Terrain Generation";
 
-	private static final Vector2i playerChunkPos = Player.player.transform.chunkPos;
+	private static final Vector2i cameraChunkPos = Player.player.camera.transform.chunkPos;
+
+	private static final Vector2i playerChunkPos  = Player.player.transform.chunkPos;
 
 	public enum State{ LOOP, WAIT_GRIDS, ASSIGN_GRIDS, START_MODELS, WAIT_MODELS, LOAD_MODELS}
 
@@ -136,7 +139,7 @@ public class TerrainManager {
 	public void refreshChunks() {
 
 		chunks.forEach((k,v) ->{
-			v.update(Maths.sqrDistance(k, playerChunkPos), playerChunkPos);
+			v.update(Maths.sqrDistance(k, playerChunkPos), cameraChunkPos);
 		});
 
 		switch (state) {
@@ -230,7 +233,7 @@ public class TerrainManager {
 
 
 			if(v.getLastTickUpdate() < Time.getTick()) { //If the tick is equal to the current one, no need to check
-				v.update(Maths.sqrDistance(k, playerChunkPosTemp), playerChunkPosTemp);
+				v.update(Maths.sqrDistance(k, playerChunkPos), cameraChunkPos);
 			}
 			if(v.getSqr_distance() > Config.sqr_chunkUnloadDist){
 				it.remove();
@@ -498,6 +501,7 @@ public class TerrainManager {
 		}
 	}
 
+
 	public static boolean isTerrainTransparent(int x, int y, int z, Vector2i chunkPos) {
 		byte blockid = getBlock(x, y, z, chunkPos);
 		if(blockid == -1)
@@ -521,5 +525,6 @@ public class TerrainManager {
 			return false;
 		return Block.blocks[blockid].isSolid();
 	}
+
 	//</editor-fold>
 }

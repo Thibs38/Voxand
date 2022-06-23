@@ -4,13 +4,14 @@ in vec3 position;
 
 uniform vec3 color;
 uniform mat4 projectionViewMatrix;
-uniform vec3 linePosition;
-uniform vec3 lineScale;
+uniform mat4 transformationMatrix;
 
 out vec3 lineColor;
 
 void main(void)
 {
-  gl_Position = projectionViewMatrix * vec4(position*lineScale + linePosition,1.0);
+  vec4 worldPosition = transformationMatrix * vec4(position,1.0);
+
+  gl_Position = projectionViewMatrix * worldPosition;
   lineColor = color;
 }

@@ -1,12 +1,10 @@
 package com.thibsworkshop.voxand.terrain;
 
-import com.thibsworkshop.voxand.debugging.Debug;
-import com.thibsworkshop.voxand.entities.Player;
 import com.thibsworkshop.voxand.io.Time;
 import com.thibsworkshop.voxand.loaders.Loader;
 import com.thibsworkshop.voxand.rendering.models.RawModel;
 import com.thibsworkshop.voxand.rendering.models.WireframeModel;
-import com.thibsworkshop.voxand.toolbox.AABB;
+import com.thibsworkshop.voxand.physics.collisions.AABB;
 import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector2i;
@@ -56,13 +54,13 @@ public class Chunk{
 		generated = true;
 	}
 
-	public void update(int sqr_distance, Vector2i playerChunkPos){ //Each update we store the tick, so we can know if distance is up to date
+	public void update(int sqr_distance, Vector2i cameraChunkPos){ //Each update we store the tick, so we can know if distance is up to date
 		this.sqr_distance = sqr_distance;
-		this.position.set((chunkPos.x - playerChunkPos.x) * CHUNK_SIZE,0, (chunkPos.y - playerChunkPos.y) * CHUNK_SIZE);
+		this.position.set((chunkPos.x - cameraChunkPos.x) * CHUNK_SIZE,0, (chunkPos.y - cameraChunkPos.y) * CHUNK_SIZE);
 		this.positionMax.set(position.x + CHUNK_SIZE, CHUNK_HEIGHT, position.z + Chunk.CHUNK_SIZE);
 		lastTickUpdate = Time.getTick();
 	}
-
+	//TODO: move to Debug class
 	public static void genWireframe(){
 		if(wireModel == null)
 			wireModel = new WireframeModel(aabb,Color.white);
@@ -165,8 +163,8 @@ public class Chunk{
 	 * @param pos the chunk position to shift
 	 * @return the new position
 	 */
-	public static float shiftChunkPosFromPlayer(int pos, int playerPos){
-		return (pos - playerPos) * Chunk.CHUNK_SIZE;
+	public static float shiftChunkPosFromCamera(int pos, int camPos){
+		return (pos - camPos) * Chunk.CHUNK_SIZE;
 	}
 
 	/**
@@ -174,7 +172,7 @@ public class Chunk{
 	 * @param position The position to shift
 	 * @param playerPos The players' position
 	 */
-	public static void shiftPositionFromPlayer(Vector3f position, Vector2i chunkPos, Vector2i playerPos){
+	public static void shiftPositionFromCamera(Vector3f position, Vector2i chunkPos, Vector2i playerPos){
 		position.add((chunkPos.x - playerPos.x) * CHUNK_SIZE, 0,(chunkPos.y - playerPos.y) * CHUNK_SIZE);
 	}
 

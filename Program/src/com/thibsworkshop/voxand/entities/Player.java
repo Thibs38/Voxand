@@ -2,7 +2,11 @@ package com.thibsworkshop.voxand.entities;
 
 import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Time;
+import com.thibsworkshop.voxand.physics.collisions.CollisionEngine;
+import com.thibsworkshop.voxand.physics.collisions.Ray;
+import com.thibsworkshop.voxand.physics.collisions.RayHit;
 import com.thibsworkshop.voxand.rendering.models.TexturedModel;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.joml.Vector3f;
 
@@ -10,37 +14,40 @@ import org.joml.Vector3f;
 public class Player extends GameEntity {
 
 	private final float speed = 2;
-	private final float rotationSpeed = 20f;
+	private final float rotationSpeed = 0.25f;
 	private final float jumpSpeed = 20f;
 
-	private final Camera camera;
+	public final Camera camera;
 
 	public static Player player;
 
 	public enum Mode { Survival, Spectator}
 
-	public Mode mode = Mode.Spectator;
-	
+	public Mode mode = Mode.Survival;
+
+	private Ray ray;
+
+
 	public Player(TexturedModel texturedModel, float mass, Camera camera) {
 		super(texturedModel, mass);
 		player = this;
 		this.camera = camera;
-		camera.transform.setPosition(transform.getPosition());
-		camera.transform.translate(0,10,0);
+		setCamera();
 		doRendering = false;
 		doUpdate = true; //Player is disabled because it shouldn't be updated through the gameobject manager
 		if(mode == Mode.Spectator) {
 			doTerrainCollisions = false;
 			rigidbody.verticalDrag = rigidbody.horizontalDrag;
 		}
+		ray = new Ray(new Vector3f(camera.transform.getPosition()), new Vector2i(transform.chunkPos),new Vector3f(camera.transform.forward()),5);
 	}
 
-	Vector3f xVelocity = new Vector3f(0);
-	Vector3f zVelocity = new Vector3f(0);
+	private final Vector3f xVelocity = new Vector3f(0);
+	private final Vector3f zVelocity = new Vector3f(0);
 	public void move() {
 		float realSpeed = speed;
-		float realRotationSpeedx = rotationSpeed * Input.getAcceleration().x * Time.getDeltaTime();
-		float realRotationSpeedy = rotationSpeed * Input.getAcceleration().y * Time.getDeltaTime();
+		float realRotationSpeedx = rotationSpeed /* * Input.getAcceleration().x * Time.getDeltaTime()*/;
+		float realRotationSpeedy = rotationSpeed /* * Input.getAcceleration().y * Time.getDeltaTime()*/;
 		float dy = 0;
 
 		boolean moved = false;
@@ -48,8 +55,8 @@ public class Player extends GameEntity {
 
 		//Applying mouse rotation to the camera
 		if(Input.hasMouseMoved()){
-			camRot.y += Input.getMouseDelta().x * realRotationSpeedx;
-			camRot.x -= Input.getMouseDelta().y * realRotationSpeedy;
+			camRot.y += Input.getMouseDelta().x * realRotationSpeedx /*Time.getDeltaTime()*/; // Do not multiply by dtime because
+			camRot.x -= Input.getMouseDelta().y * realRotationSpeedy /*Time.getDeltaTime()*/; // mouseDelta is already proportional to time
 			moved = true;
 		}
 
@@ -60,13 +67,14 @@ public class Player extends GameEntity {
 
 		camRot.y = camRot.y % 360;
 
-		transform.setRotation(0, camRot.y, 0);
 		//camera.transform.setRotation(camRot);
 
 
 		//Applying Inputs
-		switch (mode) { //OPTIMIZE: can be optimized using matrices
+		switch (mode) { //OPTIMIZE use matrices
 			case Survival -> {
+				transform.setRotation(0, camRot.y, 0);
+
 				zVelocity.set(transform.forward());
 				zVelocity.mul(Input.getAxis(Input.AxisName.Vertical) * realSpeed);
 
@@ -96,31 +104,44 @@ public class Player extends GameEntity {
 					dy += jumpSpeed;
 					moved = true;
 				}
+				Vector3f currentVelocity = rigidbody.velocity;
+				currentVelocity.y += dy;
+				rigidbody.addVelocity(xVelocity);
+				rigidbody.addVelocity(zVelocity);
+				if(mode == Mode.Spectator){
+					//float rDrag = Math.max(1- rigidbody.drag*Time.getDeltaTime(),0);
+					//currentVelocity.mul(rDrag,1,rDrag);
+				}
+				xVelocity.set(0);
+				zVelocity.set(0);
+				ray.position.set(camera.transform.getPosition());
+				ray.direction.set(camera.transform.forward());
+				ray.chunkPosition.set(camera.transform.chunkPos);
 			}
 			case Spectator -> {
 				zVelocity.set(camera.transform.forward());
-				zVelocity.mul(Input.getAxis(Input.AxisName.Vertical)*realSpeed);
+				zVelocity.mul(Input.getAxis(Input.AxisName.Vertical)*realSpeed* Time.getDeltaTime()*32);
 
-				xVelocity.set(transform.right());
-				xVelocity.mul(Input.getAxis(Input.AxisName.Horizontal) * realSpeed);
+				xVelocity.set(camera.transform.right());
+				xVelocity.mul(Input.getAxis(Input.AxisName.Horizontal) * realSpeed * Time.getDeltaTime()*32);
 
-				if(Input.isKeyHold(GLFW.GLFW_KEY_SPACE))
-					dy += jumpSpeed/4f;
-				if(Input.isKeyHold(GLFW.GLFW_KEY_LEFT_SHIFT))
-					dy -= jumpSpeed/4f;
+				camera.transform.translate(xVelocity);
+				camera.transform.translate(zVelocity);
 			}
 		}
-		Vector3f currentVelocity = rigidbody.velocity;
-		currentVelocity.y += dy;
-		rigidbody.addVelocity(xVelocity);
-		rigidbody.addVelocity(zVelocity);
-		if(mode == Mode.Spectator){
-			//float rDrag = Math.max(1- rigidbody.drag*Time.getDeltaTime(),0);
-			//currentVelocity.mul(rDrag,1,rDrag);
+
+		//System.out.println(camera.chunkPosition);
+
+		RayHit hit = CollisionEngine.rayVSterrain(ray);
+		if(hit.success){
+			//System.out.println("Block hit: " + hit.blockPosition + " distance: " + hit.distance);
 		}
-		xVelocity.set(0);
-		zVelocity.set(0);
 	}
 
-	
+	public void setCamera(){
+		camera.transform.setPosition(transform.getPosition());
+		camera.transform.chunkPos.set(transform.chunkPos);
+		camera.transform.translate(0,10,0);
+		camera.transform.setRotation(transform.getRotation());
+	}
 }

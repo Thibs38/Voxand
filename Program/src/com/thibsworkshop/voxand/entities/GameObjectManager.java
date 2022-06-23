@@ -1,10 +1,8 @@
 package com.thibsworkshop.voxand.entities;
 
-import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.game.Config;
-import com.thibsworkshop.voxand.physics.CollisionEngine;
+import com.thibsworkshop.voxand.physics.collisions.CollisionEngine;
 import com.thibsworkshop.voxand.rendering.models.TexturedModel;
-import com.thibsworkshop.voxand.rendering.renderers.MasterRenderer;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -206,6 +204,7 @@ public class GameObjectManager {
         tileEntitiesToRender.get(tileEntity.texturedModel).remove(tileEntity);
     }
 
+    //TODO: move to Debug class, generate only one model and spread it with transformation
     public void genEntityWireframe(){
         for(TexturedModel texturedModel : entities.keySet()) {
             if(texturedModel.collider != null)

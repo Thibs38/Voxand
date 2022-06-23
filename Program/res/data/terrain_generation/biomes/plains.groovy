@@ -3,7 +3,7 @@ package data.terrain_generation.biomes
 import com.thibsworkshop.voxand.data.Biome
 import com.thibsworkshop.voxand.terrain.GridGenerator
 import com.thibsworkshop.voxand.toolbox.MinMax
-
+/*
 class BiomePlains extends Biome{
 
     BiomePlains() {
@@ -29,4 +29,4 @@ class BiomePlains extends Biome{
     float generate_xyz(long x, long y, long z) {
         return 0
     }
-}
+}*/

@@ -1,5 +1,5 @@
 package data.terrain_generation
-
+/*
 import com.thibsworkshop.voxand.data.IBiomeMap
 import com.thibsworkshop.voxand.toolbox.SimplexNoise
 
@@ -35,4 +35,4 @@ class BiomeMap implements IBiomeMap{
     float elevation(long x, long z) {
         return SimplexNoise.noise(x,z);
     }
-}
+}*/

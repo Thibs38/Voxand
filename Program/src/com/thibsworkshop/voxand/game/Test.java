@@ -12,8 +12,7 @@ import com.thibsworkshop.voxand.rendering.models.TexturedModel;
 
 import com.thibsworkshop.voxand.io.Input;
 import com.thibsworkshop.voxand.io.Window;
-import com.thibsworkshop.voxand.physics.Collider;
-import com.thibsworkshop.voxand.physics.CollisionEngine;
+import com.thibsworkshop.voxand.physics.collisions.Collider;
 import com.thibsworkshop.voxand.rendering.renderers.*;
 import com.thibsworkshop.voxand.rendering.shaders.LineShader;
 import com.thibsworkshop.voxand.rendering.shaders.StaticShader;
@@ -21,7 +20,7 @@ import com.thibsworkshop.voxand.rendering.shaders.TerrainShader;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.rendering.textures.Material;
 import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
-import com.thibsworkshop.voxand.toolbox.AABB;
+import com.thibsworkshop.voxand.physics.collisions.AABB;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.*;
@@ -132,6 +131,7 @@ public class Test {
                 done = true;
             }
 
+
             if(Input.isKeyDown(GLFW_KEY_ENTER)){
                 Debug.printVector(player.transform.chunkPos);
             }
@@ -155,8 +155,12 @@ public class Test {
                 //Timing.print(TerrainManager.debugName,"Refreshing",5);
 
             gameObjectManager.update();
+            if(player.mode == Player.Mode.Survival)
+                camera.update(player.transform,1.5f);
+            else if (player.mode == Player.Mode.Spectator)
+                camera.update(camera.transform,0);
             terrainManager.refreshChunks();
-            camera.update(player.transform);
+
             renderer.render(renderers);
             window.updateWindow();
         }

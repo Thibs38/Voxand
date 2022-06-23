@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class GroovyLoader {
-
+/*
     private static final String TERRAIN_GEN_PATH = "Program/res/data/terrain_generation/";
 
     private static final GroovyClassLoader groovyClassLoader = new GroovyClassLoader();
@@ -43,5 +43,5 @@ public class GroovyLoader {
             e.printStackTrace();
         }
         return null;
-    }
+    }*/
 }

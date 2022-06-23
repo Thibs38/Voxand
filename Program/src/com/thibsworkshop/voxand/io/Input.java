@@ -25,18 +25,16 @@ public class Input {
 	private final Map<Integer,KeyState> nextState = new HashMap<>();
 	private static final Map<AxisName,Axis> axes = new HashMap<>();
 	
-	private static Vector2d mousePosition;
-	private static Vector2d lastMousePosition;
+	private static final Vector2d mousePosition = new Vector2d(0);
+	private static final Vector2d lastMousePosition= new Vector2d(0);
 
-	private static Vector2d mouseDelta;
+	private static final Vector2d mouseDelta= new Vector2d(0);
 
-	private static Vector2f acceleration;
+	private static final Vector2f acceleration= new Vector2f(0);
 
-	private static Vector2d absDelta;
-	private static Vector2d absLastDelta;
-	private static Vector2d absLastLastDelta;
+	private static final Vector2d lastDelta= new Vector2d(0);
 
-	private static boolean mouseMoved;
+	private static  boolean mouseMoved;
 
 	private final Window window;
 	
@@ -86,14 +84,6 @@ public class Input {
 		axes.put(AxisName.Horizontal, new Axis(AxisName.Horizontal, GLFW_KEY_D, GLFW_KEY_A));
 		axes.put(AxisName.Vertical, new Axis(AxisName.Vertical, GLFW_KEY_W, GLFW_KEY_S));
 
-		mousePosition = new Vector2d();
-		lastMousePosition = new Vector2d();
-		mouseDelta = new Vector2d();
-
-		absDelta = new Vector2d();
-		absLastDelta = new Vector2d();
-		absLastLastDelta = new Vector2d();
-		acceleration = new Vector2f(1);
 
 		glfwSetInputMode(window.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		if (glfwRawMouseMotionSupported())
@@ -116,22 +106,11 @@ public class Input {
 		mouseDelta.x = mousePosition.x - lastMousePosition.x;
 		mouseDelta.y = mousePosition.y - lastMousePosition.y;
 
-		absDelta.x = Math.abs(mouseDelta.x);
-		absDelta.y = Math.abs(mouseDelta.y);
+		//acceleration.x = (float)Math.max(Math.abs(mouseDelta.x - lastDelta.x)/Time.getDeltaTime()*0.1f,1d);
+		//acceleration.y = (float)Math.max(Math.abs(mouseDelta.y - lastDelta.y)/Time.getDeltaTime()*0.1f,1d);
 
-		if(absLastLastDelta.x + absLastDelta.x + absDelta.x <= 1)
-			acceleration.x = 0.5f;
-		else acceleration.x = 1f;
-
-		if(absLastLastDelta.y + absLastDelta.y + mouseDelta.y <= 1)
-			acceleration.y = 0.5f;
-		else acceleration.y = 1f;
-
-		absLastLastDelta.x = absLastDelta.x;
-		absLastLastDelta.y = absLastDelta.y;
-
-		absLastDelta.x = absDelta.x;
-		absLastDelta.y = absDelta.y;
+		lastDelta.x = mouseDelta.x;
+		lastDelta.y = mouseDelta.y;
 
 		lastMousePosition.x = mousePosition.x;
 		lastMousePosition.y = mousePosition.y;
@@ -181,7 +160,10 @@ public class Input {
 		if(isKeyDown(GLFW_KEY_F4)){
 			Debug.setTileEntityAABB(!Debug.isTileEntityAABB());
 		}
-
+		if(isKeyDown(GLFW_KEY_F5))
+			Debug.setRays(!Debug.isRays());
+		if(isKeyDown(GLFW_KEY_F6))
+			Debug.setCameraFree(!Debug.isCameraFree());
 		if(isKeyDown(GLFW_KEY_F12)){
 			Debug.clear();
 		}

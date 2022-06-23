@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.entities;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.FrustumIntersection;
@@ -51,9 +52,10 @@ public class ProjectionCamera extends Camera{
         projectionMatrix.setPerspective(fov,aspectRatio,NEAR_PLANE,FAR_PLANE);
     }
 
-    public void update(Transform attachedTransform){
+    public void update(Transform attachedTransform, float offset){
         transform.setPosition(attachedTransform.getPosition());//We apply the final translation to the camera
-        transform.translate(0,1.5f,0);
+        transform.translate(0,offset,0);
+        transform.chunkPos.set(attachedTransform.chunkPos);
         transform.update();
         updateViewMatrix();
     }

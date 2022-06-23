@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.toolbox;
+package com.thibsworkshop.voxand.physics.collisions;
 
 import org.joml.Vector3f;
 

@@ -39,6 +39,31 @@ public class Maths {
 		matrix.scale(transform.getScale());
 	}
 
+	public static Matrix4f createTransformationMatrix(Vector3f position, Vector3f scale) {
+		Matrix4f matrix = new Matrix4f().identity();
+		matrix.translate(position);
+
+		matrix.scale(scale);
+		return matrix;
+	}
+
+	public static Matrix4f createTransformationMatrix(Vector3f position, Vector3f scale, Vector3f rotationAxis, float angle) {
+		Matrix4f matrix = new Matrix4f().identity();
+		matrix.translate(position);
+
+		matrix.rotate(angle, rotationAxis);
+		matrix.scale(scale);
+		return matrix;
+	}
+
+	public static Matrix4f createTransformationMatrix(Vector3f position, float scale) {
+		Matrix4f matrix = new Matrix4f().identity();
+		matrix.translate(position);
+
+		matrix.scale(scale);
+		return matrix;
+	}
+
 	/**
 	 * Multiply m with v with w = 1
 	 * @param m right
@@ -179,6 +204,16 @@ public class Maths {
 	 * @return smallest int greater than a
 	 */
 	public static int ceil(float a) { return (int) Math.ceil(a); }
+
+	/**
+	 * Returns the maximum between a and b
+	 * @param a
+	 * @param b
+	 * @return maximum between a and b
+	 */
+	public static float max(float a, float b){
+		return (a >= b) ? a : b;
+	}
 
 	/**
 	 * Calculates the linear interpolation between a and b at time t
