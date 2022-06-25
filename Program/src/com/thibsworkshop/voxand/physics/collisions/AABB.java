@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.physics.collisions;
 
+import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Vector3f;
 
 public class AABB {
@@ -14,6 +15,13 @@ public class AABB {
         this.max = max;
         this.center = center;
         this.size = size;
+    }
+
+    public static AABB moreThanOne(){
+        return createMinMax(Maths.lessThanZero,Maths.moreThanOne);
+    }
+    public static AABB one(){
+        return createMinMax(Maths.zero,Maths.one);
     }
 
     public static AABB createMinMax(Vector3f min, Vector3f max){

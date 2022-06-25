@@ -242,6 +242,14 @@ public class TerrainManager {
 				if (v.dirty) {
 					terrainsToCreate.put(k, new TerrainGeneratorCallable(v));
 					v.dirty = false;
+					for(Vector2i cpos : v.sidesToRefresh){
+						Chunk c = chunks.get(cpos);
+						if(c != null){
+							terrainsToCreate.put(cpos,new TerrainGeneratorCallable(c));
+						}
+					}
+					v.sidesToRefresh.clear();
+
 				}
 			}
 
@@ -425,7 +433,7 @@ public class TerrainManager {
 			byte[][][] leftB = null;
 
 			if(back != null)
-				backB = back.grid;
+				backB = back.getGrid();
 			else{
 				System.out.print("null -z: ");Debug.printVector(temp.set(x,z-1));
 				System.out.println("current layer: " + currentLayer);
@@ -433,7 +441,7 @@ public class TerrainManager {
 				System.out.println("");
 			}
 			if(front != null)
-				frontB = front.grid;
+				frontB = front.getGrid();
 			else{
 				System.out.print("null z: ");Debug.printVector(temp.set(x,z+1));
 				System.out.println("current layer: " + currentLayer);
@@ -441,7 +449,7 @@ public class TerrainManager {
 				System.out.println("");
 			}
 			if(right != null)
-				rightB = right.grid;
+				rightB = right.getGrid();
 			else{
 				System.out.print("null x: ");Debug.printVector(temp.set(x+1,z));
 				System.out.println("current layer: " + currentLayer);
@@ -449,7 +457,7 @@ public class TerrainManager {
 				System.out.println("");
 			}
 			if(left != null)
-				leftB = left.grid;
+				leftB = left.getGrid();
 			else{
 				System.out.print("null -x: ");Debug.printVector(temp.set(x-1,z));
 				System.out.println("current layer: " + currentLayer);
@@ -494,10 +502,10 @@ public class TerrainManager {
 	 */
 	public static byte getBlock(int x, int y, int z, Vector2i chunkPos){
 		Chunk t = chunks.get(chunkPos);
-		if (t == null || t.grid == null) {
+		if (t == null || t.getGrid() == null) {
 			return -1;
 		} else {
-			return t.grid[x][y][z];
+			return t.getGrid()[x][y][z];
 		}
 	}
 

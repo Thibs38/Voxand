@@ -17,6 +17,7 @@ import com.thibsworkshop.voxand.rendering.renderers.*;
 import com.thibsworkshop.voxand.rendering.shaders.LineShader;
 import com.thibsworkshop.voxand.rendering.shaders.StaticShader;
 import com.thibsworkshop.voxand.rendering.shaders.TerrainShader;
+import com.thibsworkshop.voxand.terrain.Chunk;
 import com.thibsworkshop.voxand.terrain.TerrainManager;
 import com.thibsworkshop.voxand.rendering.textures.Material;
 import com.thibsworkshop.voxand.terrain.Chunk.TerrainInfo;
@@ -42,12 +43,13 @@ public class Test {
 
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        window = new Window(1280,720,false);
-        //window = new Window(1920,1080,true);
+        //window = new Window(1280,720,false);
+        window = new Window(1920,1080,true);
 
         Time.init();
         Loader.init();
         HUD.init();
+        Chunk.init();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
@@ -100,8 +102,8 @@ public class Test {
         lineRenderer.linkGameObjectManager(gameObjectManager);
         Renderer[] renderers = {terrainRenderer,gameObjectRenderer,lineRenderer};
 
-       GameEntity chick = new GameEntity(chickModel,1);
-        chick.transform.setPosition(0,200,0);
+       //GameEntity chick = new GameEntity(chickModel,1);
+        //chick.transform.setPosition(0,200,0);
         /*GameEntity chick1 = new GameEntity(chickModel,1);
         chick1.transform.setPosition(6,205,5);
         GameEntity chick2 = new GameEntity(chickModel,1);
@@ -111,7 +113,7 @@ public class Test {
         GameEntity chick4 = new GameEntity(chickModel,1);
         chick4.transform.setPosition(9,220,5);*/
 
-        gameObjectManager.processEntity(chick);
+        //gameObjectManager.processEntity(chick);
 
         gameObjectManager.processEntity(player);
         //Timing.enable(TerrainManager.debugName);
@@ -125,7 +127,7 @@ public class Test {
             Time.update();
             input.updateInput();
             if(!done && Time.getTime() > time) {
-                if(player.mode == Player.Mode.Survival)
+                if(player.getMode() == Player.Mode.Survival)
                     player.enableGravity(true);
                 Binary.readVoxFile("Program/res/data/vox/island.vox");
                 done = true;
@@ -155,9 +157,9 @@ public class Test {
                 //Timing.print(TerrainManager.debugName,"Refreshing",5);
 
             gameObjectManager.update();
-            if(player.mode == Player.Mode.Survival)
+            if(player.getMode() == Player.Mode.Survival)
                 camera.update(player.transform,1.5f);
-            else if (player.mode == Player.Mode.Spectator)
+            else if (player.getMode() == Player.Mode.Spectator)
                 camera.update(camera.transform,0);
             terrainManager.refreshChunks();
 

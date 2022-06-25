@@ -2,6 +2,7 @@ package com.thibsworkshop.voxand.rendering.renderers;
 
 import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.*;
+import com.thibsworkshop.voxand.io.Window;
 import com.thibsworkshop.voxand.physics.collisions.Ray;
 import com.thibsworkshop.voxand.rendering.gui.HUD;
 import com.thibsworkshop.voxand.rendering.models.RawModel;
@@ -13,10 +14,13 @@ import com.thibsworkshop.voxand.toolbox.Color;
 import com.thibsworkshop.voxand.toolbox.Maths;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+
+import javax.imageio.plugins.tiff.TIFFImageReadParam;
 
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
@@ -47,6 +51,7 @@ public class LineRenderer extends Renderer{
         lineShader.start();
         lineShader.loadRenderingVariables(projectionCamera.getProjectionViewMatrix());
 
+        renderBlock();
         if(Debug.isDebugMode()){
 
             if(Debug.isChunkAABB())
@@ -72,9 +77,24 @@ public class LineRenderer extends Renderer{
         lineShader.stop();
     }
 
+    public void renderBlock(){
+        if(!Player.player.blockSelected)
+            return;
+        Vector3f pos = new Vector3f(Player.player.selectedBlock);
+
+        Chunk.shiftPositionFromCamera(pos,Player.player.selectedBlockChunkPos, Player.player.camera.transform.chunkPos);
+        Matrix4f transformation = Maths.createTransformationMatrix(pos,1);
+        lineShader.loadTransformation(transformation);
+        WireframeModel model = Chunk.blockWireframeModel;
+        lineShader.loadColor(model.color);
+        prepareModel(model.getRawModel());
+        GL11.glDrawElements(GL11.GL_LINES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
+
+    }
+
     public void renderXYZ(){
         projectionCamera.forward.add(projectionCamera.transform.getPosition(),Debug.axesPosition);
-        Matrix4f transformation = Maths.createTransformationMatrix(Debug.axesPosition,0.25f);
+        Matrix4f transformation = Maths.createTransformationMatrix(Debug.axesPosition,0.1f);
         lineShader.loadTransformation(transformation);
         for(WireframeModel model: Debug.getAxisModels()){
             lineShader.loadColor(model.color);
@@ -87,14 +107,14 @@ public class LineRenderer extends Renderer{
         WireframeModel model = Debug.getRayModel();
         lineShader.loadColor(model.color);
         prepareModel(model.getRawModel());
-        for(Ray ray: Ray.rays){
-            Vector3f endPoint = new Vector3f();
-            ray.direction.mul(ray.length, endPoint);
-            endPoint.add(ray.position);
-            Vector3f midPoint = new Vector3f(ray.position);
-            midPoint.add(endPoint);
-            midPoint.mul(0.5f);
 
+        for(Ray ray: Ray.rays){
+            //FIXME: Rendering broken when moving
+            if(!ray.preview) // This is a temporary fix to not display ray when not in free look
+                continue;
+            // The model is not center, it goes form (0,0,0) to (0,0,1)
+            // So only scaling is necessary
+            Vector3f pos = new Vector3f(ray.position);
             Vector3f vecA = new Vector3f(0.0f, 0.0f, 1.0f);
             Vector3f vecB = new Vector3f(ray.direction);
 
@@ -106,26 +126,54 @@ public class LineRenderer extends Renderer{
 
             Vector3f scale = new Vector3f(ray.length);
 
-
-            Chunk.shiftPositionFromCamera(midPoint, ray.chunkPosition, Player.player.camera.transform.chunkPos);
+            Chunk.shiftPositionFromCamera(pos, ray.chunkPosition, Player.player.camera.transform.chunkPos);
             //System.out.println("scale: " + scale + " angle: " + angle);
             //System.out.print("rotation: ");
             //Debug.printVector(rotationAxis);
-            Matrix4f transformation = Maths.createTransformationMatrix(midPoint,scale,rotationAxis, angle);
+            Matrix4f transformation = Maths.createTransformationMatrix(pos,scale,rotationAxis, angle);
             //System.out.println(transformation);
             lineShader.loadTransformation(transformation);
             GL11.glDrawElements(GL11.GL_LINES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
         }
+
+        model = Debug.getRayHitCrossModel();
+        lineShader.loadColor(model.color);
+        prepareModel(model.getRawModel());
+        for(Ray ray: Ray.rays){
+            if(!ray.hit.success)
+                continue;
+            Vector3f pos = new Vector3f(ray.direction);
+            pos.mul(-0.01f); // To avoid weird clipping issues
+            pos.add(ray.hit.position);
+            Chunk.shiftPositionFromCamera(pos, ray.hit.chunkPosition,Player.player.camera.transform.chunkPos);
+
+            //The model is aligned on the forward axis
+            Vector3f forward = new Vector3f(Maths.forward);
+            forward.x += 0.0001f;
+            Vector3f normal = new Vector3f(ray.hit.normal);
+            float angle = (float) Math.acos( forward.dot(normal));
+
+            Vector3f rotationAxis = new Vector3f();
+            forward.cross(normal, rotationAxis);
+            rotationAxis.normalize();
+            //System.out.println("angle: " + angle);
+            Matrix4f transformation = Maths.createTransformationMatrix(pos,Maths.quarter,rotationAxis,angle);
+            lineShader.loadTransformation(transformation);
+            GL11.glDrawElements(GL11.GL_LINES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
+        }
+
     }
 
     public void renderHUD(){
-        Matrix4f transformation = Maths.identity;
+        Vector3f center = new Vector3f(Window.mainWindow.getWidth() / 2,Window.mainWindow.getHeight() / 2,-1);
+        //Vector3f center = new Vector3f(0,0,0);
+        Matrix4f transformation = Maths.createTransformationMatrix(center,20);
         lineShader.loadTransformation(transformation);
-        for(WireframeModel model: HUD.getCrosshair()){
-            lineShader.loadColor(model.color);
-            prepareModel(model.getRawModel());
-            GL11.glDrawElements(GL11.GL_LINES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
-        }
+        WireframeModel model = HUD.getCrosshair();
+        lineShader.loadColor(model.color);
+        prepareModel(model.getRawModel());
+        GL11.glDrawElements(GL11.GL_LINES, model.getRawModel().getVertexCount(),GL11.GL_UNSIGNED_INT,0);
+
     }
 
     private void renderChunks(){

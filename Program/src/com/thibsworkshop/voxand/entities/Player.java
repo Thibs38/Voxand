@@ -6,9 +6,15 @@ import com.thibsworkshop.voxand.physics.collisions.CollisionEngine;
 import com.thibsworkshop.voxand.physics.collisions.Ray;
 import com.thibsworkshop.voxand.physics.collisions.RayHit;
 import com.thibsworkshop.voxand.rendering.models.TexturedModel;
+import com.thibsworkshop.voxand.terrain.Chunk;
+import com.thibsworkshop.voxand.terrain.TerrainManager;
 import org.joml.Vector2i;
+import org.joml.Vector3i;
 import org.lwjgl.glfw.GLFW;
 import org.joml.Vector3f;
+import org.lwjgl.system.CallbackI;
+
+import java.util.Vector;
 
 
 public class Player extends GameEntity {
@@ -21,9 +27,14 @@ public class Player extends GameEntity {
 
 	public static Player player;
 
+	//TODO: Wrap in a class
+	public Vector3i selectedBlock = new Vector3i(0);
+	public Vector2i selectedBlockChunkPos = new Vector2i(0);
+	public boolean blockSelected = false;
+
 	public enum Mode { Survival, Spectator}
 
-	public Mode mode = Mode.Survival;
+	private Mode mode = Mode.Survival;
 
 	private Ray ray;
 
@@ -39,7 +50,7 @@ public class Player extends GameEntity {
 			doTerrainCollisions = false;
 			rigidbody.verticalDrag = rigidbody.horizontalDrag;
 		}
-		ray = new Ray(new Vector3f(camera.transform.getPosition()), new Vector2i(transform.chunkPos),new Vector3f(camera.transform.forward()),5);
+		ray = new Ray(new Vector3f(camera.transform.getPosition()), new Vector2i(transform.chunkPos),new Vector3f(camera.transform.forward()),8.5f);
 	}
 
 	private final Vector3f xVelocity = new Vector3f(0);
@@ -134,7 +145,49 @@ public class Player extends GameEntity {
 
 		RayHit hit = CollisionEngine.rayVSterrain(ray);
 		if(hit.success){
-			//System.out.println("Block hit: " + hit.blockPosition + " distance: " + hit.distance);
+			blockSelected = true;
+			Vector3f pos = new Vector3f(ray.direction);
+			pos.mul(0.1f);
+			pos.add(hit.position);
+			selectedBlockChunkPos.set(hit.chunkPosition);
+
+			Chunk.correctChunkPosition(selectedBlockChunkPos,pos);
+			Chunk.correctPosition(pos);
+
+
+			selectedBlock.x = (int)Math.floor(pos.x);
+			selectedBlock.y = (int)Math.floor(pos.y);
+			selectedBlock.z = (int)Math.floor(pos.z);
+			if(Input.isKeyDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)){
+				Chunk c = TerrainManager.getChunk(hit.chunkPosition);
+				c.setGrid(selectedBlock.x,selectedBlock.y,selectedBlock.z,(byte)0);
+			} else if (Input.isKeyDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT)) {
+				Vector3i adjacentBlock = new Vector3i(selectedBlock);
+				adjacentBlock.add(hit.normal);
+				Vector2i adjacentBlockChunk = new Vector2i(selectedBlockChunkPos);
+				Chunk.correctChunkPosition(adjacentBlockChunk,adjacentBlock);
+				Chunk.correctPosition(adjacentBlock);
+
+				Chunk c = TerrainManager.getChunk(adjacentBlockChunk);
+				c.setGrid(adjacentBlock.x,adjacentBlock.y,adjacentBlock.z,(byte)1);
+			}
+		} else {
+			blockSelected = false;
+		}
+	}
+
+	public Mode getMode(){ return mode; }
+
+	public void setMode(Mode mode){
+		this.mode = mode;
+		switch (mode) {
+			case Survival -> {
+				ray.preview = false;
+				setCamera();
+			}
+			case Spectator -> {
+				ray.preview = true;
+			}
 		}
 	}
 

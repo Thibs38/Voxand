@@ -1,4 +1,4 @@
-package com.thibsworkshop.voxand.gui;
+package com.thibsworkshop.voxand.rendering.gui;
 
 public class GUIText {
 

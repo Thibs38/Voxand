@@ -1,5 +1,6 @@
 package com.thibsworkshop.voxand.physics.collisions;
 
+import com.thibsworkshop.voxand.debugging.Debug;
 import com.thibsworkshop.voxand.entities.GameEntity;
 import com.thibsworkshop.voxand.entities.Transform;
 import com.thibsworkshop.voxand.io.Time;
@@ -366,12 +367,8 @@ public class CollisionEngine {
     //</editor-fold>
 
 
-    private static final Vector3i step = new Vector3i();
-    private static final Vector3f stepPos = new Vector3f();
-    private static final Vector3i blockPos = new Vector3i();
-    private static final Vector2i blockChunkPos = new Vector2i();
-    private static final Vector3f actualPosition = new Vector3f();
-    public static RayHit rayVSterrain(Ray ray){
+
+    /*public static RayHit rayVSterrain(Ray ray){
 
         step.x = ray.direction.x >= 0 ? 1 : -1;
         step.y = ray.direction.y >= 0 ? 1 : -1;
@@ -381,15 +378,18 @@ public class CollisionEngine {
 
 
         blockPos.x = Maths.floor(ray.position.x);
-        blockPos.y = Maths.floor(ray.position.x);
-        blockPos.z = Maths.floor(ray.position.x);
+        blockPos.y = Maths.floor(ray.position.y);
+        blockPos.z = Maths.floor(ray.position.z);
         blockChunkPos.set(ray.chunkPosition);
 
         float sqrLength = 0;
-
+        //System.out.println("BlockPos: " + blockPos + " chunk pos: " + blockChunkPos);
         if(TerrainManager.isBlockSolid(blockPos.x,blockPos.y, blockPos.z, ray.chunkPosition))
+            return new RayHit(true,new Vector3i(blockPos), new Vector2i(blockChunkPos), (float)Math.sqrt(sqrLength));
 
+        int i = 0;
         while(sqrLength < ray.getSqrLength()){
+            i++;
             if(Math.abs(stepPos.x) > Math.abs(stepPos.z)){
                 if(Math.abs(stepPos.x) > Math.abs(stepPos.y)){
                     stepPos.x += step.x;
@@ -420,11 +420,130 @@ public class CollisionEngine {
             if(blockPos.y < 0 || blockPos.y > Chunk.CHUNK_HEIGHT)
                 return new RayHit(false,null,null,(float)Math.sqrt(sqrLength));
 
-            if(TerrainManager.isBlockSolid(blockPos.x,blockPos.y,blockPos.z,blockChunkPos))
-                return new RayHit(true,new Vector3i(blockPos), new Vector2i(blockChunkPos), (float)Math.sqrt(sqrLength));
+            if(TerrainManager.isBlockSolid(blockPos.x,blockPos.y,blockPos.z,blockChunkPos)) {
+                System.out.println("loop count: ");
+
+                return new RayHit(true, new Vector3i(blockPos), new Vector2i(blockChunkPos), (float) Math.sqrt(sqrLength));
+            }
 
         }
 
+
         return new RayHit(false,null,null,(float)Math.sqrt(sqrLength));
+    }*/
+
+    private static final Vector3i step = new Vector3i();
+    private static final Vector3f tDelta = new Vector3f();
+    private static final Vector3f dist = new Vector3f();
+    private static final Vector3f tMax = new Vector3f();
+    private static final Vector3i blockPos = new Vector3i();
+    private static final Vector2i blockChunkPos = new Vector2i();
+    private static final Vector3f actualPosition = new Vector3f();
+    public static RayHit rayVSterrain( Ray ray) {
+
+        // consider raycast vector to be parametrized by t
+        //   vec = [px,py,pz] + t * [dx,dy,dz]
+
+        // algo below is as described by this paper:
+        // http://www.cse.chalmers.se/edu/year/2010/course/TDA361/grid.pdf
+        // code translated from https://github.com/fenomas/fast-voxel-raycast
+
+        float t = 0.0f;
+
+        blockPos.x = Maths.floor(ray.position.x);
+        blockPos.y = Maths.floor(ray.position.y);
+        blockPos.z = Maths.floor(ray.position.z);
+
+        blockChunkPos.set(ray.chunkPosition);
+
+        step.x = ray.direction.x >= 0 ? 1 : -1;
+        step.y = ray.direction.y >= 0 ? 1 : -1;
+        step.z = ray.direction.z >= 0 ? 1 : -1;
+
+        tDelta.x = Math.abs(1 / ray.direction.x);
+        tDelta.y = Math.abs(1 / ray.direction.y);
+        tDelta.z = Math.abs(1 / ray.direction.z);
+
+        //Distance to nearest block
+        dist.x = step.x > 0 ? blockPos.x + 1 - ray.position.x : ray.position.x - blockPos.x;
+        dist.y = step.y > 0 ? blockPos.y + 1 - ray.position.y : ray.position.y - blockPos.y;
+        dist.z = step.z > 0 ? blockPos.z + 1 - ray.position.z : ray.position.z - blockPos.z;
+
+        // location of nearest voxel boundary, in units of t
+        tMax.x = tDelta.x * dist.x;
+        tMax.y = tDelta.y * dist.y;
+        tMax.z = tDelta.z * dist.z;
+
+        int steppedIndex = -1;
+        ray.resetHit();
+
+        // main loop along raycast vector
+        while (t <= ray.length) {
+
+            // exit check
+            if(blockPos.y < 0 || blockPos.y >= Chunk.CHUNK_HEIGHT){ // Out of bounds
+                ray.hit.distance = t;
+                return ray.hit;
+            }
+            boolean b = TerrainManager.isBlockSolid(blockPos.x, blockPos.y,blockPos.z,blockChunkPos);
+            if (b) {
+                t+=0.001f;
+                ray.hit.success = true;
+                ray.hit.distance = t;
+                ray.hit.position.set(
+                        ray.position.x + t * ray.direction.x,
+                        ray.position.y + t * ray.direction.y,
+                        ray.position.z + t * ray.direction.z);
+                ray.hit.chunkPosition.set(blockChunkPos);
+                Chunk.correctPosition(ray.hit.position);
+
+                ray.hit.normal.set(0);
+                if (steppedIndex == 0) ray.hit.normal.x = -step.x;
+                if (steppedIndex == 1) ray.hit.normal.y = -step.y;
+                if (steppedIndex == 2) ray.hit.normal.z = -step.z;
+
+                return ray.hit;
+            }
+
+            // advance t to next nearest voxel boundary
+            if (tMax.x < tMax.y) {
+                if (tMax.x < tMax.z) {
+
+                    blockPos.x += step.x;
+                    blockChunkPos.x = Chunk.correctChunkPosition(blockChunkPos.x,blockPos.x);
+                    blockPos.x = Chunk.correctPosition(blockPos.x);
+                    t = tMax.x;
+                    tMax.x += tDelta.x; // We keep track of how much we went compared to the ray direction
+                    steppedIndex = 0;
+                } else {
+                    blockPos.z += step.z;
+                    blockChunkPos.y = Chunk.correctChunkPosition(blockChunkPos.y,blockPos.z);
+                    blockPos.z = Chunk.correctPosition(blockPos.z);
+                    t = tMax.z;
+                    tMax.z += tDelta.z;
+                    steppedIndex = 2;
+                }
+            } else {
+                if (tMax.y < tMax.z) {
+                    blockPos.y += step.y;
+                    t = tMax.y;
+                    tMax.y += tDelta.y;
+                    steppedIndex = 1;
+                } else {
+                    blockPos.z += step.z;
+                    blockChunkPos.y = Chunk.correctChunkPosition(blockChunkPos.y,blockPos.z);
+                    blockPos.z = Chunk.correctPosition(blockPos.z);
+                    t = tMax.z;
+                    tMax.z += tDelta.z;
+                    steppedIndex = 2;
+                }
+            }
+
+        }
+
+        ray.hit.distance = ray.length;
+        return ray.hit;
+
     }
+
 }

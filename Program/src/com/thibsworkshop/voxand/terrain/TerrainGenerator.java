@@ -1,42 +1,45 @@
 package com.thibsworkshop.voxand.terrain;
 
 import com.thibsworkshop.voxand.data.Block;
+import com.thibsworkshop.voxand.toolbox.Direction;
 
 public class TerrainGenerator {
 
 	public static IndicesVerticesNormals generate(Chunk chunk, byte[][][] back, byte[][][] front, byte[][][] right, byte[][][] left ) {
 		int verticesCountEstimate = 0;
+		
+		byte[][][] grid = chunk.getGrid();
 
 		//Estimating the vertices count
 		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) { //Here we estimate the number of vertices.
 			for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
 				for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
-					if(chunk.grid[x][y][z] > 0) { //If the cube is solid, We'll check for every face the adjacent cube if is solid or not
+					if(grid[x][y][z] > 0) { //If the cube is solid, We'll check for every face the adjacent cube if is solid or not
 						
-						if(y > 0 && chunk.grid[x][y - 1][z] == 0) { // Checking bottom face
+						if(y > 0 && grid[x][y - 1][z] == 0) { // Checking bottom face
 							verticesCountEstimate+=12;
 						}
-						if(y < Chunk.CHUNK_HEIGHT - 1 && chunk.grid[x][y + 1][z] == 0) { // Checking top face
+						if(y < Chunk.CHUNK_HEIGHT - 1 && grid[x][y + 1][z] == 0) { // Checking top face
 							verticesCountEstimate+=12;
 						}
 
 						
 						if((z == 0 && Block.blocks[back[x][y][Chunk.CHUNK_SIZE - 1]].getTransparency() < 1)
-								|| (z > 0 && chunk.grid[x][y][z - 1] == 0)) { // Checking back face
+								|| (z > 0 && grid[x][y][z - 1] == 0)) { // Checking back face
 							verticesCountEstimate+=12;
 						}
 						if((z == Chunk.CHUNK_SIZE - 1 && Block.blocks[front[x][y][0]].getTransparency() < 1)
-								|| (z < Chunk.CHUNK_SIZE - 1 && chunk.grid[x][y][z + 1] == 0)) { // Checking front face
+								|| (z < Chunk.CHUNK_SIZE - 1 && grid[x][y][z + 1] == 0)) { // Checking front face
 							verticesCountEstimate+=12;
 						}
 						
 						
 						if((x  == 0 && Block.blocks[left[Chunk.CHUNK_SIZE - 1][y][z]].getTransparency() < 1)
-								|| (x > 0 && chunk.grid[x - 1][y][z] == 0)) { // Checking left face
+								|| (x > 0 && grid[x - 1][y][z] == 0)) { // Checking left face
 							verticesCountEstimate+=12;
 						}
 						if((x == Chunk.CHUNK_SIZE - 1 && Block.blocks[right[0][y][z]].getTransparency() < 1)
-								|| (x < Chunk.CHUNK_SIZE - 1 && chunk.grid[x + 1][y][z] == 0)) { // Checking right face
+								|| (x < Chunk.CHUNK_SIZE - 1 && grid[x + 1][y][z] == 0)) { // Checking right face
 							verticesCountEstimate+=12;
 						}
 					}
@@ -60,10 +63,10 @@ public class TerrainGenerator {
 		for(int x = 0; x < Chunk.CHUNK_SIZE; x++) {
 			for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
 				for (int y = 0; y < Chunk.CHUNK_HEIGHT; y++) {
-					if(chunk.grid[x][y][z] > 0) { //If the cube is solid, We'll check for every face the adjacent cube if it solid or not
+					if(grid[x][y][z] > 0) { //If the cube is solid, We'll check for every face the adjacent cube if it solid or not
 						int faces = 0;
 						
-						if(y > 0 && chunk.grid[x][y - 1][z] == 0) { // Checking bottom face
+						if(y > 0 && grid[x][y - 1][z] == 0) { // Checking bottom face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z;
@@ -81,12 +84,12 @@ public class TerrainGenerator {
 							vertices[verticeI++] = z + 1;
 							
 							for(int i = 0; i < 4;i++)
-								normals[normalI++] = 4;
+								normals[normalI++] = Direction.BOTTOM;
 
 							faces++;
 						}
 						
-						if(y < Chunk.CHUNK_HEIGHT - 1 && chunk.grid[x][y + 1][z] == 0) { // Checking top face
+						if(y < Chunk.CHUNK_HEIGHT - 1 && grid[x][y + 1][z] == 0) { // Checking top face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y + 1;
 							vertices[verticeI++] = z;
@@ -104,13 +107,13 @@ public class TerrainGenerator {
 							vertices[verticeI++] = z;
 							
 							for(int i = 0; i < 4;i++)
-								normals[normalI++] = 1;
+								normals[normalI++] = Direction.TOP;
 
 							faces++;
 						}
-						
+						//TODO: I feel like we are only checking air blocks
 						if((z == 0 && Block.blocks[back[x][y][Chunk.CHUNK_SIZE - 1]].getTransparency() < 1) ||
-								(z > 0 && chunk.grid[x][y][z - 1] == 0)) { // Checking back face
+								(z > 0 && grid[x][y][z - 1] == 0)) { // Checking back face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z;
@@ -128,13 +131,13 @@ public class TerrainGenerator {
 							vertices[verticeI++] = z;
 							
 							for(int i = 0; i < 4;i++)
-								normals[normalI++] = 5;
+								normals[normalI++] = Direction.BACK;
 
 							faces++;
 						}
 						
 						if((z == Chunk.CHUNK_SIZE - 1 && Block.blocks[front[x][y][0]].getTransparency() < 1) ||
-								(z < Chunk.CHUNK_SIZE - 1 && chunk.grid[x][y][z + 1] == 0)) { // Checking front face
+								(z < Chunk.CHUNK_SIZE - 1 && grid[x][y][z + 1] == 0)) { // Checking front face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z + 1;
@@ -152,13 +155,13 @@ public class TerrainGenerator {
 							vertices[verticeI++] = z + 1;
 							
 							for(int i = 0; i < 4;i++)
-								normals[normalI++] = 2;
+								normals[normalI++] = Direction.FRONT;
 							
 							faces++;
 						}
 						
 						if((x  == 0 && Block.blocks[left[Chunk.CHUNK_SIZE - 1][y][z]].getTransparency() < 1) ||
-								(x > 0 && chunk.grid[x - 1][y][z] == 0)) { // Checking left face
+								(x > 0 && grid[x - 1][y][z] == 0)) { // Checking left face
 							vertices[verticeI++] = x;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z;
@@ -176,12 +179,12 @@ public class TerrainGenerator {
 							vertices[verticeI++] = z;
 							
 							for(int i = 0; i < 4;i++)
-								normals[normalI++] = 3;
+								normals[normalI++] = Direction.LEFT;
 
 							faces++;
 						}
 						
-						if((x == Chunk.CHUNK_SIZE - 1 && Block.blocks[right[0][y][z]].getTransparency() < 1) || (x < Chunk.CHUNK_SIZE - 1 && chunk.grid[x + 1][y][z] == 0)) { // Checking right face
+						if((x == Chunk.CHUNK_SIZE - 1 && Block.blocks[right[0][y][z]].getTransparency() < 1) || (x < Chunk.CHUNK_SIZE - 1 && grid[x + 1][y][z] == 0)) { // Checking right face
 							vertices[verticeI++] = x + 1;
 							vertices[verticeI++] = y;
 							vertices[verticeI++] = z;
@@ -199,7 +202,7 @@ public class TerrainGenerator {
 							vertices[verticeI++] = z + 1;
 							
 							for(int i = 0; i < 4;i++)
-								normals[normalI++] = 0;
+								normals[normalI++] = Direction.RIGHT;
 							
 							faces++;
 						}
@@ -214,7 +217,7 @@ public class TerrainGenerator {
 							indices[indiceI++]= verticesCount;
 							
 							for(int j = 0; j < 4;j++)
-								blocks[blockI++]= chunk.grid[x][y][z];
+								blocks[blockI++]= grid[x][y][z];
 							
 							verticesCount += 4;
 						}

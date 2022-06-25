@@ -15,6 +15,7 @@ public class GridGenerator {
 
 	public static Chunk generate(Vector2i chunkPos, Vector2i playerChunkPos, TerrainInfo info) {
 		Chunk chunk = new Chunk(chunkPos,playerChunkPos);
+		byte[][][] grid = chunk.getGrid();
 		long realx = (long) chunkPos.x * Chunk.CHUNK_SIZE;
 		long realz = (long) chunkPos.y * Chunk.CHUNK_SIZE;
 
@@ -45,22 +46,22 @@ public class GridGenerator {
 					else {*/
 						if(simplex < 120) {
 							if(y <= simplex-5)
-								chunk.grid[x][y][z] = 3;
+								grid[x][y][z] = 3;
 							else if(y <= simplex-1)
-								chunk.grid[x][y][z] = 2;
+								grid[x][y][z] = 2;
 							else if(y <= simplex)
-								chunk.grid[x][y][z] = 1;
+								grid[x][y][z] = 1;
 							else 
-								chunk.grid[x][y][z] = 0;
+								grid[x][y][z] = 0;
 						}else{
 							if(y <= simplex-2)
-								chunk.grid[x][y][z] = 3;
+								grid[x][y][z] = 3;
 							else if(y <= simplex-1)
-								chunk.grid[x][y][z] = 2;
+								grid[x][y][z] = 2;
 							else if(y <= simplex)
-								chunk.grid[x][y][z] = 1;
+								grid[x][y][z] = 1;
 							else 
-								chunk.grid[x][y][z] = 0;
+								grid[x][y][z] = 0;
 						}
 						
 					//}

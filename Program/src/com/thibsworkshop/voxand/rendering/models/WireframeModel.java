@@ -16,6 +16,28 @@ public class WireframeModel {
         this.color = color;
     }
 
+
+    /**
+     * Generates a cross model
+     * @param color Color of the cross
+     */
+    public WireframeModel(Vector3f color){
+        this.color = color;
+
+        float[] positions = new float[]{
+                0.5f, 0.5f, 0,
+                -0.5f, -0.5f, 0,
+                -0.5f, 0.5f, 0,
+                0.5f, -0.5f, 0,
+        };
+
+        int[] indices = new int[]{
+                0,1,
+                2,3
+        };
+
+        this.rawModel = Loader.loadToVAOLine(positions,indices);
+    }
     public WireframeModel(Vector3f A, Vector3f B, Vector3f color){
         this.color = color;
 

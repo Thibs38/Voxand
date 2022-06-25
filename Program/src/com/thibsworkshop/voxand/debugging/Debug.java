@@ -26,18 +26,24 @@ public class Debug {
 
     private static WireframeModel[] axisModels;
     private static WireframeModel rayModel;
+    private static WireframeModel rayHitCrossModel;
 
     public static Vector3f axesPosition = new Vector3f();
 
 
 
 
-    private static void genRayModel(){ rayModel = new WireframeModel(Maths.zero,Maths.forward,Color.red);}
+    private static void genRayModel(){
+        rayModel = new WireframeModel(Maths.zero,Maths.forward,Color.red);
+        rayHitCrossModel = new WireframeModel(Color.red);
+    }
 
 
     public static WireframeModel[] getAxisModels(){ return axisModels; }
 
     public static WireframeModel getRayModel(){ return rayModel; }
+
+    public static WireframeModel getRayHitCrossModel(){ return rayHitCrossModel; }
 
 
 
@@ -133,11 +139,10 @@ public class Debug {
             }
             Debug.cameraFree = cameraFree;
             if(cameraFree)
-                Player.player.mode = Player.Mode.Spectator;
-            else{
-                Player.player.mode = Player.Mode.Survival;
-                Player.player.setCamera();
-            }
+                Player.player.setMode(Player.Mode.Spectator);
+            else
+                Player.player.setMode(Player.Mode.Survival);
+
         }
         else
             printWarningDebugModeNotEnabled("Rays Wireframe");

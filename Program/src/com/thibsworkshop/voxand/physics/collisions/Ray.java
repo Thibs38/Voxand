@@ -19,6 +19,10 @@ public class Ray {
 
     private float sqrLength;
 
+    public RayHit hit;
+
+    public boolean preview = false;
+
     public static ArrayList<Ray> rays = new ArrayList<Ray>();
 
     public Ray(Vector3f position, Vector2i chunkPosition, Vector3f direction, float length){
@@ -28,6 +32,23 @@ public class Ray {
         this.length = length;
         this.sqrLength = length * length;
         Ray.rays.add(this);
+        this.hit = new RayHit();
+    }
+
+    public void setHit(boolean success, Vector3f position, Vector2i chunkPosition, Vector3i normal, float distance){
+        this.hit.success = success;
+        this.hit.position.set(position);
+        this.hit.chunkPosition.set(chunkPosition);
+        this.hit.distance = distance;
+        this.hit.normal.set(normal);
+    }
+
+    public void resetHit(){
+        this.hit.success = false;
+        this.hit.position.set(0);
+        this.hit.chunkPosition.set(0);
+        this.hit.distance = 0;
+        this.hit.normal.set(0);
     }
 
     public float getSqrLength() {

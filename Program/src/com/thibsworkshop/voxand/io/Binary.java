@@ -48,7 +48,7 @@ public class Binary {
                             block = 5;
                             break;
                     }
-                    TerrainManager.getChunk(new Vector2i(0,0)).grid[x][z][y] = block;
+                    TerrainManager.getChunk(new Vector2i(0,0)).getGrid()[x][z][y] = block;
                     // Do stuff with the data
                 }
             }

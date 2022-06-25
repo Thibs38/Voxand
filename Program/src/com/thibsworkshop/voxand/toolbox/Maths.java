@@ -8,6 +8,9 @@ import java.lang.Math;
 
 public class Maths {
 
+
+	public static final float EPSILON = 0.0001f;
+
 	public static final Vector3f right = new Vector3f(1, 0, 0);
 	public static final Vector3f left = new Vector3f(-1,0,0);
 	public static final Vector3f up = new Vector3f(0, 1, 0);
@@ -15,13 +18,17 @@ public class Maths {
 	public static final Vector3f forward = new Vector3f(0, 0, 1);
 	public static final Vector3f backward = new Vector3f(0,0,-1);
 	public static final Vector3f zero = new Vector3f(0);
+	public static final Vector3f moreThanZero = new Vector3f(0.001f);
+	public static final Vector3f lessThanZero = new Vector3f(-0.001f);
 	public static final Vector3f one = new Vector3f(1);
+	public static final Vector3f lessThanOne = new Vector3f(0.999f);
+	public static final Vector3f moreThanOne = new Vector3f(1.001f);
+
 	public static final Vector3f half = new Vector3f(0.5f);
 	public static final Vector3f quarter = new Vector3f(0.25f);
 
 	public static final Matrix4f identity = new Matrix4f().identity();
 
-	public static final float EPSILON = 0.0001f;
 
 	/**
 	 * Updates the transformation matrix of the given transform
@@ -102,6 +109,7 @@ public class Maths {
 	public static float floatMod(float x, float y){
 		return (float)(x - Math.floor(x/y) * y);
 	}
+
 
 	/**
 	 * Calculates the sign of a

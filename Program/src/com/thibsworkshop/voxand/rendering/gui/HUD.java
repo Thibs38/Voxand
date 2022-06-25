@@ -8,13 +8,10 @@ import org.joml.Vector3f;
 
 public class HUD {
 
-    private static WireframeModel[] crosshair;
+    private static WireframeModel crosshair;
 
     public static void init(){
-        crosshair = new WireframeModel[2];
-        Vector3f center = new Vector3f(Window.mainWindow.getWidth() / 2,Window.mainWindow.getHeight() / 2,0);
-        crosshair[0] = new WireframeModel(center.add(-100,0,0),center.add(100,0,0), Color.white);
-        crosshair[1] = new WireframeModel(center.add(0,-100,0),center.add(0,100,0), Color.white);
+        crosshair = new WireframeModel(Color.white);
     }
-    public static WireframeModel[] getCrosshair(){ return crosshair;}
+    public static WireframeModel getCrosshair(){ return crosshair;}
 }
