@@ -26,8 +26,13 @@ public class Truetype {
     private int lineOffset;
 
 
+    /**
+     * Creates a new True Type font from ttf file
+     * @param filePath the path of the tff file
+     */
     public Truetype(String filePath) {
 
+        //TODO: Add extension checking
         try {
             ttf = BufferTools.ioResourceToByteBuffer(filePath, 512 * 1024);
         } catch (IOException e) {

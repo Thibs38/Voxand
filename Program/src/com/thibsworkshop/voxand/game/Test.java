@@ -65,8 +65,8 @@ public class Test {
         AABB chickAABB = AABB.createMinMax(new Vector3f(-0.3f,0f,-0.3f),new Vector3f(0.3f,0.9f,0.3f));
         Collider chickCollider = new Collider(chickAABB);
 
-        TexturedModel texturedModel = new TexturedModel("chr_knight","chr_knight", mat,playerCollider);
-        TexturedModel chickModel = new TexturedModel("chick","chick", mat,chickCollider);
+        TexturedModel texturedModel = new TexturedModel("chr_knight","Program/res/textures/chr_knight.png", mat,playerCollider);
+        TexturedModel chickModel = new TexturedModel("chick","Program/res/textures/chick.png", mat,chickCollider);
 
         ProjectionCamera camera = new ProjectionCamera(70);
         Camera.main = camera;

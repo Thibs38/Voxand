@@ -1,5 +1,7 @@
 package com.thibsworkshop.voxand.rendering.gui;
 
+
+
 public class GUIText {
 
     String text;
@@ -9,13 +11,20 @@ public class GUIText {
 
     Truetype font;
 
+    /**
+     * Creates a new gui text that can be shown on a canvas
+     * @param text the text in the gui
+     * @param height the height of the font
+     * @param font the font type
+     */
     public GUIText(String text, int height, Truetype font){
         this.fontHeight = height;
         this.lineHeight = fontHeight;
         this.font = font;
     }
 
-    /* Read text from file *//*
+    /* Read text from file */
+    /*
     public GUIText(int height, Truetype font){
         this.fontHeight = height;
         this.lineHeight = fontHeight;

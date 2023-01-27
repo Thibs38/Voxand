@@ -62,8 +62,8 @@ public class Loader {
 		return new RawModel(vaoID,iboID, indices.length);
 	}
 	
-	public static Texture loadTexture(String fileName) {
-		Texture texture = TextureLoader.loadTexture("PNG", "Program/res/textures/"+fileName+".png");
+	public static Texture loadTexture(String path) {
+		Texture texture = TextureLoader.loadTexture("PNG", path);
 		if(texture == null) return null;
 		textures.add(texture.getID());
 		return texture;

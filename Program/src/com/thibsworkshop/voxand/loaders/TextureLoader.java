@@ -13,15 +13,15 @@ import org.lwjgl.opengl.GL11;
 
 public class TextureLoader {
 
-	public static Texture loadTexture(String extension, String fileName){
+	public static Texture loadTexture(String extension, String path){
 
 	    //load png file
 	    PNGDecoder decoder = null;
 	    InputStream stream = null;
 		try {
-			stream = new FileInputStream(fileName);
+			stream = new FileInputStream(path);
 		} catch (FileNotFoundException e1) {
-			System.err.println("Couldn't load texture: " + fileName);
+			System.err.println("Couldn't load texture: " + path);
 			e1.printStackTrace();
 			return null;
 		}
@@ -30,7 +30,7 @@ public class TextureLoader {
 			decoder = new PNGDecoder(stream);
 			
 		} catch (IOException e) {
-			System.err.println("Couldn't load texture: " + fileName);
+			System.err.println("Couldn't load texture: " + path);
 			e.printStackTrace();
 			return null;
 		}
